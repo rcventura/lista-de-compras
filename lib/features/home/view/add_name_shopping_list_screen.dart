@@ -12,6 +12,11 @@ class AddNameShoppingListScreen extends StatefulWidget {
 class _AddNameShoppingListScreenState extends State<AddNameShoppingListScreen> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
+  List<DropdownMenuItem<String>> items = [
+    const DropdownMenuItem(value: 'Casa', child: Text('Casa')),
+    const DropdownMenuItem(value: 'Mercado', child: Text('Mercado')),
+  ];
+  String? _selectedValue;
 
   @override
   void dispose() {
@@ -38,11 +43,34 @@ class _AddNameShoppingListScreenState extends State<AddNameShoppingListScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextFormField(
-                controller: _controller,
-                autofocus: true,
-                decoration: const InputDecoration(labelText: 'Nome da lista'),
-                validator: Validators.required,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Adicione o nome e o local que esta criando esta lista.',
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 30),
+                  TextFormField(
+                    controller: _controller,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Nome da lista',
+                    ),
+                    validator: Validators.required,
+                  ),
+                  const SizedBox(height: 30),
+                  DropdownButton(
+                    items: items,
+                    value: _selectedValue,
+                    onChanged: (String? value) {
+                      setState(() {
+                        _selectedValue = value;
+                      });
+                      print('Valor selecionado: $value');
+                    },
+                  )
+                ],
               ),
               const SizedBox(height: 24),
               SizedBox(
