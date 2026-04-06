@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/helpers/validators.dart';
 import '../../../components/toastAlert/toastAlert.dart';
+import '../../shopping/view/shopping_list_detail_screen.dart';
 
 class AddNameShoppingListScreen extends StatefulWidget {
   const AddNameShoppingListScreen({super.key});
@@ -105,7 +106,12 @@ class _AddNameShoppingListScreenState extends State<AddNameShoppingListScreen> {
                       if (nome.isNotEmpty) {
                         ToastAlert.show(context, 'Lista "$nome" criada com sucesso!');
                         Duration(seconds: 4);
-                        Navigator.pop(context, nome);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ShoppingListDetailScreen(),
+                          ),
+                        );
                       }
                     }
                   },
