@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:lista_compras/components/SMButtom/SMButtom.dart';
+import '../../../components/toastAlert/toastAlert.dart';
 import '../../../core/helpers/validators.dart';
-
-import '../viewmodel/auth_viewmodel.dart';
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
+import '../bloc/auth_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -21,74 +24,85 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     super.dispose();
   }
 
-  Future<void> _submit(AuthViewModel vm) async {
+  void sendResetPasswordRequest() {
     if (!_formKey.currentState!.validate()) return;
 
-    await vm.forgotPassword(email: _emailController.text.trim());
-
-    if (!mounted) return;
-
-    if (vm.status == AuthStatus.error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(vm.errorMessage ?? 'Erro ao enviar e-mail.')),
-      );
-      vm.resetStatus();
-      return;
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Instruções enviadas para o seu e-mail.')),
+    context.read<AuthBloc>().add(
+      ResetPasswordRequested(email: _emailController.text.trim()),
     );
-
-    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 24),
-                child: Image.asset('assets/images/logo.png'),
-              ),
+      body: SafeArea(
+        child: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is SendResetPasswordSuccess) {
+              _emailController.clear();
+              Navigator.pop(context);
+              ToastAlert.show(context, 'Instruções enviadas para seu e-mail!');
+            }
 
-              const Text(
-                'Informe seu e-mail e enviaremos as instruções para redefinir sua senha.',
-              ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(labelText: 'E-mail'),
-                validator: Validators.email,
-              ),
-              const SizedBox(height: 24),
-              Consumer<AuthViewModel>(
-                builder: (_, vm, _) => FilledButton(
-                  onPressed: vm.isLoading ? null : () => _submit(vm),
-                  child: vm.isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Enviar instruções'),
+            if (state is AuthError) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
+            }
+          },
+
+          builder: (context, state) {
+            final isLoading = state is AuthLoading;
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 30),
+
+                    Image.asset(
+                      'assets/images/logo.png',
+                      height: 150,
+                      fit: BoxFit.contain,
+                    ),
+
+                    const Text(
+                      'Informe seu e-mail e enviaremos as instruções para redefinir sua senha.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 40),
+                    TextFormField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        labelText: 'E-mail', 
+                        prefixIcon: Icon(Icons.email, color: Colors.grey), 
+                        border: OutlineInputBorder()),
+                      validator: Validators.email,
+                    ),
+                    const SizedBox(height: 40),
+
+                    SMButton(
+                      text: 'Enviar',
+                      onPressed: sendResetPasswordRequest,
+                      isLoading: isLoading,
+                    ),
+
+                    const SizedBox(height: 16),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Voltar para login'),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Voltar para login'),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
