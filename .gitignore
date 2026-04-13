@@ -2,6 +2,11 @@
 .claude/
 .mcp.json
 
+# Environment / secrets
+.env
+dart-defines.json
+.vscode/launch.json
+
 # Miscellaneous
 *.class
 *.log
