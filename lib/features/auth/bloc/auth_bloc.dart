@@ -1,4 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lista_compras/features/auth/domain/usecases/forgot_password_usercase.dart';
+import 'package:lista_compras/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:lista_compras/features/auth/view/forgot_password_screen.dart';
+import '../domain/usecases/create_usecase.dart';
 import '../data/repositories/auth_repository.dart';
 import '../domain/usecases/login_usecase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
@@ -11,11 +15,18 @@ import 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   late final AuthRepository _authRepository;
   late final LoginUseCase _loginUseCase;
+  late final CreateAccountUseCase _createAccountUseCase;
+  late final LogoutUsecase _logoutUsecase;
+  late final ForgotPasswordUsercase _forgotPasswordUsercase;
+
   // O estado inicial quando o BLoC é criado é AuthInitial.
   AuthBloc() : super(AuthInitial()) {
     _authRepository = AuthRepository(Supabase.instance.client);
     _loginUseCase = LoginUseCase(_authRepository);
-
+    _createAccountUseCase = CreateAccountUseCase(_authRepository);
+    _logoutUsecase = LogoutUsecase(_authRepository);
+    _forgotPasswordUsercase = ForgotPasswordUsercase(_authRepository);
+    
     // Aqui registramos o handler para o evento LoginRequested.
     // Toda vez que a UI disparar LoginRequested, esse código roda.
     on<LoginRequested>(_onLoginRequested);
@@ -32,7 +43,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      final user = await _loginUseCase(
+      final user = await _loginUseCase.loginAccount(
         email: event.email,
         password: event.password,
       );
@@ -44,6 +55,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } else {
         emit(AuthError(e.message));
       }
+    } catch (_) {
       emit(AuthError('Erro ao entrar. Tente novamente.'));
     }
   }
@@ -55,19 +67,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      final response = await Supabase.instance.client.auth.signUp(
+      await _createAccountUseCase.createAccount(
+        name: event.name,
         email: event.email,
         password: event.password,
       );
-
-      final userId = response.user?.id;
-      if (userId != null) {
-        await Supabase.instance.client.from('users').insert({
-          'id': userId,
-          'name': event.name,
-          'email': event.email,
-        });
-      }
 
       emit(RegisterSuccess());
     } on AuthApiException catch (e) {
@@ -84,10 +88,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      await Supabase.instance.client.auth.resetPasswordForEmail(
-        event.email,
-        redirectTo: 'io.supabase.flutter://reset-password',
-      );
+      await _forgotPasswordUsercase.forgotPasswordAccount();
       emit(SendResetPasswordSuccess());
     } on AuthApiException catch (e) {
       emit(AuthError(e.message));
@@ -102,7 +103,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     try {
-      await Supabase.instance.client.auth.signOut();
+      await _logoutUsecase.logountAccount();
       emit(AuthInitial());
     } catch (e) {
       emit(AuthError('Erro ao sair. Tente novamente.'));

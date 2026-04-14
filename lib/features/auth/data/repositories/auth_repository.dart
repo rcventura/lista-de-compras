@@ -7,7 +7,8 @@ class AuthRepository {
 
   AuthRepository(this.client);
 
-  Future<UserEntity> login({
+  // AUHTENTICATION - LOGIN
+  Future<UserEntity> loginAccount({
     required String email,
     required String password,
   }) async {
@@ -22,5 +23,44 @@ class AuthRepository {
 
     final userModel = UserModel.fromMap(data);
     return userModel.toEntity();
+  }
+
+  // LOGOUT
+  Future<void> logoutAccount() async {
+       client.auth.signOut();
+  }
+
+  // CREATE ACCOUNT
+  Future<UserEntity> createAccount({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    await client.auth.signUp(email: email, password: password);
+
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('Usuário não encontrado após login.');
+    }
+    final data = await client.from('users').insert({
+      'id': userId,
+      'name': name,
+      'email': email,
+    })
+    .select()
+    .single();
+
+    final userModel = UserModel.fromMap(data);
+    return userModel.toEntity();
+  }
+
+  // FORGOT PASSWORD
+  Future<void> forgotPasswordAccount({
+    required String email,
+  }) async {
+    await client.auth.resetPasswordForEmail(
+      email,
+      redirectTo: 'io.supabase.flutter://reset-password',
+      );
   }
 }
