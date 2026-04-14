@@ -26,12 +26,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           .order('created_at', ascending: false);
 
       final shoppingLists = response
-          .map((item) => ShoppinglistModel.fromMap(item as Map<String, dynamic>))
+          .map((item) => ShoppinglistModel.fromMap(item))
           .toList();
 
       emit(ShoppingListFetchSuccess(shoppingLists));
     } catch (e) {
-      print('Erro ao buscar listas: $e');
       emit(ShoppingListFetchError('Erro ao carregar listas. Tente novamente.'));
     }
   }
@@ -49,9 +48,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           .eq('id', event.shoppingListId)
           .single();
 
-      final shoppingList = ShoppinglistModel.fromMap(response as Map<String, dynamic>);
+      final shoppingList = ShoppinglistModel.fromMap(response);
       emit(ShoppingListDetailedSuccess(shoppingList));
     } catch (e) {
+      // ignore: avoid_print
       print('Erro ao buscar detalhes da lista: $e');
       emit(ShoppingListFetchError('Erro ao carregar detalhes da lista. Tente novamente.'));
     }

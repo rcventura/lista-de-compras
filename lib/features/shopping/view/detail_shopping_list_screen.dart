@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lista_compras/components/BottomSheet/Person/PersonButtomSheet.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_event.dart';
 import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_event.dart';
 import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_state.dart';
@@ -82,7 +81,7 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                                     borderRadius: BorderRadius.circular(8.0),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
+                                        color: Colors.grey.withValues(alpha: 0.5),
                                         spreadRadius: 2,
                                         blurRadius: 5,
                                         offset: Offset(0, 1),
@@ -133,7 +132,7 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                             children: [
                               Divider(color: Colors.grey, thickness: 1),
 
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 height: 70,
                                 child: Row(

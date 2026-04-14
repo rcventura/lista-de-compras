@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lista_compras/core/routes/routes.dart';
 import '../../../core/helpers/validators.dart';
-import '../../../components/toastAlert/toastAlert.dart';
 import '../../../components/SMButtom/SMButtom.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';

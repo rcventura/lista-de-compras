@@ -32,7 +32,6 @@ class ShoppinglistBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
 
       emit(ShoppingListFetchSuccess(shoppingLists));
     } catch (e) {
-      print('Erro ao buscar listas: $e');
       emit(ShoppingListFetchError('Erro ao carregar listas. Tente novamente.'));
     }
   }
@@ -53,7 +52,6 @@ class ShoppinglistBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
       final shoppingList = ShoppinglistModel.fromMap(response);
       emit(ShoppingListDetailsFetchSuccess(shoppingList));
     } catch (e) {
-      print('Erro ao buscar detalhes da lista: $e');
       emit(ShoppingListFetchError('Erro ao carregar detalhes da lista. Tente novamente.'));
     }
   }
@@ -75,7 +73,6 @@ class ShoppinglistBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
 
       emit(ShoppingListCreationSuccess());
     } catch (e) {
-      print('Erro ao criar lista: $e');
       emit(ShoppingListFetchError('Erro ao criar lista. Tente novamente.'));
     }
   }
@@ -94,7 +91,6 @@ class ShoppinglistBloc extends Bloc<ShoppingListEvent, ShoppingListState> {
 
       emit(ShoppingListDeletionSuccess());
     } catch (e) {
-      print('Erro ao deletar lista: $e');
       emit(ShoppingListFetchError('Erro ao deletar lista. Tente novamente.'));
     }
   }

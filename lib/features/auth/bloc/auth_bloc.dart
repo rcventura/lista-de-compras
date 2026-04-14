@@ -1,15 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../data/repositories/auth_repository.dart';
+import '../domain/usecases/login_usecase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
-import '../model/user_model.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
 // O BLoC recebe eventos (AuthEvent) e emite estados (AuthState).
 // Pense nele como o "cérebro" que fica entre a UI e o Supabase.
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  late final AuthRepository _authRepository;
+  late final LoginUseCase _loginUseCase;
   // O estado inicial quando o BLoC é criado é AuthInitial.
   AuthBloc() : super(AuthInitial()) {
+    _authRepository = AuthRepository(Supabase.instance.client);
+    _loginUseCase = LoginUseCase(_authRepository);
 
     // Aqui registramos o handler para o evento LoginRequested.
     // Toda vez que a UI disparar LoginRequested, esse código roda.
@@ -27,39 +32,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      // 2. Chama o Supabase para fazer login
-      await Supabase.instance.client.auth.signInWithPassword(
+      final user = await _loginUseCase(
         email: event.email,
         password: event.password,
       );
 
-      // 3. Busca os dados do usuário logado
-      final userId = Supabase.instance.client.auth.currentUser?.id;
-
-      final data = await Supabase.instance.client
-          .from('users')
-          .select()
-          .eq('id', userId ?? '')
-          .single();
-
-      final user = UserModel(
-        id: data['id'],
-        name: data['name'],
-        email: data['email'],
-      );
-
-      // 4. Sucesso! Envia o usuário para a UI
       emit(AuthSuccess(user));
     } on AuthApiException catch (e) {
-      // 5a. Erro do Supabase com mensagem específica
-
       if (e.statusCode == '400') {
         emit(AuthError('Email ou senha inválidos.'));
       } else {
         emit(AuthError(e.message));
       }
-    } catch (e) {
-      // 5b. Erro genérico
       emit(AuthError('Erro ao entrar. Tente novamente.'));
     }
   }
@@ -112,7 +96,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-// Fazer logout.
+  // Fazer logout.
   Future<void> _onLogoutRequested(
     LogoutRequested event,
     Emitter<AuthState> emit,
@@ -124,6 +108,4 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthError('Erro ao sair. Tente novamente.'));
     }
   }
-
-
 }
