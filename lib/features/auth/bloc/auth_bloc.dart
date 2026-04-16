@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lista_compras/features/auth/domain/usecases/forgot_password_usercase.dart';
-import 'package:lista_compras/features/auth/domain/usecases/logout_usecase.dart';
-import 'package:lista_compras/features/auth/view/forgot_password_screen.dart';
+import '../domain/usecases/forgot_password_usercase.dart';
+import '../domain/usecases/logout_usecase.dart';
 import '../domain/usecases/create_usecase.dart';
 import '../data/repositories/auth_repository.dart';
 import '../domain/usecases/login_usecase.dart';

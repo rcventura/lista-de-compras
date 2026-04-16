@@ -5,7 +5,6 @@ import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_event.dar
 import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class ShoppingListDetailScreen extends StatefulWidget {
   const ShoppingListDetailScreen({super.key, required this.shoppingListId});
 
@@ -14,13 +13,9 @@ class ShoppingListDetailScreen extends StatefulWidget {
   @override
   State<ShoppingListDetailScreen> createState() =>
       _ShoppingListDetailScreenState();
-
 }
 
-
-
 class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -81,7 +76,9 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                                     borderRadius: BorderRadius.circular(8.0),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.grey.withValues(alpha: 0.5),
+                                        color: Colors.grey.withValues(
+                                          alpha: 0.5,
+                                        ),
                                         spreadRadius: 2,
                                         blurRadius: 5,
                                         offset: Offset(0, 1),
@@ -113,7 +110,9 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                                           shrinkWrap: true,
                                           itemBuilder: (context, index) {
                                             return ListTile(
-                                              title: Text(listaItem[index].name),
+                                              title: Text(
+                                                listaItem[index].name,
+                                              ),
                                               subtitle: Text(
                                                 'Descrição do item ${index + 1}',
                                               ),

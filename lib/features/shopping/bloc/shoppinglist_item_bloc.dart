@@ -1,13 +1,23 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lista_compras/features/home/domain/usecases/fetch_shopping_list_usecase.dart';
+import 'package:lista_compras/features/shopping/data/repositories/fetch_detail_shopping_list_repository.dart';
+import 'package:lista_compras/features/shopping/domain/usecases/fetch_detail_shopping_list_usecase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
-import '../model/shopping_list_item_model.dart';
+import '../model/fetch_detail_shopping_list_model.dart';
 import 'shoppinglist_item_event.dart';
 import 'shoppinglist_item_state.dart';
 
 class ShoppinglistItemBloc
     extends Bloc<ShoppingListItemEvent, ShoppingListItemState> {
+      late final FetchDetailShoppingListRepository _detailShoppingListRepository;
+      late final FetchDetailShoppingListUsecase _fetchDetailShoppingListUsecase;
+      
+
   ShoppinglistItemBloc() : super(ShoppingListItemInitial()) {
+    _detailShoppingListRepository = FetchDetailShoppingListRepository(Supabase.instance.client, _detailShoppingListRepository.shoppingListId);
+    _fetchDetailShoppingListUsecase = FetchDetailShoppingListUsecase(_detailShoppingListRepository);
+
     on<FetchShoppingListItemsRequested>(_onFetchShoppingListItemsRequested);
     on<AddShoppingListItemRequested>(_onAddShoppingListItemRequested);
     on<UpdateShoppingListItemRequested>(_onUpdateShoppingListItemRequested);
@@ -22,17 +32,9 @@ class ShoppinglistItemBloc
     emit(ShoppingListItemLoading());
 
     try {
-      final response = await Supabase.instance.client
-          .from('shopping_list_items')
-          .select()
-          .eq('shopping_list_id', event.shoppingListId);
 
-      final items = (response as List)
-          .map((item) =>
-              ShoppingListItemModel.fromMap(item as Map<String, dynamic>))
-          .toList();
-
-      emit(ShoppingListItemFetchSuccess(items));
+      final items = await _fetchDetailShoppingListUsecase.fetchShoppingListDetail();
+   //   emit(ShoppingListItemFetchSuccess(items));
     } catch (e) {
       emit(ShoppingListItemError('Erro ao carregar itens. Tente novamente.'));
     }

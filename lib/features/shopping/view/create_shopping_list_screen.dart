@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:lista_compras/core/routes/routes.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/helpers/validators.dart';
 import '../../../components/SMButtom/SMButtom.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/shoppinglist_bloc.dart';
-import '../bloc/shoppinglist_event.dart';
-import '../bloc/shoppinglist_state.dart';
+import '../bloc/create_shoppinglist_bloc.dart';
+import '../bloc/create_shoppinglist_event.dart';
+import '../bloc/create_shoppinglist_state.dart';
 
-class AddNameShoppingListScreen extends StatefulWidget {
-  const AddNameShoppingListScreen({super.key});
+class CreateShoppingListScreen extends StatefulWidget {
+  const CreateShoppingListScreen({super.key});
 
   @override
-  State<AddNameShoppingListScreen> createState() =>
-      _AddNameShoppingListScreenState();
+  State<CreateShoppingListScreen> createState() =>
+      _CreateShoppingListScreenState();
 }
 
-class _AddNameShoppingListScreenState extends State<AddNameShoppingListScreen> {
+class _CreateShoppingListScreenState extends State<CreateShoppingListScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameTextFieldController = TextEditingController();
   final _nameSuperMarketTextFieldController = TextEditingController();
@@ -40,8 +40,13 @@ class _AddNameShoppingListScreenState extends State<AddNameShoppingListScreen> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    context.read<ShoppinglistBloc>().add(
-      CreateShoppingListRequested(name: nameList, location: locationList, supermarketName: supermarketName),
+    context.read<CreateShoppinglistBloc>().add(
+      CreateShoppingListRequested(
+        userId: Supabase.instance.client.auth.currentUser?.id ?? '',
+        name: nameList,
+        local: locationList,
+        supermarketName: supermarketName,
+      ),
     );
   }
 
@@ -57,13 +62,10 @@ class _AddNameShoppingListScreenState extends State<AddNameShoppingListScreen> {
         ),
       ),
       body: SafeArea(
-        child: BlocConsumer<ShoppinglistBloc, ShoppingListState>(
+        child: BlocConsumer<CreateShoppinglistBloc, CreateShoppingListState>(
           listener: (context, state) {
             if (state is ShoppingListCreationSuccess) {
-              Navigator.pushReplacementNamed(
-                context,
-                Routes.shoppingListDetail,
-              );
+              Navigator.pop(context);
             }
 
             if (state is ShoppingListFetchError) {

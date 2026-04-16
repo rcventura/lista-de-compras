@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/features/auth/view/login_screen.dart';
 import 'package:lista_compras/features/home/view/home_screen.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_bloc.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_event.dart';
+import 'package:lista_compras/features/shopping/bloc/create_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_event.dart';
-import 'package:lista_compras/features/shopping/view/add_shopping_list_screen.dart';
+import 'package:lista_compras/features/shopping/view/create_shopping_list_screen.dart';
 import 'package:lista_compras/features/shopping/view/detail_shopping_list_screen.dart';
 
 
@@ -21,17 +20,12 @@ class Routes {
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case home:
-        return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => ShoppinglistBloc()..add(FetchShoppingListsRequested()),
-            child: const HomeScreen(),
-          ),
-        );
+        return MaterialPageRoute(builder: (_) => const HomeScreen());
         case addShoppingList: 
           return MaterialPageRoute(
             builder: (_) => BlocProvider(
-              create: (_) => ShoppinglistBloc(),
-              child: const AddNameShoppingListScreen(),
+              create: (_) => CreateShoppinglistBloc(),
+              child: const CreateShoppingListScreen(),
             ),
           );
           case shoppingListDetail:
@@ -39,7 +33,7 @@ class Routes {
             return MaterialPageRoute(
               builder: (_) => MultiBlocProvider(
                 providers: [
-                  BlocProvider(create: (_) => ShoppinglistBloc()),
+                  BlocProvider(create: (_) => CreateShoppinglistBloc()),
                   BlocProvider(create: (_) => ShoppinglistItemBloc()..add(FetchShoppingListItemsRequested(id))),
                 ],
                 child: ShoppingListDetailScreen(shoppingListId: id),

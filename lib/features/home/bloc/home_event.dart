@@ -1,6 +1,6 @@
 abstract class HomeEvent {}
 
-class FetchShoppingListsRequest extends HomeEvent {}
+class FetchHomeShoppingListsRequest extends HomeEvent {}
 class ShoppingListDetailedRequested extends HomeEvent {
   final String shoppingListId;
 

@@ -1,3 +1,5 @@
+import 'package:lista_compras/features/home/domain/entities/home_entity.dart';
+
 class ShoppinglistModel {
   final String id;
   final String name;
@@ -18,5 +20,9 @@ class ShoppinglistModel {
       local: map['local'] as String? ?? '',
       createdAt: DateTime.parse(map['created_at'] as String),
     );
+  }
+
+  HomeEntity toEntity() {
+    return HomeEntity(id: id, name: name, local: local, createdAt: createdAt);
   }
 }

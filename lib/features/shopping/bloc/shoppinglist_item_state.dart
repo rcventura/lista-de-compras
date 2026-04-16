@@ -1,4 +1,4 @@
-import '../model/shopping_list_item_model.dart';
+import '../domain/entities/Fetch_detail_shopping_list_entity.dart';
 
 abstract class ShoppingListItemState {}
 
@@ -7,7 +7,7 @@ class ShoppingListItemInitial extends ShoppingListItemState {}
 class ShoppingListItemLoading extends ShoppingListItemState {}
 
 class ShoppingListItemFetchSuccess extends ShoppingListItemState {
-  final List<ShoppingListItemModel> items;
+  final List<FetchDetailShoppingListEntity> items;
 
   ShoppingListItemFetchSuccess(this.items);
 }
