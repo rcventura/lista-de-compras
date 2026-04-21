@@ -1,22 +1,12 @@
 abstract class HomeEvent {}
 
-class FetchHomeShoppingListsRequest extends HomeEvent {}
-class ShoppingListDetailedRequested extends HomeEvent {
+class HomeFetchShoppingListsRequest extends HomeEvent {}
+
+class HomeShoppingListDetailedRequested extends HomeEvent {
   final String shoppingListId;
-
-  ShoppingListDetailedRequested(this.shoppingListId);
+  HomeShoppingListDetailedRequested(this.shoppingListId);
 }
 
-class DeleteShoppingListRequest extends HomeEvent {
-  final String id;
+class HomeLogoutRequest extends HomeEvent {}
 
-  DeleteShoppingListRequest(this.id);
-}
-
-class LogoutRequest extends HomeEvent {}
-class RefreshShoppingListsRequest extends HomeEvent {}
-class DetailShoppingListRequest extends HomeEvent {
-  final String id;
-
-  DetailShoppingListRequest(this.id);
-}
+class HomeRefreshShoppingListsRequest extends HomeEvent {}

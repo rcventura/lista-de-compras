@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/features/auth/view/login_screen.dart';
 import 'package:lista_compras/features/home/view/home_screen.dart';
 import 'package:lista_compras/features/shopping/bloc/create_shoppinglist_bloc.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_bloc.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_event.dart';
+import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
+import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_event.dart';
 import 'package:lista_compras/features/shopping/view/create_shopping_list_screen.dart';
 import 'package:lista_compras/features/shopping/view/detail_shopping_list_screen.dart';
 
@@ -34,7 +34,7 @@ class Routes {
               builder: (_) => MultiBlocProvider(
                 providers: [
                   BlocProvider(create: (_) => CreateShoppinglistBloc()),
-                  BlocProvider(create: (_) => ShoppinglistItemBloc()..add(FetchShoppingListItemsRequested(id))),
+                  BlocProvider(create: (_) => DetailShoppinglistBloc()..add(DetailFetchShoppingListItemsRequested(id))),
                 ],
                 child: ShoppingListDetailScreen(shoppingListId: id),
               ),

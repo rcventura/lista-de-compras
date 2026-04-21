@@ -5,7 +5,7 @@ class ForgotPasswordUsercase {
 
   ForgotPasswordUsercase(this.repository);
 
-  Future<void> forgotPasswordAccount() {
-    return repository.logoutAccount();
+  Future<void> forgotPasswordAccount(String email) async {
+    return repository.forgotPasswordAccount(email: email);
   }
 }

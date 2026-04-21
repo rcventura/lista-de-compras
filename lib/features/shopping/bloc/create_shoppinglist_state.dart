@@ -1,29 +1,16 @@
-import 'package:lista_compras/features/shopping/domain/entities/create_shopping_list_entity.dart';
-
 abstract class CreateShoppingListState {}
 
-class ShoppingListInitial extends CreateShoppingListState {}
+class CreateShoppingListInitial extends CreateShoppingListState {}
 
-class ShoppingListLoading extends CreateShoppingListState {}
+class CreateShoppingListLoading extends CreateShoppingListState {}
 
-class ShoppingListCreationSuccess extends CreateShoppingListState {}
-
-class ShoppingListDeletionSuccess extends CreateShoppingListState {}
-
-class ShoppingListFetchSuccess extends CreateShoppingListState {
-  final List<CreateShoppingListEntity> shoppingLists;
-
-  ShoppingListFetchSuccess(this.shoppingLists);
+class CreateShoppingListCreationSuccess extends CreateShoppingListState {
+  final String shoppingListId;
+  CreateShoppingListCreationSuccess(this.shoppingListId);
 }
 
-class ShoppingListDetailsFetchSuccess extends CreateShoppingListState {
-  final CreateShoppingListEntity shoppingList;
-
-  ShoppingListDetailsFetchSuccess(this.shoppingList);
-}
-
-class ShoppingListFetchError extends CreateShoppingListState {
+class CreateShoppingListCreationError extends CreateShoppingListState {
   final String message;
 
-  ShoppingListFetchError(this.message);
+  CreateShoppingListCreationError(this.message);
 }

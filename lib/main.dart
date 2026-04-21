@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/core/routes/routes.dart';
 import 'package:provider/provider.dart';
 import 'features/auth/bloc/auth_bloc.dart';
-import 'features/home/bloc/home_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {

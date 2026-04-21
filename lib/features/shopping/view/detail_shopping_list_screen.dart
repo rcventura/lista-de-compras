@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lista_compras/components/BottomSheet/Person/PersonButtomSheet.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_bloc.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_event.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_state.dart';
+import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
+import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_event.dart';
+import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ShoppingListDetailScreen extends StatefulWidget {
@@ -19,26 +19,26 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ShoppinglistItemBloc>().add(
-      FetchShoppingListItemsRequested(widget.shoppingListId),
+    context.read<DetailShoppinglistBloc>().add(
+      DetailFetchShoppingListItemsRequested(widget.shoppingListId),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ShoppinglistItemBloc, ShoppingListItemState>(
+    return BlocListener<DetailShoppinglistBloc, DetailShoppinglistState>(
       listener: (context, state) {
-        if (state is ShoppingListItemInitial) {
+        if (state is DetailSShoppingListItemInitial) {
           // Lógica para lidar com o estado inicial dos itens da lista de compras
           Navigator.of(context).pushReplacementNamed('/home');
           // Lógica para lidar com mudanças de estado
         }
       },
 
-      child: BlocBuilder<ShoppinglistItemBloc, ShoppingListItemState>(
+      child: BlocBuilder<DetailShoppinglistBloc, DetailShoppinglistState>(
         builder: (context, state) {
-          final isLoading = state is ShoppingListItemLoading;
-          final listaItem = state is ShoppingListItemFetchSuccess
+          final isLoading = state is DetailSShoppingListItemLoading;
+          final listaItem = state is DetailSShoppingListItemFetchSuccess
               ? state.items
               : [];
           // Lógica para construir a UI com base no estado atual

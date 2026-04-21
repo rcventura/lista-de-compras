@@ -1,5 +1,5 @@
 import 'package:lista_compras/features/home/domain/entities/home_entity.dart';
-import 'package:lista_compras/features/home/model/shoppinglist_model.dart';
+import 'package:lista_compras/features/home/model/home_shoppinglist_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeRespository {
@@ -18,11 +18,8 @@ class HomeRespository {
         .select()
         .eq('user_id', userId)
         .order('created_at', ascending: false);
-
-        print('Resposta do Supabase: $response');
-
     return (response as List)
-        .map((item) => ShoppinglistModel.fromMap(item).toEntity())
+        .map((item) => HomeShoppinglistModel.fromMap(item).toEntity())
         .toList();
   }
 }

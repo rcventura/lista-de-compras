@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lista_compras/core/routes/routes.dart';
+import 'package:lista_compras/features/shopping/domain/entities/create_shopping_list_entity.dart';
+import 'package:lista_compras/features/shopping/model/create_shopping_list_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/helpers/validators.dart';
 import '../../../components/SMButtom/SMButtom.dart';
@@ -64,11 +67,13 @@ class _CreateShoppingListScreenState extends State<CreateShoppingListScreen> {
       body: SafeArea(
         child: BlocConsumer<CreateShoppinglistBloc, CreateShoppingListState>(
           listener: (context, state) {
-            if (state is ShoppingListCreationSuccess) {
-              Navigator.pop(context);
+            if (state is CreateShoppingListCreationSuccess) {
+              print('ID da lista criada: ${state.shoppingListId}');
+              String shoppingListId = CreateShoppingListEntity; // Verifique o ID retornado
+              Navigator.pushNamed(context, Routes.shoppingListDetail, arguments: state.shoppingListId);
             }
 
-            if (state is ShoppingListFetchError) {
+            if (state is CreateShoppingListCreationError) {
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
@@ -76,7 +81,7 @@ class _CreateShoppingListScreenState extends State<CreateShoppingListScreen> {
           },
 
           builder: (context, state) {
-            final isLoading = state is ShoppingListLoading;
+            final isLoading = state is CreateShoppingListLoading;
             return Padding(
               padding: const EdgeInsets.all(24),
               child: Form(

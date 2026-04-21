@@ -19,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final HomeBloc _homeBloc = HomeBloc()..add(FetchHomeShoppingListsRequest());
+  final HomeBloc _homeBloc = HomeBloc()..add(HomeFetchShoppingListsRequest());
 
   @override
   void dispose() {
@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     if (mounted) {
-      _homeBloc.add(FetchHomeShoppingListsRequest());
+      _homeBloc.add(HomeFetchShoppingListsRequest());
     }
   }
 
@@ -62,10 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
       child: BlocBuilder<HomeBloc, HomeState>(
         bloc: _homeBloc,
         builder: (context, state) {
-          final listas = state is ShoppingListFetchSuccess
+          final listas = state is HomeShoppingListFetchSuccess
               ? state.shoppingLists
               : [];
-          final isLoading = state is ShoppingListLoading;
+          final isLoading = state is HomeShoppingListLoading;
 
           return Scaffold(
             appBar: AppBar(
@@ -141,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               : RefreshIndicator.adaptive(
                                   onRefresh: () async {
                                     _homeBloc.add(
-                                      FetchHomeShoppingListsRequest(),
+                                      HomeFetchShoppingListsRequest(),
                                     );
                                   },
                                   child: ListView.builder(
@@ -156,9 +156,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                         subtitle: Text(
-                                          DateFormat('dd/MM/yyyy').format(
-                                            listas[index].createdAt,
-                                          ),
+                                          DateFormat(
+                                            'dd/MM/yyyy',
+                                          ).format(listas[index].createdAt),
                                           style: const TextStyle(
                                             fontSize: 12,
                                             color: Colors.grey,

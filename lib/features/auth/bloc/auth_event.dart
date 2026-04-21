@@ -1,10 +1,5 @@
-// Classe base de todos os eventos de autenticação.
-// "abstract" significa que ninguém cria AuthEvent diretamente,
-// apenas suas subclasses.
 abstract class AuthEvent {}
 
-// Evento disparado quando o usuário clica em "Entrar".
-// Carrega email e senha que vieram do formulário.
 class LoginRequested extends AuthEvent {
   final String email;
   final String password;

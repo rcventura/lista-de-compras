@@ -7,7 +7,6 @@ class CreateShoppingListRepository {
 
   CreateShoppingListRepository(this.client);
 
-
   //CREATE LIST
   Future<CreateShoppingListEntity> createShoppingList({
     required String name,

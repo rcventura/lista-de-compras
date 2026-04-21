@@ -74,9 +74,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
-                  const Text('Organize suas compras de forma simples',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, color: Colors.grey)),
+                  const Text(
+                    'Organize suas compras de forma simples',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
                 ],
               ),
               const SizedBox(height: 32),
@@ -86,7 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: const InputDecoration(
                   labelText: 'E-mail',
                   prefixIcon: Icon(Icons.email, color: Colors.grey),
-                  border:OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
                 ),
                 validator: Validators.email,
               ),
@@ -96,7 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   labelText: 'Senha',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
                   prefixIcon: Icon(Icons.lock, color: Colors.grey),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -108,7 +114,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () =>
                         setState(() => _obscurePassword = !_obscurePassword),
                   ),
-                  
                 ),
                 validator: Validators.password,
               ),
@@ -127,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const Text('Esqueci minha senha'),
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
               // BlocConsumer combina duas responsabilidades:
               //   listener → reage a estados sem reconstruir a UI (navegar, snackbar)
@@ -143,7 +148,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 builder: (context, state) {
                   // Mostra o botão com loading quando está carregando
-
                   final isLoading = state is AuthLoading;
                   return Column(
                     spacing: 5,

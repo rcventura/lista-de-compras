@@ -2,10 +2,10 @@ import 'package:lista_compras/features/shopping/domain/entities/fetch_detail_sho
 import 'package:lista_compras/features/shopping/model/fetch_detail_shopping_list_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class FetchDetailShoppingListRepository {
+class DetailShoppingListRepository {
   final SupabaseClient client;
   final String shoppingListId;
-  FetchDetailShoppingListRepository(this.client, this.shoppingListId);
+  DetailShoppingListRepository(this.client, this.shoppingListId);
 
   Future<List<FetchDetailShoppingListEntity>> fetchShoppingListDetail() async {
     final userId = client.auth.currentUser?.id;

@@ -25,7 +25,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _createAccountUseCase = CreateAccountUseCase(_authRepository);
     _logoutUsecase = LogoutUsecase(_authRepository);
     _forgotPasswordUsercase = ForgotPasswordUsercase(_authRepository);
-    
+
     // Aqui registramos o handler para o evento LoginRequested.
     // Toda vez que a UI disparar LoginRequested, esse código roda.
     on<LoginRequested>(_onLoginRequested);
@@ -34,6 +34,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ResetPasswordRequested>(_onResetPasswordRequested);
   }
 
+  // LOGIN
   Future<void> _onLoginRequested(
     LoginRequested event, // o evento com email e senha
     Emitter<AuthState> emit, // função que envia o novo estado para a UI
@@ -59,6 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  // CREATE ACCOUNT
   Future<void> _onCreateAccountRequested(
     CreateAccountRequested event,
     Emitter<AuthState> emit,
@@ -80,6 +82,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  // RESET PASSWORD
   Future<void> _onResetPasswordRequested(
     ResetPasswordRequested event,
     Emitter<AuthState> emit,
@@ -87,7 +90,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      await _forgotPasswordUsercase.forgotPasswordAccount();
+      await _forgotPasswordUsercase.forgotPasswordAccount(event.email);
       emit(SendResetPasswordSuccess());
     } on AuthApiException catch (e) {
       emit(AuthError(e.message));
@@ -96,7 +99,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  // Fazer logout.
+  // LOGOUT
   Future<void> _onLogoutRequested(
     LogoutRequested event,
     Emitter<AuthState> emit,
