@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:lista_compras/components/BottomSheet/Person/PersonButtomSheet.dart';
 import 'package:lista_compras/core/routes/routes.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_bloc.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_event.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_state.dart';
-import 'package:lista_compras/features/shopping/view/add_shopping_list_screen.dart';
 import 'package:lista_compras/features/auth/bloc/auth_bloc.dart';
 import 'package:lista_compras/features/auth/bloc/auth_state.dart';
-import 'package:intl/intl.dart';
+import 'package:lista_compras/features/home/bloc/home_bloc.dart';
+import 'package:lista_compras/features/home/bloc/home_event.dart';
+import 'package:lista_compras/features/home/bloc/home_state.dart';
+import 'package:lista_compras/features/shopping/bloc/create_shoppinglist_bloc.dart';
+import 'package:lista_compras/features/shopping/view/create_shopping_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,26 +19,40 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final HomeBloc _homeBloc = HomeBloc()..add(HomeFetchShoppingListsRequest());
+
+  @override
+  void dispose() {
+    _homeBloc.close();
+    super.dispose();
+  }
 
   Future<void> _navigateToAddList() async {
     await Navigator.push<void>(
       context,
       MaterialPageRoute(
         builder: (_) => BlocProvider(
-          create: (_) => ShoppinglistBloc(),
-          child: const AddNameShoppingListScreen(),
+          create: (_) => CreateShoppinglistBloc(),
+          child: const CreateShoppingListScreen(),
         ),
       ),
     );
 
     if (mounted) {
-      context.read<ShoppinglistBloc>().add(FetchShoppingListsRequested());
+      _homeBloc.add(HomeFetchShoppingListsRequest());
     }
   }
 
-  Future<void> _navigateToListDetails(String shoppingListId) async {
-    // Lógica para navegar para os detalhes da lista
-    await Navigator.pushNamed(context, Routes.shoppingListDetail, arguments: shoppingListId);
+  Future<void> _navigateToListDetails(String shoppingListId, String shoppingListName, DateTime dataCriacao) async {
+    await Navigator.pushNamed(
+      context,
+      Routes.shoppingListDetail,
+      arguments: ShoppingListDetailArgs(
+        shoppingListId: shoppingListId,
+        shoppingListName: shoppingListName,
+        dataCriacao: dataCriacao,
+      ),
+    );
   }
 
   @override
@@ -48,29 +63,30 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.of(context).pushReplacementNamed('/');
         }
       },
-      child: BlocBuilder<ShoppinglistBloc, ShoppingListState>(
+      child: BlocBuilder<HomeBloc, HomeState>(
+        bloc: _homeBloc,
         builder: (context, state) {
-          final listas = state is ShoppingListFetchSuccess
+          final listas = state is HomeShoppingListFetchSuccess
               ? state.shoppingLists
               : [];
-          final isLoading = state is ShoppingListLoading;
+          final isLoading = state is HomeShoppingListLoading;
 
           return Scaffold(
             appBar: AppBar(
               title: const Text('Lista de Compras'),
               centerTitle: true,
               leading: IconButton(
-                icon: const Icon(
-                  Icons.add,
-                  color: Colors.black54,
-                ),
+                icon: const Icon(Icons.add, color: Colors.black54),
                 onPressed: _navigateToAddList,
               ),
               actions: [
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: IconButton(
-                    icon: const Icon(Icons.person_outline, color: Colors.black54),
+                    icon: const Icon(
+                      Icons.person_outline,
+                      color: Colors.black54,
+                    ),
                     onPressed: () => ShowUserModal.show(context),
                   ),
                 ),
@@ -128,8 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 )
                               : RefreshIndicator.adaptive(
                                   onRefresh: () async {
-                                    context.read<ShoppinglistBloc>().add(
-                                      FetchShoppingListsRequested(),
+                                    _homeBloc.add(
+                                      HomeFetchShoppingListsRequest(),
                                     );
                                   },
                                   child: ListView.builder(
@@ -156,7 +172,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Icons.chevron_right,
                                         ),
                                         onTap: () {
-                                          _navigateToListDetails(listas[index].id);
+                                          _navigateToListDetails(
+                                            listas[index].id,
+                                            listas[index].name,
+                                            listas[index].createdAt,
+                                          );
                                         },
                                       );
                                     },

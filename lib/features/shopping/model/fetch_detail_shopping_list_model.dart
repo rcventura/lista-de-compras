@@ -1,4 +1,6 @@
-class ShoppingListItemModel {
+import 'package:lista_compras/features/shopping/domain/entities/fetch_detail_shopping_list_entity.dart';
+
+class FetchDetailShoppingListModel {
   final String id;
   final String shoppingListId;
   final String productId;
@@ -10,7 +12,7 @@ class ShoppingListItemModel {
   final DateTime? createdAt;
   
 
-  ShoppingListItemModel({
+  FetchDetailShoppingListModel({
     required this.id,
     required this.shoppingListId,
     required this.productId,
@@ -22,8 +24,8 @@ class ShoppingListItemModel {
     this.createdAt,  
   });
 
-  factory ShoppingListItemModel.fromMap(Map<String, dynamic> map) {
-    return ShoppingListItemModel(
+  factory FetchDetailShoppingListModel.fromMap(Map<String, dynamic> map) {
+    return FetchDetailShoppingListModel(
       id: map['id'] as String,
       shoppingListId: map['list_id'] as String,
       productId: map['product_id'] as String,
@@ -36,7 +38,7 @@ class ShoppingListItemModel {
     );
   }
 
-  ShoppingListItemModel copyWith({
+  FetchDetailShoppingListModel copyWith({
     String? id,
     String? shoppingListId,
     String? productId,
@@ -46,7 +48,7 @@ class ShoppingListItemModel {
     int? order,
     DateTime? createdAt,
   }) {
-    return ShoppingListItemModel(
+    return FetchDetailShoppingListModel(
       
       id: id ?? this.id,
       shoppingListId: shoppingListId ?? this.shoppingListId,
@@ -57,5 +59,19 @@ class ShoppingListItemModel {
       isChecked: isChecked ?? this.isChecked,
       order: order ?? this.order,
       createdAt: createdAt,);
+  }
+
+  FetchDetailShoppingListEntity toEntity() {
+    return FetchDetailShoppingListEntity(
+      id: id,
+      shoppingListId: shoppingListId,
+      productId: productId,
+      name: name,
+      quantity: quantity,
+      unit: unit,
+      isChecked: isChecked,
+      order: order,
+      createdAt: createdAt,
+    );
   }
 }

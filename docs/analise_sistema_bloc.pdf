@@ -1,0 +1,740 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Count 7 /Kids [3 0 R 5 0 R 7 0 R 9 0 R 11 0 R 13 0 R 15 0 R] >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 17 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1753 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+(Analise do Sistema - Lista de Compras) Tj
+T*
+() Tj
+T*
+(Data da analise: 2026-04-16) Tj
+T*
+() Tj
+T*
+(Escopo) Tj
+T*
+() Tj
+T*
+(Esta analise foi feita a partir da leitura do codigo-fonte em `lib/`, com foco) Tj
+T*
+(na arquitetura por feature e no uso do padrao BLoC.) Tj
+T*
+() Tj
+T*
+(O projeto esta organizado em tres features principais:) Tj
+T*
+() Tj
+T*
+(- `auth`) Tj
+T*
+(- `home`) Tj
+T*
+(- `shopping`) Tj
+T*
+() Tj
+T*
+(Tambem existem camadas compartilhadas em `core/` e componentes reutilizaveis em) Tj
+T*
+(`components/`.) Tj
+T*
+() Tj
+T*
+(Resumo Executivo) Tj
+T*
+() Tj
+T*
+(O sistema ja possui uma base funcional com BLoC nas jornadas principais:) Tj
+T*
+() Tj
+T*
+(- autenticacao) Tj
+T*
+(- exibicao da home) Tj
+T*
+(- criacao de lista de compras) Tj
+T*
+() Tj
+T*
+(Tambem existe uma feature para detalhes da lista e itens da lista, mas ela) Tj
+T*
+(ainda esta parcial e contem inconsistencias importantes na implementacao do) Tj
+T*
+(BLoC e no acoplamento com repository/usecase.) Tj
+T*
+() Tj
+T*
+(Em resumo:) Tj
+T*
+() Tj
+T*
+(- Feito e funcional com BLoC: login, cadastro, home, criacao de lista) Tj
+T*
+(- Feito, mas com risco/bug no fluxo BLoC: reset de senha) Tj
+T*
+(- Feito parcialmente com BLoC: detalhe da lista e itens da lista) Tj
+T*
+() Tj
+T*
+(Arquitetura Observada) Tj
+T*
+() Tj
+T*
+(O projeto segue uma divisao parecida com Clean Architecture simplificada:) Tj
+T*
+() Tj
+T*
+(- `view`: telas e widgets da feature) Tj
+T*
+(- `bloc`: coordenacao de eventos e estados) Tj
+T*
+(- `data/repositories`: acesso ao Supabase) Tj
+T*
+(- `domain/entities`: estruturas do dominio) Tj
+T*
+(- `domain/usecases`: regras de negocio por acao) Tj
+T*
+(- `model`: adaptacao entre resposta do banco e entidade do dominio) Tj
+T*
+T*
+( Pagina 1 de 7 ) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 17 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 1630 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+() Tj
+T*
+(Fluxo esperado:) Tj
+T*
+() Tj
+T*
+(1. A tela dispara um `Event`) Tj
+T*
+(2. O `Bloc` processa a acao) Tj
+T*
+(3. O `Bloc` chama um `UseCase`) Tj
+T*
+(4. O `UseCase` usa um `Repository`) Tj
+T*
+(5. O `Repository` conversa com Supabase) Tj
+T*
+(6. O resultado retorna ao `Bloc`) Tj
+T*
+(7. O `Bloc` emite um `State`) Tj
+T*
+(8. A tela reage ao novo estado) Tj
+T*
+() Tj
+T*
+(Features Implementadas) Tj
+T*
+() Tj
+T*
+(1. Auth) Tj
+T*
+() Tj
+T*
+(Arquivos principais:) Tj
+T*
+() Tj
+T*
+(- `lib/features/auth/bloc/auth_bloc.dart`) Tj
+T*
+(- `lib/features/auth/view/login_screen.dart`) Tj
+T*
+(- `lib/features/auth/view/register_screen.dart`) Tj
+T*
+(- `lib/features/auth/view/forgot_password_screen.dart`) Tj
+T*
+(- `lib/features/auth/data/repositories/auth_repository.dart`) Tj
+T*
+() Tj
+T*
+(Capacidades encontradas:) Tj
+T*
+() Tj
+T*
+(- login com email e senha) Tj
+T*
+(- criacao de conta) Tj
+T*
+(- logout) Tj
+T*
+(- solicitacao de reset de senha) Tj
+T*
+() Tj
+T*
+(Uso de BLoC:) Tj
+T*
+() Tj
+T*
+(- `AuthBloc` recebe eventos de login, logout, cadastro e reset) Tj
+T*
+(- a UI usa `BlocConsumer` nas telas de login, cadastro e reset) Tj
+T*
+(- os estados `AuthLoading`, `AuthSuccess`, `RegisterSuccess`,) Tj
+T*
+(`SendResetPasswordSuccess` e `AuthError` estao mapeados para a interface) Tj
+T*
+() Tj
+T*
+(Status:) Tj
+T*
+() Tj
+T*
+(- Login: implementado e funcional com BLoC) Tj
+T*
+(- Cadastro: implementado e funcional com BLoC) Tj
+T*
+(- Logout: implementado e funcional com BLoC) Tj
+T*
+(- Reset de senha: implementado na UI, mas com bug na regra de negocio) Tj
+T*
+() Tj
+T*
+(Observacao importante:) Tj
+T*
+T*
+( Pagina 2 de 7 ) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 17 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 1857 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+() Tj
+T*
+(O use case `ForgotPasswordUsercase` chama `repository.logoutAccount\(\)` em vez de) Tj
+T*
+(`repository.forgotPasswordAccount\(...\)`. Isso indica que a tela existe e o fluxo) Tj
+T*
+(de estados existe, mas a regra atual de reset esta incorreta e nao pode ser) Tj
+T*
+(considerada confiavel sem ajuste.) Tj
+T*
+() Tj
+T*
+(Conclusao da feature `auth`:) Tj
+T*
+() Tj
+T*
+(- funcional no nucleo de autenticacao) Tj
+T*
+(- parcialmente inconsistente no reset de senha) Tj
+T*
+() Tj
+T*
+(2. Home) Tj
+T*
+() Tj
+T*
+(Arquivos principais:) Tj
+T*
+() Tj
+T*
+(- `lib/features/home/view/home_screen.dart`) Tj
+T*
+(- `lib/features/home/bloc/home_bloc.dart`) Tj
+T*
+(- `lib/features/home/data/repositories/home_respository.dart`) Tj
+T*
+(- `lib/features/home/domain/usecases/fetch_shopping_list_usecase.dart`) Tj
+T*
+() Tj
+T*
+(Capacidades encontradas:) Tj
+T*
+() Tj
+T*
+(- carregar listas do usuario autenticado) Tj
+T*
+(- exibir estado vazio) Tj
+T*
+(- exibir loading) Tj
+T*
+(- navegar para criacao de lista) Tj
+T*
+(- navegar para detalhe da lista) Tj
+T*
+(- atualizar a home ao retornar da criacao) Tj
+T*
+() Tj
+T*
+(Uso de BLoC:) Tj
+T*
+() Tj
+T*
+(- `HomeBloc` recebe `FetchHomeShoppingListsRequest`) Tj
+T*
+(- a tela usa `BlocBuilder<HomeBloc, HomeState>`) Tj
+T*
+(- o estado de sucesso entrega a colecao de listas para renderizacao) Tj
+T*
+() Tj
+T*
+(Status:) Tj
+T*
+() Tj
+T*
+(- Home/listagem de listas: implementado e funcional com BLoC) Tj
+T*
+(- refresh apos retorno da criacao: implementado e funcional com BLoC) Tj
+T*
+(- detalhe via evento do `HomeBloc`: previsto, mas nao concluido) Tj
+T*
+() Tj
+T*
+(Observacao importante:) Tj
+T*
+() Tj
+T*
+(Existe handler para `ShoppingListDetailedRequested`, mas o `emit` de sucesso esta) Tj
+T*
+(comentado. Na pratica, o detalhe da lista nao esta sendo resolvido por este BLoC.) Tj
+T*
+() Tj
+T*
+T*
+( Pagina 3 de 7 ) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 17 0 R >> >> /Contents 10 0 R >>
+endobj
+10 0 obj
+<< /Length 1968 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+(Conclusao da feature `home`:) Tj
+T*
+() Tj
+T*
+(- funcional para listagem e navegacao principal) Tj
+T*
+(- com parte de detalhe ainda incompleta) Tj
+T*
+() Tj
+T*
+(3. Shopping - Criacao de Lista) Tj
+T*
+() Tj
+T*
+(Arquivos principais:) Tj
+T*
+() Tj
+T*
+(- `lib/features/shopping/view/create_shopping_list_screen.dart`) Tj
+T*
+(- `lib/features/shopping/bloc/create_shoppinglist_bloc.dart`) Tj
+T*
+(- `lib/features/shopping/data/repositories/create_shopping_list_repository.dart`) Tj
+T*
+(- `lib/features/shopping/model/create_shopping_list_model.dart`) Tj
+T*
+() Tj
+T*
+(Capacidades encontradas:) Tj
+T*
+() Tj
+T*
+(- abrir tela de criacao) Tj
+T*
+(- informar nome da lista) Tj
+T*
+(- selecionar local) Tj
+T*
+(- informar nome do supermercado quando o local for mercado) Tj
+T*
+(- salvar no Supabase) Tj
+T*
+(- retornar para a home apos sucesso) Tj
+T*
+() Tj
+T*
+(Uso de BLoC:) Tj
+T*
+() Tj
+T*
+(- a tela usa `BlocConsumer<CreateShoppinglistBloc, CreateShoppingListState>`) Tj
+T*
+(- o evento `CreateShoppingListRequested` dispara a criacao) Tj
+T*
+(- o estado `ShoppingListCreationSuccess` fecha a tela) Tj
+T*
+() Tj
+T*
+(Status:) Tj
+T*
+() Tj
+T*
+(- Criacao de lista: implementado e funcional com BLoC) Tj
+T*
+(- Delecao de lista: implementada no BLoC, mas nao observada na UI atual) Tj
+T*
+(- Fetch de listas pelo `CreateShoppinglistBloc`: parcialmente implementado) Tj
+T*
+(- Fetch de detalhe pelo `CreateShoppinglistBloc`: parcialmente implementado) Tj
+T*
+() Tj
+T*
+(Observacoes importantes:) Tj
+T*
+() Tj
+T*
+(- O BLoC mistura responsabilidades de criacao, exclusao, fetch e detalhe) Tj
+T*
+(- Existem estados para fetch e detalhe, mas alguns `emit\(...\)` estao comentados) Tj
+T*
+(- A UI atual usa esse BLoC com sucesso para a criacao, mas nao para todas as) Tj
+T*
+(outras responsabilidades previstas) Tj
+T*
+() Tj
+T*
+(Conclusao da feature `shopping` na parte de criacao:) Tj
+T*
+() Tj
+T*
+(- funcional para o fluxo principal de criar lista) Tj
+T*
+T*
+( Pagina 4 de 7 ) Tj
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 17 0 R >> >> /Contents 12 0 R >>
+endobj
+12 0 obj
+<< /Length 2009 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+(- com excesso de responsabilidades no mesmo BLoC) Tj
+T*
+() Tj
+T*
+(4. Shopping - Detalhe da Lista e Itens) Tj
+T*
+() Tj
+T*
+(Arquivos principais:) Tj
+T*
+() Tj
+T*
+(- `lib/features/shopping/view/detail_shopping_list_screen.dart`) Tj
+T*
+(- `lib/features/shopping/bloc/shoppinglist_item_bloc.dart`) Tj
+T*
+(- `lib/features/shopping/data/repositories/fetch_detail_shopping_list_repository.dart`) Tj
+T*
+(- `lib/features/shopping/domain/usecases/fetch_detail_shopping_list_usecase.dart`) Tj
+T*
+() Tj
+T*
+(Capacidades encontradas:) Tj
+T*
+() Tj
+T*
+(- rota de detalhe com `shoppingListId`) Tj
+T*
+(- disparo de evento para carregar itens) Tj
+T*
+(- estruturas de eventos para adicionar, atualizar, excluir e marcar item) Tj
+T*
+(- estados para loading, sucesso e erro) Tj
+T*
+() Tj
+T*
+(Status:) Tj
+T*
+() Tj
+T*
+(- Tela de detalhe: implementada parcialmente) Tj
+T*
+(- Busca de itens: parcialmente implementada) Tj
+T*
+(- Adicao/edicao/exclusao/toggle de item: implementadas no BLoC, mas sem UI) Tj
+T*
+(completa observada) Tj
+T*
+(- Fluxo completo de detalhe da lista: nao confiavel no estado atual) Tj
+T*
+() Tj
+T*
+(Observacoes importantes:) Tj
+T*
+() Tj
+T*
+(1. O `ShoppinglistItemBloc` inicializa o repository de forma inconsistente:) Tj
+T*
+(usa `_detailShoppingListRepository.shoppingListId` antes de o proprio) Tj
+T*
+(repository estar pronto.) Tj
+T*
+() Tj
+T*
+(2. O estado `ShoppingListItemFetchSuccess` existe, mas o `emit\(...\)` de sucesso) Tj
+T*
+(no fetch esta comentado.) Tj
+T*
+() Tj
+T*
+(3. A tela de detalhe monta lista e total, mas ainda com placeholders estaticos.) Tj
+T*
+() Tj
+T*
+(4. A tela escuta `ShoppingListItemInitial` para navegar de volta para `/home`,) Tj
+T*
+(o que sugere um fluxo de estado ainda pouco definido.) Tj
+T*
+() Tj
+T*
+(Conclusao da feature `shopping` na parte de itens:) Tj
+T*
+() Tj
+T*
+(- estrutura arquitetural iniciada com BLoC) Tj
+T*
+(- funcionalidade ainda incompleta) Tj
+T*
+(- nao deve ser considerada pronta de ponta a ponta) Tj
+T*
+() Tj
+T*
+T*
+( Pagina 5 de 7 ) Tj
+ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 17 0 R >> >> /Contents 14 0 R >>
+endobj
+14 0 obj
+<< /Length 1786 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+(Features Feitas X Funcionando com BLoC) Tj
+T*
+() Tj
+T*
+(Feitas e Funcionando com BLoC) Tj
+T*
+() Tj
+T*
+(- Login) Tj
+T*
+(- Cadastro de usuario) Tj
+T*
+(- Logout) Tj
+T*
+(- Home com listagem das listas) Tj
+T*
+(- Criacao de nova lista de compras) Tj
+T*
+(- Retorno da criacao para a home com refresh) Tj
+T*
+() Tj
+T*
+(Feitas, mas com inconsistencias de regra ou implementacao) Tj
+T*
+() Tj
+T*
+(- Reset de senha) Tj
+T*
+(- Busca de detalhe de lista no `HomeBloc`) Tj
+T*
+(- Fetch/listagem dentro do `CreateShoppinglistBloc`) Tj
+T*
+(- Detalhe de lista via `CreateShoppinglistBloc`) Tj
+T*
+() Tj
+T*
+(Feitas parcialmente) Tj
+T*
+() Tj
+T*
+(- Detalhe da lista de compras) Tj
+T*
+(- Gestao de itens da lista) Tj
+T*
+(- Calculo de total exibido na tela de detalhe) Tj
+T*
+() Tj
+T*
+(Avaliacao do Uso do BLoC no Sistema) Tj
+T*
+() Tj
+T*
+(Pontos positivos:) Tj
+T*
+() Tj
+T*
+(- o projeto adota BLoC de forma consistente nas features principais) Tj
+T*
+(- as telas principais reagem bem a loading, sucesso e erro) Tj
+T*
+(- a separacao em `view`, `bloc`, `repository`, `usecase`, `entity` e `model`) Tj
+T*
+(ja existe e ajuda a evolucao do sistema) Tj
+T*
+() Tj
+T*
+(Pontos de atencao:) Tj
+T*
+() Tj
+T*
+(- alguns BLoCs concentram responsabilidades demais) Tj
+T*
+(- existem handlers com `emit\(...\)` comentados, o que deixa a feature "meio) Tj
+T*
+(pronta") Tj
+T*
+(- parte da regra ainda bypassa a camada de usecase/repository e consulta o) Tj
+T*
+(Supabase diretamente no BLoC) Tj
+T*
+(- a feature de itens da lista ainda nao fecha o ciclo completo de BLoC) Tj
+T*
+() Tj
+T*
+(Recomendacoes Prioritarias) Tj
+T*
+() Tj
+T*
+(1. Corrigir o fluxo de reset de senha em `ForgotPasswordUsercase`) Tj
+T*
+(2. Finalizar os `emit\(...\)` faltantes nas features de detalhe/fetch) Tj
+T*
+T*
+( Pagina 6 de 7 ) Tj
+ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 17 0 R >> >> /Contents 16 0 R >>
+endobj
+16 0 obj
+<< /Length 1259 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+(3. Refatorar `CreateShoppinglistBloc` para reduzir responsabilidades) Tj
+T*
+(4. Reestruturar `ShoppinglistItemBloc` para receber o `shoppingListId` de forma) Tj
+T*
+(segura) Tj
+T*
+(5. Completar a UI da tela de detalhe para adicionar, editar, excluir e marcar) Tj
+T*
+(itens de fato) Tj
+T*
+(6. Adicionar testes de unidade para blocs e use cases principais) Tj
+T*
+() Tj
+T*
+(Conclusao Final) Tj
+T*
+() Tj
+T*
+(O sistema ja possui uma base real e aproveitavel em BLoC. As features centrais) Tj
+T*
+(de autenticacao, home e criacao de lista ja mostram um fluxo funcional.) Tj
+T*
+() Tj
+T*
+(No entanto, a feature de detalhe da lista e gestao de itens ainda esta em fase) Tj
+T*
+(parcial. Hoje, o projeto pode ser considerado:) Tj
+T*
+() Tj
+T*
+(- funcional no fluxo principal de autenticacao) Tj
+T*
+(- funcional no fluxo principal de listar listas) Tj
+T*
+(- funcional no fluxo principal de criar lista) Tj
+T*
+(- parcialmente pronto no fluxo de detalhe e itens da lista) Tj
+T*
+() Tj
+T*
+(Essa conclusao foi baseada na leitura estatica do codigo e nos ajustes feitos no) Tj
+T*
+(fluxo recente de home/criacao. Ela nao substitui testes automatizados e testes) Tj
+T*
+(manuais completos em todos os cenarios.) Tj
+T*
+() Tj
+T*
+T*
+( Pagina 7 de 7 ) Tj
+ET
+endstream
+endobj
+17 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 18
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000154 00000 n 
+0000000281 00000 n 
+0000002086 00000 n 
+0000002213 00000 n 
+0000003895 00000 n 
+0000004022 00000 n 
+0000005931 00000 n 
+0000006059 00000 n 
+0000008080 00000 n 
+0000008209 00000 n 
+0000010271 00000 n 
+0000010400 00000 n 
+0000012239 00000 n 
+0000012368 00000 n 
+0000013680 00000 n 
+trailer
+<< /Size 18 /Root 1 0 R >>
+startxref
+13751
+%%EOF

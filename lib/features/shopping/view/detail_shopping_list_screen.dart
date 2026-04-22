@@ -1,50 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:lista_compras/components/BottomSheet/Person/PersonButtomSheet.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_event.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_bloc.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_event.dart';
-import 'package:lista_compras/features/shopping/bloc/shoppinglist_item_state.dart';
+import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
+import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-class ShoppingListDetailScreen extends StatefulWidget {
-  const ShoppingListDetailScreen({super.key, required this.shoppingListId});
+class DetailShoppingListScreen extends StatefulWidget {
+  const DetailShoppingListScreen({
+    super.key,
+    required this.shoppingListId,
+    required this.shoppingListName,
+    required this.dataCriacao,
+  });
 
   final String shoppingListId;
+  final String shoppingListName;
+  final DateTime dataCriacao;
 
   @override
-  State<ShoppingListDetailScreen> createState() =>
-      _ShoppingListDetailScreenState();
-
+  State<DetailShoppingListScreen> createState() =>
+      _DetailShoppingListScreenState();
 }
 
-
-
-class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<ShoppinglistItemBloc>().add(
-      FetchShoppingListItemsRequested(widget.shoppingListId),
-    );
-  }
-
+class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ShoppinglistItemBloc, ShoppingListItemState>(
+    return BlocListener<DetailShoppinglistBloc, DetailShoppinglistState>(
       listener: (context, state) {
-        if (state is ShoppingListItemInitial) {
+        if (state is DetailSShoppingListItemInitial) {
           // Lógica para lidar com o estado inicial dos itens da lista de compras
           Navigator.of(context).pushReplacementNamed('/home');
           // Lógica para lidar com mudanças de estado
         }
       },
 
-      child: BlocBuilder<ShoppinglistItemBloc, ShoppingListItemState>(
+      child: BlocBuilder<DetailShoppinglistBloc, DetailShoppinglistState>(
         builder: (context, state) {
-          final isLoading = state is ShoppingListItemLoading;
-          final listaItem = state is ShoppingListItemFetchSuccess
+          final isLoading = state is DetailSShoppingListItemLoading;
+          final listaItem = state is DetailSShoppingListItemFetchSuccess
               ? state.items
               : [];
           // Lógica para construir a UI com base no estado atual
@@ -82,7 +74,9 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                                     borderRadius: BorderRadius.circular(8.0),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
+                                        color: Colors.grey.withValues(
+                                          alpha: 0.5,
+                                        ),
                                         spreadRadius: 2,
                                         blurRadius: 5,
                                         offset: Offset(0, 1),
@@ -93,7 +87,17 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: [],
+                                    children: [
+                                      Text(widget.shoppingListName),
+
+                                      Text(
+                                        'Criada em: ${widget.dataCriacao.toString().split(' ')[0]}',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
 
@@ -114,7 +118,9 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                                           shrinkWrap: true,
                                           itemBuilder: (context, index) {
                                             return ListTile(
-                                              title: Text(listaItem[index].name),
+                                              title: Text(
+                                                listaItem[index].name,
+                                              ),
                                               subtitle: Text(
                                                 'Descrição do item ${index + 1}',
                                               ),
@@ -133,7 +139,7 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                             children: [
                               Divider(color: Colors.grey, thickness: 1),
 
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 height: 70,
                                 child: Row(
