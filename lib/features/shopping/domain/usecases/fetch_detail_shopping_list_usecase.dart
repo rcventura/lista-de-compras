@@ -6,7 +6,7 @@ class FetchDetailShoppingListUsecase {
 
   FetchDetailShoppingListUsecase(this.repository);
 
-  Future<List<FetchDetailShoppingListEntity>> fetchShoppingListDetail() {
-    return repository.fetchShoppingListDetail();
+  Future<List<FetchDetailShoppingListEntity>> fetchShoppingListDetail(String shoppingListId) {
+    return repository.fetchShoppingListDetail(shoppingListId);
   }
 }

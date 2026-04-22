@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/features/shopping/data/repositories/detail_shopping_list_repository.dart';
+import 'package:lista_compras/features/shopping/domain/entities/fetch_detail_shopping_list_entity.dart';
 import 'package:lista_compras/features/shopping/domain/usecases/fetch_detail_shopping_list_usecase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import 'detail_shoppinglist_event.dart';
@@ -12,7 +13,7 @@ class DetailShoppinglistBloc
       
 
   DetailShoppinglistBloc() : super(DetailSShoppingListItemInitial()) {
-    _detailShoppingListRepository = DetailShoppingListRepository(Supabase.instance.client, _detailShoppingListRepository.shoppingListId);
+    _detailShoppingListRepository = DetailShoppingListRepository(Supabase.instance.client);
     _fetchDetailShoppingListUsecase = FetchDetailShoppingListUsecase(_detailShoppingListRepository);
 
     on<DetailFetchShoppingListItemsRequested>(_onFetchShoppingListItemsRequested);
@@ -28,8 +29,8 @@ class DetailShoppinglistBloc
 
     try {
 
-      final items = await _fetchDetailShoppingListUsecase.fetchShoppingListDetail();
-   //   emit(ShoppingListItemFetchSuccess(items));
+      final List<FetchDetailShoppingListEntity> items = await _fetchDetailShoppingListUsecase.fetchShoppingListDetail(event.shoppingListId);
+      emit(DetailSShoppingListItemFetchSuccess(items));
     } catch (e) {
       emit(DetailSShoppingListItemError('Erro ao carregar itens. Tente novamente.'));
     }

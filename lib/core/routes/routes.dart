@@ -8,6 +8,17 @@ import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_event.d
 import 'package:lista_compras/features/shopping/view/create_shopping_list_screen.dart';
 import 'package:lista_compras/features/shopping/view/detail_shopping_list_screen.dart';
 
+class ShoppingListDetailArgs {
+  final String shoppingListId;
+  final String shoppingListName;
+  final DateTime dataCriacao;
+
+  const ShoppingListDetailArgs({
+    required this.shoppingListId,
+    required this.shoppingListName,
+    required this.dataCriacao,
+  });
+}
 
 class Routes {
   static const String login = '/';
@@ -28,17 +39,38 @@ class Routes {
               child: const CreateShoppingListScreen(),
             ),
           );
-          case shoppingListDetail:
-          final id = settings.arguments as String;
-            return MaterialPageRoute(
-              builder: (_) => MultiBlocProvider(
-                providers: [
-                  BlocProvider(create: (_) => CreateShoppinglistBloc()),
-                  BlocProvider(create: (_) => DetailShoppinglistBloc()..add(DetailFetchShoppingListItemsRequested(id))),
-                ],
-                child: ShoppingListDetailScreen(shoppingListId: id),
+      case shoppingListDetail:
+        final arguments = settings.arguments;
+
+        if (arguments is! ShoppingListDetailArgs) {
+          return MaterialPageRoute(
+            builder: (_) => Scaffold(
+              body: Center(
+                child: Text(
+                  'Argumentos invalidos para a rota ${settings.name}.',
+                ),
               ),
-            );
+            ),
+          );
+        }
+
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => DetailShoppinglistBloc()
+              ..add(
+                DetailFetchShoppingListItemsRequested(
+                  arguments.shoppingListId,
+                  arguments.shoppingListName,
+                  arguments.dataCriacao,
+                ),
+              ),
+            child: DetailShoppingListScreen(
+              shoppingListId: arguments.shoppingListId,
+              shoppingListName: arguments.shoppingListName,
+              dataCriacao: arguments.dataCriacao,
+            ),
+          ),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

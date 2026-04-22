@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lista_compras/core/routes/routes.dart';
-import 'package:lista_compras/features/shopping/domain/entities/create_shopping_list_entity.dart';
-import 'package:lista_compras/features/shopping/model/create_shopping_list_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/helpers/validators.dart';
 import '../../../components/SMButtom/SMButtom.dart';
@@ -68,9 +66,15 @@ class _CreateShoppingListScreenState extends State<CreateShoppingListScreen> {
         child: BlocConsumer<CreateShoppinglistBloc, CreateShoppingListState>(
           listener: (context, state) {
             if (state is CreateShoppingListCreationSuccess) {
-              print('ID da lista criada: ${state.shoppingListId}');
-              String shoppingListId = CreateShoppingListEntity; // Verifique o ID retornado
-              Navigator.pushNamed(context, Routes.shoppingListDetail, arguments: state.shoppingListId);
+              Navigator.pushNamed(
+                context,
+                Routes.shoppingListDetail,
+                arguments: ShoppingListDetailArgs(
+                  shoppingListId: state.shoppingListId,
+                  shoppingListName: _nameTextFieldController.text.trim(),
+                  dataCriacao: DateTime.now(),
+                ),
+              );
             }
 
             if (state is CreateShoppingListCreationError) {

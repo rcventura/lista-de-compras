@@ -2,8 +2,11 @@ abstract class DetailShoppinglistEvent {}
 
 class DetailFetchShoppingListItemsRequested extends DetailShoppinglistEvent {
   final String shoppingListId;
+  final String shoppingListName;
+  final DateTime dataCriacao;
 
-  DetailFetchShoppingListItemsRequested(this.shoppingListId);
+   DetailFetchShoppingListItemsRequested(this.shoppingListId, this.shoppingListName, this.dataCriacao);
+
 }
 
 class DetailUpdateShoppingListItemRequested extends DetailShoppinglistEvent {

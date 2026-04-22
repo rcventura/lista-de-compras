@@ -4,10 +4,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DetailShoppingListRepository {
   final SupabaseClient client;
-  final String shoppingListId;
-  DetailShoppingListRepository(this.client, this.shoppingListId);
 
-  Future<List<FetchDetailShoppingListEntity>> fetchShoppingListDetail() async {
+  DetailShoppingListRepository(this.client);
+
+  Future<List<FetchDetailShoppingListEntity>> fetchShoppingListDetail(String shoppingListId) async {
     final userId = client.auth.currentUser?.id;
 
     if (userId == null) {

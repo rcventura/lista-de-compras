@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:lista_compras/components/BottomSheet/Person/PersonButtomSheet.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
-import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_event.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ShoppingListDetailScreen extends StatefulWidget {
-  const ShoppingListDetailScreen({super.key, required this.shoppingListId});
+class DetailShoppingListScreen extends StatefulWidget {
+  const DetailShoppingListScreen({
+    super.key,
+    required this.shoppingListId,
+    required this.shoppingListName,
+    required this.dataCriacao,
+  });
 
   final String shoppingListId;
+  final String shoppingListName;
+  final DateTime dataCriacao;
 
   @override
-  State<ShoppingListDetailScreen> createState() =>
-      _ShoppingListDetailScreenState();
+  State<DetailShoppingListScreen> createState() =>
+      _DetailShoppingListScreenState();
 }
 
-class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<DetailShoppinglistBloc>().add(
-      DetailFetchShoppingListItemsRequested(widget.shoppingListId),
-    );
-  }
-
+class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<DetailShoppinglistBloc, DetailShoppinglistState>(
@@ -89,7 +87,17 @@ class _ShoppingListDetailScreenState extends State<ShoppingListDetailScreen> {
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: [],
+                                    children: [
+                                      Text(widget.shoppingListName),
+
+                                      Text(
+                                        'Criada em: ${widget.dataCriacao.toString().split(' ')[0]}',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
 

@@ -43,11 +43,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _navigateToListDetails(String shoppingListId) async {
+  Future<void> _navigateToListDetails(String shoppingListId, String shoppingListName, DateTime dataCriacao) async {
     await Navigator.pushNamed(
       context,
       Routes.shoppingListDetail,
-      arguments: shoppingListId,
+      arguments: ShoppingListDetailArgs(
+        shoppingListId: shoppingListId,
+        shoppingListName: shoppingListName,
+        dataCriacao: dataCriacao,
+      ),
     );
   }
 
@@ -170,6 +174,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         onTap: () {
                                           _navigateToListDetails(
                                             listas[index].id,
+                                            listas[index].name,
+                                            listas[index].createdAt,
                                           );
                                         },
                                       );

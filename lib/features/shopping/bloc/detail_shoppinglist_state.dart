@@ -1,4 +1,4 @@
-import '../domain/entities/Fetch_detail_shopping_list_entity.dart';
+import 'package:lista_compras/features/shopping/domain/entities/fetch_detail_shopping_list_entity.dart';
 
 abstract class DetailShoppinglistState {}
 
