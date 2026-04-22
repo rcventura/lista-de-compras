@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/helpers/validators.dart';
-import '../viewmodel/auth_viewmodel.dart';
+import '../bloc/auth_bloc.dart';
+import '../bloc/auth_event.dart';
+import '../bloc/auth_state.dart';
 import 'forgot_password_screen.dart';
 import 'register_screen.dart';
-import '../../home/view/home_screen.dart';
+import '../../../components/SMButtom/SMButtom.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,37 +29,23 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void clearValidators() {
+  void _clearForm() {
     _formKey.currentState?.reset();
     _emailController.clear();
     _passwordController.clear();
   }
 
-  Future<void> _submit(AuthViewModel vm) async {
+  // Dispara o evento LoginRequested para o BLoC.
+  // O BLoC vai processar e emitir um novo estado (loading → success/error).
+  void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
-    await vm.login(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
+    context.read<AuthBloc>().add(
+      LoginRequested(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      ),
     );
-
-    if (!mounted) return;
-
-    if(vm.status == AuthStatus.success) {
-      clearValidators();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
-      return;
-    }
-
-    if (vm.status == AuthStatus.error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(vm.errorMessage ?? 'Erro ao entrar.')),
-      );
-      vm.resetStatus();
-    }
   }
 
   @override
@@ -69,31 +57,59 @@ class _LoginScreenState extends State<LoginScreen> {
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 80),
               Image.asset(
                 'assets/images/logo.png',
-                height: 180,
+                height: 150,
                 fit: BoxFit.contain,
+              ),
+              const SizedBox(height: 10),
+              Column(
+                children: [
+                  const Text(
+                    'Bem-vindo',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Organize suas compras de forma simples',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ],
               ),
               const SizedBox(height: 32),
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(labelText: 'E-mail'),
+                decoration: const InputDecoration(
+                  labelText: 'E-mail',
+                  prefixIcon: Icon(Icons.email, color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                ),
                 validator: Validators.email,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 30),
               TextFormField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   labelText: 'Senha',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                  ),
+                  prefixIcon: Icon(Icons.lock, color: Colors.grey),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword
                           ? Icons.visibility_off
                           : Icons.visibility,
+                      color: Colors.grey,
                     ),
                     onPressed: () =>
                         setState(() => _obscurePassword = !_obscurePassword),
@@ -105,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    clearValidators();
+                    _clearForm();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -116,26 +132,62 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const Text('Esqueci minha senha'),
                 ),
               ),
-              const SizedBox(height: 8),
-              Consumer<AuthViewModel>(
-                builder: (_, vm, _) => FilledButton(
-                  onPressed: vm.isLoading ? null : () => _submit(vm),
-                  child: vm.isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Entrar'),
-                ),
+              const SizedBox(height: 20),
+
+              // BlocConsumer combina duas responsabilidades:
+              //   listener → reage a estados sem reconstruir a UI (navegar, snackbar)
+              //   builder  → reconstrói um widget quando o estado muda
+              BlocConsumer<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  // Navega para Home quando o login for bem-sucedido
+                  if (state is AuthSuccess) {
+                    _clearForm();
+                    Navigator.pushReplacementNamed(context, '/home');
+                  }
+                },
+
+                builder: (context, state) {
+                  // Mostra o botão com loading quando está carregando
+                  final isLoading = state is AuthLoading;
+                  return Column(
+                    spacing: 5,
+                    children: [
+                      if (state is AuthError)
+                        Text(
+                          state.message,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+
+                      SMButton(
+                        text: 'Entrar',
+                        onPressed: _submit,
+                        isLoading: isLoading,
+                      ),
+                    ],
+                  );
+                },
               ),
+
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const RegisterScreen()),
                 ),
-                child: const Text('Não tem conta? Cadastre-se'),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 5,
+                  children: [
+                    const Text(
+                      'Não tem conta?',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    const Text(
+                      'Cadastre-se',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
