@@ -9,4 +9,8 @@ class FetchShoppingListUsecase {
   Future<List<HomeEntity>> fetchShoppingList() {
     return repository.fetchShoppingList();
   }
+
+  Future<List<HomeEntity>> searchShoppingList(List<String> query) {
+    return repository.searchShoppingList(query);
+  }
 }
