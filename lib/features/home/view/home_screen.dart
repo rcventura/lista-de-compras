@@ -273,13 +273,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         icon: Icon(Icons.calendar_month_outlined),
                         color: Colors.grey[600],
                         iconSize: 24,
-                        onPressed: () {
-                          Future<DateTime?> selectedDate = showDatePicker(
+                        onPressed: () async {
+                          final selectedDate = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
                             firstDate: DateTime(2000),
                             lastDate: DateTime(2100),
                           );
+                          if (selectedDate != null) {
+                            // Handle selected date
+                          }
                         },
                       ),
                     ],
