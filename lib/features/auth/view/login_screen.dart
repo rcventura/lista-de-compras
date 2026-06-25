@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lista_compras/core/routes/routes.dart';
 
 import '../../../core/helpers/validators.dart';
 import '../bloc/auth_bloc.dart';
@@ -142,7 +143,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Navega para Home quando o login for bem-sucedido
                   if (state is AuthSuccess) {
                     _clearForm();
-                    Navigator.pushReplacementNamed(context, '/home');
+                    if (!mounted) return;
+                    Navigator.of(context).pushNamedAndRemoveUntil(Routes.home, (route) => false);
                   }
                 },
 

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lista_compras/components/BottomSheet/Person/PersonButtomSheet.dart';
+import 'package:intl/intl.dart';
+import 'package:lista_compras/components/BottomSheet/Category/CategoryBottomSheet.dart';
+import 'package:lista_compras/components/BottomSheet/Person/personButtomSheet.dart';
+import 'package:lista_compras/components/SMButtom/SMButtom.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,15 +24,18 @@ class DetailShoppingListScreen extends StatefulWidget {
       _DetailShoppingListScreenState();
 }
 
+
 class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<DetailShoppinglistBloc, DetailShoppinglistState>(
       listener: (context, state) {
-        if (state is DetailSShoppingListItemInitial) {
-          // Lógica para lidar com o estado inicial dos itens da lista de compras
-          Navigator.of(context).pushReplacementNamed('/home');
-          // Lógica para lidar com mudanças de estado
+        if (!mounted) return;
+
+        if (state is DetailSShoppingListItemError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
         }
       },
 
@@ -51,7 +57,7 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.person_outline, color: Colors.black54),
-                  onPressed: () => ShowUserModal.show(context),
+                  onPressed: () => ShowPersonBottomSheet.show(context),
                 ),
               ],
             ),
@@ -89,13 +95,23 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(widget.shoppingListName),
-
                                       Text(
-                                        'Criada em: ${widget.dataCriacao.toString().split(' ')[0]}',
+                                        DateFormat('dd/MM/yyyy').format(widget.dataCriacao),
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: Colors.grey,
                                         ),
+                                      ),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          SMButton(
+                                            width: 150,
+                                            height: 25,
+                                            onPressed: () => ShowCategoryBottomSheet.show(context),
+                                            text: 'Adicionar Item',
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -112,24 +128,27 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                             ),
                                           ),
                                         )
-                                      : ListView.builder(
-                                          scrollDirection: Axis.vertical,
-                                          itemCount: listaItem.length,
-                                          shrinkWrap: true,
-                                          itemBuilder: (context, index) {
-                                            return ListTile(
-                                              title: Text(
-                                                listaItem[index].name,
-                                              ),
-                                              subtitle: Text(
-                                                'Descrição do item ${index + 1}',
-                                              ),
-                                              trailing: Icon(
-                                                Icons.check_circle_outline,
-                                              ),
-                                            );
-                                          },
-                                        ),
+                                      : SizedBox(
+                                          width: double.infinity,
+                                          height: 10,
+                                        child: ListView.builder(
+                                            scrollDirection: Axis.vertical,
+                                            itemCount: listaItem.length,
+                                            shrinkWrap: true,
+                                            itemBuilder: (context, index) {
+                                              return ListTile(
+                                                title: Text(
+                                                  listaItem[index].name,
+                                                ),
+                                             //   subtitle: Text(
+                                             //     'Descrição do item ${index + 1}',
+                                             //   ),
+                                                trailing: Icon(Icons.keyboard_arrow_right_outlined),
+                                                
+                                              );
+                                            },
+                                          ),
+                                      ),
                                 ),
                               ],
                             ),
@@ -139,29 +158,34 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                             children: [
                               Divider(color: Colors.grey, thickness: 1),
 
-                              SizedBox(
-                                width: double.infinity,
-                                height: 70,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        'Total',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  height: 20,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          'Total',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Text(
-                                      'R\$ 100,00',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.green,
+                                      Text(
+                                        listaItem.isNotEmpty
+                                            ? 'R\$ ${listaItem.fold(0.0, (sum, item) => sum + ((item.quantity * (item.price ?? 0.0)))).toStringAsFixed(2)}'
+                                            : 'R\$ 0.00',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.green,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],

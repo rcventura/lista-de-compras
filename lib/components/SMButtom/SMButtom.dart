@@ -4,19 +4,25 @@ class SMButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final bool isLoading;
+  final bool isDisabled;
+  final double width;
+  final double height;
 
   const SMButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
+    this.isDisabled = false,
+    this.width = double.infinity,
+    this.height = 45,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 45,
-      width: double.infinity,
+      height: height,
+      width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
       ),
@@ -28,7 +34,7 @@ class SMButton extends StatelessWidget {
             ),
           ),
         ),
-        onPressed: isLoading ? null : onPressed,
+        onPressed: isLoading || isDisabled ? null : onPressed,
         child: isLoading
             ? const SizedBox(
                 width: 24,

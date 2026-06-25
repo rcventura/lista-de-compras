@@ -2,17 +2,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../features/auth/bloc/auth_bloc.dart';
-import '../../../features/auth/bloc/auth_event.dart';
-import '../../../features/auth/bloc/auth_state.dart';
+import '../../../../features/auth/bloc/auth_bloc.dart';
+import '../../../../features/auth/bloc/auth_event.dart';
+import '../../../../features/auth/bloc/auth_state.dart';
 
-class ShowPersonBottomSheet extends StatelessWidget {
-  const ShowPersonBottomSheet({super.key});
+class ShowCategoryBottomSheet extends StatelessWidget {
+  const ShowCategoryBottomSheet({super.key});
 
   static void show(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      builder: (_) => const ShowPersonBottomSheet(),
+      builder: (_) => const ShowCategoryBottomSheet(),
     );
   }
 
@@ -29,6 +29,7 @@ class ShowPersonBottomSheet extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
+      height: 500,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,8 +48,6 @@ class ShowPersonBottomSheet extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image(image: AssetImage('assets/images/logo.png'), width: 200, height: 200),
-
               Text(
                 user?.name ?? '',
                 style: const TextStyle(
@@ -68,7 +67,7 @@ class ShowPersonBottomSheet extends StatelessWidget {
               Divider(color: Colors.grey[300]),
               Container(
                 width: double.infinity,
-                
+
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),

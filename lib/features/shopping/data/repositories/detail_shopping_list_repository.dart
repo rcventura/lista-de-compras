@@ -16,8 +16,13 @@ class DetailShoppingListRepository {
 
     final resposne = await client
         .from('shopping_list_items')
-        .select()
-        .eq('shopping_list_id', shoppingListId);
+        .select(
+          'id, list_id, product_id, name, quantity, unit, '
+          'checked, position, created_at, price'
+        )
+        .eq('list_id', shoppingListId)
+        .order('position', ascending: true)
+        .range(0, 100);
 
     return (resposne as List)
         .map((item) => FetchDetailShoppingListModel.fromMap(item).toEntity())

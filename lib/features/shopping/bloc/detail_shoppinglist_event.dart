@@ -14,14 +14,14 @@ class DetailUpdateShoppingListItemRequested extends DetailShoppinglistEvent {
   final String? name;
   final int? quantity;
   final double? price;
-  final bool? isChecked;
+  final bool? checked;
 
   DetailUpdateShoppingListItemRequested({
     required this.itemId,
     this.name,
     this.quantity,
     this.price,
-    this.isChecked,
+    this.checked,
   });
 }
 
