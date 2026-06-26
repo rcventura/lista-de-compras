@@ -8,8 +8,6 @@ import 'package:lista_compras/features/auth/bloc/auth_state.dart';
 import 'package:lista_compras/features/home/bloc/home_bloc.dart';
 import 'package:lista_compras/features/home/bloc/home_event.dart';
 import 'package:lista_compras/features/home/bloc/home_state.dart';
-import 'package:lista_compras/features/shopping/bloc/create_shoppinglist_bloc.dart';
-import 'package:lista_compras/features/shopping/view/create_shopping_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
