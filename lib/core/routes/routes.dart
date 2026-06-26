@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/features/auth/view/login_screen.dart';
+import 'package:lista_compras/features/categories/bloc/categories_bloc.dart';
+import 'package:lista_compras/features/categories/view/categories_screen.dart';
 import 'package:lista_compras/features/home/view/home_screen.dart';
 import 'package:lista_compras/features/shopping/bloc/create_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
@@ -25,6 +27,7 @@ class Routes {
   static const String home = '/home';
   static const String addShoppingList = '/add-shopping-list';
   static const String shoppingListDetail = '/shopping-list-details';
+  static const String categories = '/categories';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -32,13 +35,13 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-        case addShoppingList: 
-          return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-              create: (_) => CreateShoppinglistBloc(),
-              child: const CreateShoppingListScreen(),
-            ),
-          );
+      case addShoppingList:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => CreateShoppinglistBloc(),
+            child: const CreateShoppingListScreen(),
+          ),
+        );
       case shoppingListDetail:
         final arguments = settings.arguments;
 
@@ -71,6 +74,15 @@ class Routes {
             ),
           ),
         );
+
+      case categories:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (_) => CategoriesBloc(),
+            child: const CategoriesScreen(),
+          ),
+        );
+
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

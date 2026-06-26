@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lista_compras/components/BottomSheet/Category/CategoryBottomSheet.dart';
 import 'package:lista_compras/components/BottomSheet/Person/personButtomSheet.dart';
 import 'package:lista_compras/components/SMButtom/SMButtom.dart';
+import 'package:lista_compras/core/routes/routes.dart';
+import 'package:lista_compras/features/categories/bloc/categories_bloc.dart';
+import 'package:lista_compras/features/categories/bloc/categories_event.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,8 +26,20 @@ class DetailShoppingListScreen extends StatefulWidget {
       _DetailShoppingListScreenState();
 }
 
-
 class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
+    final CategoriesBloc _categoriesBloc = CategoriesBloc()..add(CategoriesFetchItemRequest());
+
+    Future<void> _navigateToCategories() async {
+    await Navigator.pushNamed(
+      context,
+      Routes.categories,
+    );
+
+    if (mounted) {
+      _categoriesBloc.add(CategoriesFetchItemRequest());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<DetailShoppinglistBloc, DetailShoppinglistState>(
@@ -108,7 +122,7 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                           SMButton(
                                             width: 150,
                                             height: 25,
-                                            onPressed: () => ShowCategoryBottomSheet.show(context),
+                                            onPressed: () => _navigateToCategories(),
                                             text: 'Adicionar Item',
                                           ),
                                         ],
