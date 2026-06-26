@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/categories/bloc/categories_bloc.dart';
 import 'package:lista_compras/features/categories/bloc/categories_event.dart';
 import 'package:lista_compras/features/categories/bloc/categories_state.dart';
@@ -16,6 +17,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   void initState() {
     super.initState();
     context.read<CategoriesBloc>().add(CategoriesFetchItemRequest());
+  }
+
+  Future<void> _navigateToCategoryDetails(String categoryId) async {
+    await Navigator.pushNamed(
+      context,
+      Routes.categoriesItems,
+      arguments: CategoriesItemsArgs(categoryId: categoryId),
+    );
   }
 
   @override
@@ -50,40 +59,42 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             body: isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : categoryList.isEmpty
-                    ? const Center(child: Text('Nenhuma categoria encontrada.'))
-                    : GridView.builder(
-                        itemCount: categoryList.length,
-                        itemBuilder: (context, index) {
-                          final category = categoryList[index];
+                ? const Center(child: Text('Nenhuma categoria encontrada.'))
+                : GridView.builder(
+                    itemCount: categoryList.length,
+                    itemBuilder: (context, index) {
+                      final category = categoryList[index];
 
-                          return GestureDetector(
-                            onTap: () {
-                            },
-                            child: Card(
-                              child: Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      category.icon,
-                                      style: const TextStyle(fontSize: 36),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      category.name,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
+                      return GestureDetector(
+                        onTap: () {
+                          print('Categoria selecionada: ${category.name} - ${category.id}');
+                          _navigateToCategoryDetails(category.id);
                         },
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                        child: Card(
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  category.icon,
+                                  style: const TextStyle(fontSize: 36),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  category.name,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                         ),
-                      ),
+                  ),
           );
         },
       ),

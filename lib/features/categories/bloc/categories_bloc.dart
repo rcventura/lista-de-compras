@@ -7,12 +7,12 @@ import 'categories_event.dart';
 import 'categories_state.dart';
 
 class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
-  late final CategoriesRepository _categoriesRespositorhy;
+  late final CategoriesRepository _categoriesRespository;
   late final CategoriesUsecase _categoriesUsecase;
 
 CategoriesBloc() : super(CategoryInitial()) {
-    _categoriesRespositorhy = CategoriesRepository(Supabase.instance.client);
-    _categoriesUsecase = CategoriesUsecase(_categoriesRespositorhy);
+    _categoriesRespository = CategoriesRepository(Supabase.instance.client);
+    _categoriesUsecase = CategoriesUsecase(_categoriesRespository);
 
     on<CategoriesFetchItemRequest>(_onFetchCategoriesRequested);
   }
