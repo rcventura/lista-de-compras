@@ -6,13 +6,13 @@ import '../../../features/auth/bloc/auth_bloc.dart';
 import '../../../features/auth/bloc/auth_event.dart';
 import '../../../features/auth/bloc/auth_state.dart';
 
-class ShowUserModal extends StatelessWidget {
-  const ShowUserModal({super.key});
+class ShowPersonBottomSheet extends StatelessWidget {
+  const ShowPersonBottomSheet({super.key});
 
   static void show(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      builder: (_) => const ShowUserModal(),
+      builder: (_) => const ShowPersonBottomSheet(),
     );
   }
 

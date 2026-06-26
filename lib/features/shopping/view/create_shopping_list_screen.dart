@@ -66,7 +66,7 @@ class _CreateShoppingListScreenState extends State<CreateShoppingListScreen> {
         child: BlocConsumer<CreateShoppinglistBloc, CreateShoppingListState>(
           listener: (context, state) {
             if (state is CreateShoppingListCreationSuccess) {
-              Navigator.pushNamed(
+              Navigator.pushReplacementNamed(
                 context,
                 Routes.shoppingListDetail,
                 arguments: ShoppingListDetailArgs(

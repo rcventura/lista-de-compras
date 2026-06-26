@@ -47,7 +47,7 @@ class DetailShoppinglistBloc
         if (event.name != null) 'name': event.name,
         if (event.quantity != null) 'quantity': event.quantity,
         if (event.price != null) 'price': event.price,
-        if (event.isChecked != null) 'is_checked': event.isChecked,
+        if (event.checked != null) 'checked': event.checked,
       };
 
       await Supabase.instance.client

@@ -7,9 +7,10 @@ class FetchDetailShoppingListModel {
   final String name;
   final int quantity;
   final String unit;
-  final bool isChecked;
+  final bool checked;
   final int? order;
   final DateTime? createdAt;
+  final double price;
   
 
   FetchDetailShoppingListModel({
@@ -20,8 +21,9 @@ class FetchDetailShoppingListModel {
     required this.quantity,
     required this.unit,
     required this.order,
-    required this.isChecked,
+    required this.checked,
     this.createdAt,  
+    required this.price,
   });
 
   factory FetchDetailShoppingListModel.fromMap(Map<String, dynamic> map) {
@@ -32,9 +34,10 @@ class FetchDetailShoppingListModel {
       name: map['name'] as String,
       quantity: map['quantity'] as int,
       unit: map['unit'] as String,
-      isChecked: map['is_checked'] as bool? ?? false,
+      checked: map['checked'] as bool? ?? false,
       order: map['position'] as int?,
       createdAt: map['created_at'] != null ? DateTime.parse(map['created_at']) : null,
+      price: map['price'] != null ? (map['price'] as num).toDouble() : 0.0,
     );
   }
 
@@ -44,9 +47,10 @@ class FetchDetailShoppingListModel {
     String? productId,
     String? name,
     int? quantity,
-    bool? isChecked,
+    bool? checked,
     int? order,
     DateTime? createdAt,
+    double? price,
   }) {
     return FetchDetailShoppingListModel(
       
@@ -56,9 +60,11 @@ class FetchDetailShoppingListModel {
       name: name ?? this.name,
       quantity: quantity ?? this.quantity,
       unit: unit,
-      isChecked: isChecked ?? this.isChecked,
+      checked: checked ?? this.checked,
       order: order ?? this.order,
-      createdAt: createdAt,);
+      createdAt: createdAt,
+      price: price ?? this.price,
+    );
   }
 
   FetchDetailShoppingListEntity toEntity() {
@@ -69,9 +75,10 @@ class FetchDetailShoppingListModel {
       name: name,
       quantity: quantity,
       unit: unit,
-      isChecked: isChecked,
+      checked: checked,
       order: order,
       createdAt: createdAt,
+      price: price,
     );
   }
 }

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:lista_compras/components/BottomSheet/Person/PersonButtomSheet.dart';
+import 'package:lista_compras/components/BottomSheet/Person/personButtomSheet.dart';
 import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/auth/bloc/auth_bloc.dart';
 import 'package:lista_compras/features/auth/bloc/auth_state.dart';
 import 'package:lista_compras/features/home/bloc/home_bloc.dart';
 import 'package:lista_compras/features/home/bloc/home_event.dart';
 import 'package:lista_compras/features/home/bloc/home_state.dart';
-import 'package:lista_compras/features/shopping/bloc/create_shoppinglist_bloc.dart';
-import 'package:lista_compras/features/shopping/view/create_shopping_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,14 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _navigateToAddList() async {
-    await Navigator.push<void>(
+    await Navigator.pushNamedAndRemoveUntil<void>(
       context,
-      MaterialPageRoute(
-        builder: (_) => BlocProvider(
-          create: (_) => CreateShoppinglistBloc(),
-          child: const CreateShoppingListScreen(),
-        ),
-      ),
+      Routes.addShoppingList,
+      (route) => route.isFirst,
     );
 
     if (mounted) {
@@ -83,8 +77,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
+        if (!mounted) return;
+
         if (state is AuthInitial) {
-          Navigator.of(context).pushReplacementNamed('/');
+          Navigator.of(context).pushNamedAndRemoveUntil(Routes.login, (route) => false);
         }
       },
       child: BlocBuilder<HomeBloc, HomeState>(
@@ -111,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Icons.person_outline,
                       color: Colors.black54,
                     ),
-                    onPressed: () => ShowUserModal.show(context),
+                    onPressed: () => ShowPersonBottomSheet.show(context),
                   ),
                 ),
               ],
@@ -273,13 +269,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         icon: Icon(Icons.calendar_month_outlined),
                         color: Colors.grey[600],
                         iconSize: 24,
-                        onPressed: () {
-                          Future<DateTime?> selectedDate = showDatePicker(
+                        onPressed: () async {
+                          final selectedDate = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
                             firstDate: DateTime(2000),
                             lastDate: DateTime(2100),
                           );
+                          if (selectedDate != null) {
+                            // Handle selected date
+                          }
                         },
                       ),
                     ],
