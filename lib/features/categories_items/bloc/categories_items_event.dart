@@ -5,8 +5,7 @@ class CategoriesItemsFetchRequest extends CategoriesItemsEvent {
   CategoriesItemsFetchRequest({required this.categoryId});
 }
 
-
 class CategoriesItemsSelected extends CategoriesItemsEvent {
-  final String categoryId;
-  CategoriesItemsSelected(this.categoryId);
+  final int itemIndex;
+  CategoriesItemsSelected(this.itemIndex);
 }

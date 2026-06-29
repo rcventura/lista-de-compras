@@ -67,7 +67,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
                       return GestureDetector(
                         onTap: () {
-                          print('Categoria selecionada: ${category.name} - ${category.id}');
                           _navigateToCategoryDetails(category.id);
                         },
                         child: Card(

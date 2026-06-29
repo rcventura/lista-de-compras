@@ -6,7 +6,7 @@ import 'package:lista_compras/features/categories_items/bloc/categories_items_st
 
 class CategoriesItemsScreen extends StatefulWidget {
   final String categoryId;
-  
+
   const CategoriesItemsScreen({super.key, required this.categoryId});
 
   @override
@@ -17,8 +17,9 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
   @override
   void initState() {
     super.initState();
-    print('Carregando itens da categoria: ${widget.categoryId}');
-    context.read<CategoriesItemsBloc>().add(CategoriesItemsFetchRequest(categoryId: widget.categoryId));
+    context.read<CategoriesItemsBloc>().add(
+      CategoriesItemsFetchRequest(categoryId: widget.categoryId),
+    );
   }
 
   @override
@@ -32,6 +33,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
             context,
           ).showSnackBar(SnackBar(content: Text(state.message)));
         }
+        
       },
       child: BlocBuilder<CategoriesItemsBloc, CategoriesItemsState>(
         builder: (context, state) {
@@ -39,9 +41,12 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
           final categoriesItemsList = state is CategoriesItemsLoadingSuccess
               ? state.categoriesItemsList
               : [];
+          final selectedIndex = state is CategoriesItemsLoadingSuccess
+              ? state.selectedIndex
+              : null;
 
           return Scaffold(
-                        appBar: AppBar(
+            appBar: AppBar(
               title: Text('Itens da Categoria'),
               centerTitle: true,
               leading: IconButton(
@@ -52,18 +57,25 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
             body: isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : categoriesItemsList.isEmpty
-                    ? const Center(child: Text('Nenhuma categoria encontrada.'))
-                    : ListView.builder(
-                        itemCount: categoriesItemsList.length,
-                        itemBuilder: (context, index) {
-                          final categoryItem = categoriesItemsList[index];
+                ? const Center(child: Text('Nenhum item encontrado.'))
+                : ListView.builder(
+                    itemCount: categoriesItemsList.length,
+                    itemBuilder: (context, index) {
+                      final categoryItem = categoriesItemsList[index];
 
-                          return ListTile(
-                            title: Text(categoryItem.name),
-                        
+                      return ListTile(
+                        title: Text(categoryItem.name),
+                        trailing: selectedIndex == index
+                            ? const Icon(Icons.check, color: Colors.green)
+                            : null,
+                        onTap: () {
+                          context.read<CategoriesItemsBloc>().add(
+                            CategoriesItemsSelected(index),
                           );
                         },
-                      ),
+                      );
+                    },
+                  ),
           );
         },
       ),
