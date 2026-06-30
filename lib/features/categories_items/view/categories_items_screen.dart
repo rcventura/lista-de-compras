@@ -6,7 +6,6 @@ import 'package:lista_compras/features/categories_items/bloc/categories_items_st
 
 class CategoriesItemsScreen extends StatefulWidget {
   final String categoryId;
-
   const CategoriesItemsScreen({super.key, required this.categoryId});
 
   @override
@@ -14,12 +13,24 @@ class CategoriesItemsScreen extends StatefulWidget {
 }
 
 class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
+  List<String> itemsSelected = [];
+
   @override
   void initState() {
     super.initState();
     context.read<CategoriesItemsBloc>().add(
       CategoriesItemsFetchRequest(categoryId: widget.categoryId),
     );
+  }
+
+  void _toggleSelectedItem(String itemId) {
+    setState(() {
+      if (itemsSelected.contains(itemId)) {
+        itemsSelected.remove(itemId);
+      } else {
+        itemsSelected.add(itemId);
+      }
+    });
   }
 
   @override
@@ -33,7 +44,6 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
             context,
           ).showSnackBar(SnackBar(content: Text(state.message)));
         }
-        
       },
       child: BlocBuilder<CategoriesItemsBloc, CategoriesItemsState>(
         builder: (context, state) {
@@ -41,17 +51,16 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
           final categoriesItemsList = state is CategoriesItemsLoadingSuccess
               ? state.categoriesItemsList
               : [];
-          final selectedIndex = state is CategoriesItemsLoadingSuccess
-              ? state.selectedIndex
-              : null;
-
           return Scaffold(
             appBar: AppBar(
               title: Text('Itens da Categoria'),
               centerTitle: true,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black54),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => {
+                  itemsSelected.clear(),
+                  Navigator.pop(context),
+                }
               ),
             ),
             body: isLoading
@@ -63,19 +72,17 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                     itemBuilder: (context, index) {
                       final categoryItem = categoriesItemsList[index];
 
-                      return ListTile(
+                      return CheckboxListTile(
                         title: Text(categoryItem.name),
-                        trailing: selectedIndex == index
-                            ? const Icon(Icons.check, color: Colors.green)
-                            : null,
-                        onTap: () {
-                          context.read<CategoriesItemsBloc>().add(
-                            CategoriesItemsSelected(index),
-                          );
-                        },
+                        value: itemsSelected.contains(categoryItem.id)
+                            ? true
+                            : false,
+                        onChanged: (_) => _toggleSelectedItem(categoryItem.id),
                       );
                     },
                   ),
+
+                  
           );
         },
       ),

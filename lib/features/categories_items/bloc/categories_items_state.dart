@@ -8,12 +8,10 @@ class CategoriesItemsLoading extends CategoriesItemsState {}
 
 class CategoriesItemsLoadingSuccess extends CategoriesItemsState {
   final List<CategoriesItemEntity> categoriesItemsList;
-  final int? selectedIndex;
 
   CategoriesItemsLoadingSuccess(
-    this.categoriesItemsList, {
-    this.selectedIndex,
-  });
+    this.categoriesItemsList,
+    );
 }
 
 class CategoriesItemsLoadingError extends CategoriesItemsState {
