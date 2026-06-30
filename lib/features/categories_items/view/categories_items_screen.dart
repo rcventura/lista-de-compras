@@ -14,6 +14,8 @@ class CategoriesItemsScreen extends StatefulWidget {
 
 class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
   List<String> itemsSelected = [];
+    final _searchController = TextEditingController();
+var _clearButtonVisible = false;
 
   @override
   void initState() {
@@ -21,6 +23,22 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     context.read<CategoriesItemsBloc>().add(
       CategoriesItemsFetchRequest(categoryId: widget.categoryId),
     );
+  }
+    void _clearTextField() {
+    _searchController.clear();
+    setState(() {
+      _clearButtonVisible = false;
+    });
+  }
+
+    Widget showClearButtom() {
+    if (_clearButtonVisible) {
+      return IconButton(
+        onPressed: _clearTextField,
+        icon: Icon(Icons.close, size: 20, color: Colors.grey[600]),
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   void _toggleSelectedItem(String itemId) {
@@ -53,36 +71,68 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
               : [];
           return Scaffold(
             appBar: AppBar(
-              title: Text('Itens da Categoria'),
+              title: Text('Itens da Categorias'),
               centerTitle: true,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black54),
                 onPressed: () => {
                   itemsSelected.clear(),
                   Navigator.pop(context),
-                }
+                },
               ),
             ),
             body: isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : categoriesItemsList.isEmpty
                 ? const Center(child: Text('Nenhum item encontrado.'))
-                : ListView.builder(
-                    itemCount: categoriesItemsList.length,
-                    itemBuilder: (context, index) {
-                      final categoryItem = categoriesItemsList[index];
+                : Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16, 0.0),
+                        child: TextField(
+                            controller: _searchController,
+                            maxLines: 1,
+                            onChanged: (value) {
+                              setState(() {
+                                _searchController.text.isEmpty
+                                    ? _clearButtonVisible = false
+                                    : _clearButtonVisible = true;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.zero,
+                              hintText: 'Pesquisar item',
+                              prefixIcon: const Icon(Icons.search),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                      
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey[200],
+                              suffixIcon: showClearButtom(),
+                            ),
+                          ),
+                      ),
 
-                      return CheckboxListTile(
-                        title: Text(categoryItem.name),
-                        value: itemsSelected.contains(categoryItem.id)
-                            ? true
-                            : false,
-                        onChanged: (_) => _toggleSelectedItem(categoryItem.id),
-                      );
-                    },
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: categoriesItemsList.length,
+                          itemBuilder: (context, index) {
+                            final categoryItem = categoriesItemsList[index];
+
+                            return CheckboxListTile(
+                              title: Text(categoryItem.name),
+                              value: itemsSelected.contains(categoryItem.id)
+                                  ? true
+                                  : false,
+                              onChanged: (_) =>
+                                  _toggleSelectedItem(categoryItem.id),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-
-                  
           );
         },
       ),
