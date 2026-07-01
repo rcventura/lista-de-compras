@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_event.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_state.dart';
+import 'package:lista_compras/features/categories_items/domain/entity/categories_item_entity.dart';
 
 class CategoriesItemsScreen extends StatefulWidget {
   final String categoryId;
@@ -14,8 +15,10 @@ class CategoriesItemsScreen extends StatefulWidget {
 
 class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
   List<String> itemsSelected = [];
-    final _searchController = TextEditingController();
-var _clearButtonVisible = false;
+  List<CategoriesItemEntity> searchItemList = [];
+
+  final _searchController = TextEditingController();
+  var _clearButtonVisible = false;
 
   @override
   void initState() {
@@ -24,14 +27,28 @@ var _clearButtonVisible = false;
       CategoriesItemsFetchRequest(categoryId: widget.categoryId),
     );
   }
-    void _clearTextField() {
+
+  void _clearTextField() {
     _searchController.clear();
     setState(() {
       _clearButtonVisible = false;
     });
   }
 
-    Widget showClearButtom() {
+  void getFilteredItems(List<CategoriesItemEntity> categoriesItemsList) {
+    final searchText = _searchController.text.toLowerCase();
+    if (searchText.isEmpty) {
+      searchItemList = categoriesItemsList;
+    } else {
+      searchItemList = categoriesItemsList
+          .where((item) {
+            return item.name.toLowerCase().contains(searchText);
+          })
+          .toList();
+    }
+  }
+
+  Widget showClearButtom() {
     if (_clearButtonVisible) {
       return IconButton(
         onPressed: _clearTextField,
@@ -90,46 +107,65 @@ var _clearButtonVisible = false;
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16, 0.0),
                         child: TextField(
-                            controller: _searchController,
-                            maxLines: 1,
-                            onChanged: (value) {
-                              setState(() {
-                                _searchController.text.isEmpty
-                                    ? _clearButtonVisible = false
-                                    : _clearButtonVisible = true;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.zero,
-                              hintText: 'Pesquisar item',
-                              prefixIcon: const Icon(Icons.search),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                      
-                              ),
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                              suffixIcon: showClearButtom(),
+                          controller: _searchController,
+                          maxLines: 1,
+                          onChanged: (value) {
+                            setState(() {
+                              if (_searchController.text.isEmpty) {
+                                _clearButtonVisible = false;
+                              
+                              } else {
+                                _clearButtonVisible = true;
+                                  getFilteredItems(categoriesItemsList as List<CategoriesItemEntity>);
+                              }
+                            });
+                          },
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.zero,
+                            hintText: 'Pesquisar item',
+                            prefixIcon: const Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            suffixIcon: showClearButtom(),
                           ),
+                        ),
                       ),
 
                       Expanded(
-                        child: ListView.builder(
-                          itemCount: categoriesItemsList.length,
-                          itemBuilder: (context, index) {
-                            final categoryItem = categoriesItemsList[index];
+                        child: _searchController.text.isNotEmpty
+                            ? ListView.builder(
+                                itemCount: searchItemList.length,
+                                itemBuilder: (context, index) {
+                                  final categoryItem = searchItemList[index];
 
-                            return CheckboxListTile(
-                              title: Text(categoryItem.name),
-                              value: itemsSelected.contains(categoryItem.id)
-                                  ? true
-                                  : false,
-                              onChanged: (_) =>
-                                  _toggleSelectedItem(categoryItem.id),
-                            );
-                          },
-                        ),
+                                  return CheckboxListTile(
+                                    title: Text(categoryItem.name),
+                                    value: itemsSelected.contains(categoryItem.id)
+                                        ? true
+                                        : false,
+                                    onChanged: (_) =>
+                                        _toggleSelectedItem(categoryItem.id),
+                                  );
+                                },
+                              )
+                            : ListView.builder(
+                                itemCount: categoriesItemsList.length,
+                                itemBuilder: (context, index) {
+                                  final categoryItem = categoriesItemsList[index];
+
+                                  return CheckboxListTile(
+                                    title: Text(categoryItem.name),
+                                    value: itemsSelected.contains(categoryItem.id)
+                                        ? true
+                                        : false,
+                                    onChanged: (_) =>
+                                        _toggleSelectedItem(categoryItem.id),
+                                  );
+                                },
+                              ),
                       ),
                     ],
                   ),
