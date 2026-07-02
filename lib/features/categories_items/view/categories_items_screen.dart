@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lista_compras/components/SMButtom/SMButtom.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_event.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_state.dart';
@@ -35,16 +36,14 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     });
   }
 
-  void getFilteredItems(List<CategoriesItemEntity> categoriesItemsList) {
+  void _searchItem(List<CategoriesItemEntity> categoriesItemsList) {
     final searchText = _searchController.text.toLowerCase();
     if (searchText.isEmpty) {
       searchItemList = categoriesItemsList;
     } else {
-      searchItemList = categoriesItemsList
-          .where((item) {
-            return item.name.toLowerCase().contains(searchText);
-          })
-          .toList();
+      searchItemList = categoriesItemsList.where((item) {
+        return item.name.toLowerCase().contains(searchText);
+      }).toList();
     }
   }
 
@@ -103,6 +102,8 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                 : categoriesItemsList.isEmpty
                 ? const Center(child: Text('Nenhum item encontrado.'))
                 : Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16, 0.0),
@@ -113,10 +114,12 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                             setState(() {
                               if (_searchController.text.isEmpty) {
                                 _clearButtonVisible = false;
-                              
                               } else {
                                 _clearButtonVisible = true;
-                                  getFilteredItems(categoriesItemsList as List<CategoriesItemEntity>);
+                                _searchItem(
+                                  categoriesItemsList
+                                      as List<CategoriesItemEntity>,
+                                );
                               }
                             });
                           },
@@ -134,38 +137,84 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                         ),
                       ),
 
-                      Expanded(
-                        child: _searchController.text.isNotEmpty
-                            ? ListView.builder(
-                                itemCount: searchItemList.length,
-                                itemBuilder: (context, index) {
-                                  final categoryItem = searchItemList[index];
+                      searchItemList.isEmpty &&
+                              _searchController.text.isNotEmpty
+                          ? const Center(
+                              child: Text('Item pesquisado não encontrado.'),
+                            )
+                          : Expanded(
+                              child: _searchController.text.isNotEmpty
+                                  ? ListView.builder(
+                                      itemCount: searchItemList.length,
+                                      itemBuilder: (context, index) {
+                                        final categoryItem =
+                                            searchItemList[index];
+                                        return CheckboxListTile(
+                                          title: Text(categoryItem.name),
+                                          value:
+                                              itemsSelected.contains(
+                                                categoryItem.id,
+                                              )
+                                              ? true
+                                              : false,
+                                          onChanged: (_) => _toggleSelectedItem(
+                                            categoryItem.id,
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : ListView.builder(
+                                      itemCount: categoriesItemsList.length,
+                                      itemBuilder: (context, index) {
+                                        final categoryItem =
+                                            categoriesItemsList[index];
+                                        return CheckboxListTile(
+                                          title: Text(categoryItem.name),
+                                          value:
+                                              itemsSelected.contains(
+                                                categoryItem.id,
+                                              )
+                                              ? true
+                                              : false,
+                                          onChanged: (_) => _toggleSelectedItem(
+                                            categoryItem.id,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                            ),
 
-                                  return CheckboxListTile(
-                                    title: Text(categoryItem.name),
-                                    value: itemsSelected.contains(categoryItem.id)
-                                        ? true
-                                        : false,
-                                    onChanged: (_) =>
-                                        _toggleSelectedItem(categoryItem.id),
-                                  );
-                                },
-                              )
-                            : ListView.builder(
-                                itemCount: categoriesItemsList.length,
-                                itemBuilder: (context, index) {
-                                  final categoryItem = categoriesItemsList[index];
-
-                                  return CheckboxListTile(
-                                    title: Text(categoryItem.name),
-                                    value: itemsSelected.contains(categoryItem.id)
-                                        ? true
-                                        : false,
-                                    onChanged: (_) =>
-                                        _toggleSelectedItem(categoryItem.id),
-                                  );
-                                },
+                      SizedBox(
+                        width: double.infinity,
+                        height: 150,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            16.0,
+                            0.0,
+                            16.0,
+                            20.0,
+                          ),
+                          child: Column(
+                            spacing: 5,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Itens selecionados: ${itemsSelected.length}',
+                                textAlign: TextAlign.start,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
+                              SMButton(
+                                text: 'Adicionar',
+                                isDisabled: itemsSelected.isEmpty,
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),

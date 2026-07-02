@@ -19,3 +19,9 @@ class CategoriesItemsLoadingError extends CategoriesItemsState {
 
   CategoriesItemsLoadingError(this.message);
 }
+
+class CategoriesItemsAddSuccess extends CategoriesItemsState {
+  final String message;
+
+  CategoriesItemsAddSuccess(this.message);
+}
