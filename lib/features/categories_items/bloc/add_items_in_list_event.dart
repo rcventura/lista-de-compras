@@ -1,4 +1,6 @@
-class AddItemsInListEntity {
+abstract class AddItemsInListEvent {}
+
+class AddItemsInListRequested extends AddItemsInListEvent {
   final String listId;
   final String productId;
   final String name;
@@ -8,7 +10,7 @@ class AddItemsInListEntity {
   final int position;
   final double price;
 
-  AddItemsInListEntity({
+  AddItemsInListRequested({
     required this.listId,
     required this.productId,
     required this.name,

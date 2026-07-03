@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/components/SMButtom/SMButtom.dart';
+import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_bloc.dart';
+import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_event.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_event.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_state.dart';
@@ -65,6 +67,21 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
         itemsSelected.add(itemId);
       }
     });
+  }
+
+  Future<void> _addSelectedItems() async {
+  context.read<AddItemsInListBloc>().add(
+      AddItemsInListRequested(
+        listId: '',
+        productId: '',
+        name: '',
+        quantity: '',
+        unit: '',
+        checked: true,
+        position: 0,
+        price: 0.0,
+      ),
+    );
   }
 
   @override

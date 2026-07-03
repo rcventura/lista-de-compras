@@ -28,7 +28,6 @@ class DetailShoppinglistBloc
     emit(DetailSShoppingListItemLoading());
 
     try {
-
       final List<FetchDetailShoppingListEntity> items = await _fetchDetailShoppingListUsecase.fetchShoppingListDetail(event.shoppingListId);
       emit(DetailSShoppingListItemFetchSuccess(items));
     } catch (e) {

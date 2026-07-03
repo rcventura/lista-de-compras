@@ -12,7 +12,6 @@ class AddItemsInListRepository {
           .from('shopping_list_items')
           .insert([
             {
-              'id': item.id,
               'list_id': item.listId,
               'product_id': item.productId,
               'name': item.name,
