@@ -43,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _navigateToListDetails(
     String shoppingListId,
     String shoppingListName,
-    DateTime dataCriacao,
   ) async {
     await Navigator.pushNamed(
       context,
@@ -51,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
       arguments: ShoppingListDetailArgs(
         shoppingListId: shoppingListId,
         shoppingListName: shoppingListName,
-        dataCriacao: dataCriacao,
       ),
     );
   }
@@ -374,7 +372,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                               _navigateToListDetails(
                                                 listas[index].id,
                                                 listas[index].name,
-                                                listas[index].createdAt,
                                               );
                                             },
                                           );

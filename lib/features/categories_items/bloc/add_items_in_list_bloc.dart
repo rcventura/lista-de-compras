@@ -5,8 +5,6 @@ import 'package:lista_compras/features/categories_items/data/add_items_in_list_r
 import 'package:lista_compras/features/categories_items/domain/usecase/add_items_in_list_usecase.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
-import 'categories_items_event.dart';
-import 'categories_items_state.dart';
 
 class AddItemsInListBloc
     extends Bloc<AddItemsInListEvent, AddItemsInListState> {

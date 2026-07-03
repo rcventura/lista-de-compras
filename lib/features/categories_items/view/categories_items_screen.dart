@@ -69,17 +69,25 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     });
   }
 
-  Future<void> _addSelectedItems() async {
+  Future<void> _addSelectedItems(
+    String listId,
+    String productId,
+    String name,
+    String quantity,
+    String unit,
+    int position,
+    double price,
+  ) async {
   context.read<AddItemsInListBloc>().add(
       AddItemsInListRequested(
-        listId: '',
-        productId: '',
-        name: '',
-        quantity: '',
-        unit: '',
+        listId: listId,
+        productId: productId,
+        name: name,
+        quantity: quantity,
+        unit: unit,
         checked: true,
-        position: 0,
-        price: 0.0,
+        position: position,
+        price: price,
       ),
     );
   }
@@ -227,7 +235,9 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                               SMButton(
                                 text: 'Adicionar',
                                 isDisabled: itemsSelected.isEmpty,
-                                onPressed: () {},
+                                onPressed: () {
+                                  
+                                },
                               ),
                             ],
                           ),

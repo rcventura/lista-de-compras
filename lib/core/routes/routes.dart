@@ -16,12 +16,10 @@ import 'package:lista_compras/features/shopping/view/detail_shopping_list_screen
 class ShoppingListDetailArgs {
   final String shoppingListId;
   final String shoppingListName;
-  final DateTime dataCriacao;
 
   const ShoppingListDetailArgs({
     required this.shoppingListId,
     required this.shoppingListName,
-    required this.dataCriacao,
   });
 }
 
@@ -74,15 +72,12 @@ class Routes {
             create: (_) => DetailShoppinglistBloc()
               ..add(
                 DetailFetchShoppingListItemsRequested(
-                  arguments.shoppingListId,
-                  arguments.shoppingListName,
-                  arguments.dataCriacao,
+                  arguments.shoppingListId
                 ),
               ),
             child: DetailShoppingListScreen(
               shoppingListId: arguments.shoppingListId,
               shoppingListName: arguments.shoppingListName,
-              dataCriacao: arguments.dataCriacao,
             ),
           ),
         );

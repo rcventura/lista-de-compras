@@ -6,7 +6,12 @@ class CreateShoppingListLoading extends CreateShoppingListState {}
 
 class CreateShoppingListCreationSuccess extends CreateShoppingListState {
   final String shoppingListId;
-  CreateShoppingListCreationSuccess(this.shoppingListId);
+  final String shoppingListName;
+
+  CreateShoppingListCreationSuccess({
+    required this.shoppingListId,
+    required this.shoppingListName,
+  });
 }
 
 class CreateShoppingListCreationError extends CreateShoppingListState {

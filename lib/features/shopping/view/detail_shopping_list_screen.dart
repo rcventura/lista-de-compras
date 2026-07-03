@@ -14,12 +14,10 @@ class DetailShoppingListScreen extends StatefulWidget {
     super.key,
     required this.shoppingListId,
     required this.shoppingListName,
-    required this.dataCriacao,
   });
 
   final String shoppingListId;
   final String shoppingListName;
-  final DateTime dataCriacao;
 
   @override
   State<DetailShoppingListScreen> createState() =>
@@ -108,9 +106,16 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(widget.shoppingListName),
                                       Text(
-                                        DateFormat('dd/MM/yyyy').format(widget.dataCriacao),
+                                        widget.shoppingListName,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        DateFormat('dd/MM/yyyy').format(DateTime.now()),
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: Colors.grey,
