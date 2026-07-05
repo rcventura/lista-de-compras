@@ -3,7 +3,7 @@ class CreateShoppingListEntity {
   final String name;
   final String local;
   final String? supermarketName;
-  final DateTime createdAt;
+  final String createdAt;
 
   const CreateShoppingListEntity({
     required this.id,

@@ -27,3 +27,17 @@ class DetailDeleteShoppingListItemRequested extends DetailShoppinglistEvent {
 
   DetailDeleteShoppingListItemRequested(this.itemId);
 }
+
+class DetailSShoppingListSelected extends DetailShoppinglistEvent {
+  final String shoppingListId;
+  final String shoppingListName;
+  final String shoppingListCreatedAt;
+  final String? locate;
+
+  DetailSShoppingListSelected({
+    required this.shoppingListId,
+    required this.shoppingListName,
+    required this.shoppingListCreatedAt,
+    this.locate,
+  });
+}

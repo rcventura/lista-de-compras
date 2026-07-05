@@ -40,6 +40,8 @@ class CreateShoppinglistBloc
         CreateShoppingListCreationSuccess(
           shoppingListId: shoppingList.id,
           shoppingListName: shoppingList.name,
+          shoppingListCreatedAt: shoppingList.createdAt,
+          locate: shoppingList.local,
         ),
       );
     } catch (e) {

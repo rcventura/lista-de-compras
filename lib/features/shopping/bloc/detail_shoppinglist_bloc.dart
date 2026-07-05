@@ -16,20 +16,26 @@ class DetailShoppinglistBloc
     _detailShoppingListRepository = DetailShoppingListRepository(Supabase.instance.client);
     _fetchDetailShoppingListUsecase = FetchDetailShoppingListUsecase(_detailShoppingListRepository);
 
-    on<DetailFetchShoppingListItemsRequested>(_onFetchShoppingListItemsRequested);
+    on<DetailSShoppingListSelected>(_onFetchShoppingListItemsRequested);
     on<DetailUpdateShoppingListItemRequested>(_onUpdateShoppingListItemRequested);
     on<DetailDeleteShoppingListItemRequested>(_onDeleteShoppingListItemRequested);
   }
 
   Future<void> _onFetchShoppingListItemsRequested(
-    DetailFetchShoppingListItemsRequested event,
+    DetailSShoppingListSelected event,
     Emitter<DetailShoppinglistState> emit,
   ) async {
     emit(DetailSShoppingListItemLoading());
 
     try {
       final List<FetchDetailShoppingListEntity> items = await _fetchDetailShoppingListUsecase.fetchShoppingListDetail(event.shoppingListId);
-      emit(DetailSShoppingListItemFetchSuccess(items));
+      emit(DetailSShoppingListItemFetchSuccess(
+        event.shoppingListId,
+        event.shoppingListName,
+        event.shoppingListCreatedAt,
+        event.locate ?? '',
+        items,
+      ));
     } catch (e) {
       emit(DetailSShoppingListItemError('Erro ao carregar itens. Tente novamente.'));
     }
