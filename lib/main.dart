@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:lista_compras/core/config/supabase_config.dart';
 import 'package:lista_compras/core/routes/routes.dart';
+import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
 import 'package:provider/provider.dart';
 import 'features/auth/bloc/auth_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,7 +27,10 @@ class ListaComprasApp extends StatelessWidget {
         : Routes.home;
 
     return MultiProvider(
-      providers: [BlocProvider(create: (_) => AuthBloc())],
+      providers: [
+        BlocProvider(create: (_) => AuthBloc()),
+        BlocProvider(create: (_) => CurrentShoppingListCubit()),
+        ],
       child: MaterialApp(
         locale: const Locale('pt', 'BR'),
         supportedLocales: const [

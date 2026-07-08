@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/components/SMButtom/SMButtom.dart';
+import 'package:lista_compras/core/helpers/enum.dart';
 import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_event.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_event.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_state.dart';
 import 'package:lista_compras/features/categories_items/domain/entity/categories_item_entity.dart';
+import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
+import 'package:lista_compras/features/shopping/cubit/current_shopping_list_state.dart';
 
 class CategoriesItemsScreen extends StatefulWidget {
   final String categoryId;
@@ -78,7 +81,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     int position,
     double price,
   ) async {
-  context.read<AddItemsInListBloc>().add(
+    context.read<AddItemsInListBloc>().add(
       AddItemsInListRequested(
         listId: listId,
         productId: productId,
@@ -106,10 +109,19 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
       },
       child: BlocBuilder<CategoriesItemsBloc, CategoriesItemsState>(
         builder: (context, state) {
+          final currentShoppingListState = context
+              .watch<CurrentShoppingListCubit>()
+              .state;
+          final currentShoppingList =
+              currentShoppingListState is CurrentShoppingListLoaded
+              ? currentShoppingListState.currentShoppingList
+              : null;
           final isLoading = state is CategoriesItemsLoading;
           final categoriesItemsList = state is CategoriesItemsLoadingSuccess
               ? state.categoriesItemsList
               : [];
+
+          final shoppingListLocate = currentShoppingList?.local ?? '';
           return Scaffold(
             appBar: AppBar(
               title: Text('Itens da Categorias'),
@@ -193,56 +205,67 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                                       itemBuilder: (context, index) {
                                         final categoryItem =
                                             categoriesItemsList[index];
-                                        return CheckboxListTile(
-                                          title: Text(categoryItem.name),
-                                          value:
-                                              itemsSelected.contains(
-                                                categoryItem.id,
+                                        return shoppingListLocate ==
+                                                ShoppingListLocateEnum.casa.value
+                                            ? CheckboxListTile(
+                                                title: Text(categoryItem.name),
+                                                value:
+                                                    itemsSelected.contains(
+                                                      categoryItem.id,
+                                                    )
+                                                    ? true
+                                                    : false,
+                                                onChanged: (_) =>
+                                                    _toggleSelectedItem(
+                                                      categoryItem.id,
+                                                    ),
                                               )
-                                              ? true
-                                              : false,
-                                          onChanged: (_) => _toggleSelectedItem(
-                                            categoryItem.id,
-                                          ),
-                                        );
+                                            : ListTile(
+                                                title: Text(categoryItem.name),
+                                                trailing: Icon(
+                                                  Icons.chevron_right,
+                                                  size: 20,
+                                                  color: Colors.grey[600],
+                                                ),
+                                                onTap: () => {},
+                                              );
                                       },
                                     ),
                             ),
-
-                      SizedBox(
-                        width: double.infinity,
-                        height: 150,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            16.0,
-                            0.0,
-                            16.0,
-                            20.0,
-                          ),
-                          child: Column(
-                            spacing: 5,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Itens selecionados: ${itemsSelected.length}',
-                                textAlign: TextAlign.start,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
+                      if (shoppingListLocate ==
+                          ShoppingListLocateEnum.casa.value)
+                        SizedBox(
+                          width: double.infinity,
+                          height: 150,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              16.0,
+                              0.0,
+                              16.0,
+                              20.0,
+                            ),
+                            child: Column(
+                              spacing: 5,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Itens selecionados: ${itemsSelected.length}',
+                                  textAlign: TextAlign.start,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              SMButton(
-                                text: 'Adicionar',
-                                isDisabled: itemsSelected.isEmpty,
-                                onPressed: () {
-                                  
-                                },
-                              ),
-                            ],
+                                SMButton(
+                                  text: 'Adicionar',
+                                  isDisabled: itemsSelected.isEmpty,
+                                  onPressed: () {},
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
           );

@@ -7,17 +7,9 @@ class DetailSShoppingListItemInitial extends DetailShoppinglistState {}
 class DetailSShoppingListItemLoading extends DetailShoppinglistState {}
 
 class DetailSShoppingListItemFetchSuccess extends DetailShoppinglistState {
-  final String shoppingListId;
-  final String shoppingListName;
-  final String shoppingListCreatedAt;
-  final String locate;
   final List<FetchDetailShoppingListEntity> items;
 
   DetailSShoppingListItemFetchSuccess(
-    this.shoppingListId,
-    this.shoppingListName,
-    this.shoppingListCreatedAt,
-    this.locate,
     this.items,
   );
 }

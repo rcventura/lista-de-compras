@@ -71,9 +71,6 @@ class _CreateShoppingListScreenState extends State<CreateShoppingListScreen> {
                 Routes.shoppingListDetail,
                 arguments: ShoppingListDetailArgs(
                   shoppingListId: state.shoppingListId,
-                  shoppingListName: state.shoppingListName,
-                  shoppingListCreatedAt: state.shoppingListCreatedAt,
-                  locate: state.locate,
                 ),
               );
             }

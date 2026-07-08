@@ -16,13 +16,13 @@ class DetailShoppinglistBloc
     _detailShoppingListRepository = DetailShoppingListRepository(Supabase.instance.client);
     _fetchDetailShoppingListUsecase = FetchDetailShoppingListUsecase(_detailShoppingListRepository);
 
-    on<DetailSShoppingListSelected>(_onFetchShoppingListItemsRequested);
+    on<DetailFetchShoppingListItemsRequested>(_onFetchShoppingListItemsRequested);
     on<DetailUpdateShoppingListItemRequested>(_onUpdateShoppingListItemRequested);
     on<DetailDeleteShoppingListItemRequested>(_onDeleteShoppingListItemRequested);
   }
 
   Future<void> _onFetchShoppingListItemsRequested(
-    DetailSShoppingListSelected event,
+    DetailFetchShoppingListItemsRequested event,
     Emitter<DetailShoppinglistState> emit,
   ) async {
     emit(DetailSShoppingListItemLoading());
@@ -30,10 +30,6 @@ class DetailShoppinglistBloc
     try {
       final List<FetchDetailShoppingListEntity> items = await _fetchDetailShoppingListUsecase.fetchShoppingListDetail(event.shoppingListId);
       emit(DetailSShoppingListItemFetchSuccess(
-        event.shoppingListId,
-        event.shoppingListName,
-        event.shoppingListCreatedAt,
-        event.locate ?? '',
         items,
       ));
     } catch (e) {

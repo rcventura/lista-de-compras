@@ -7,11 +7,11 @@ import 'package:lista_compras/features/categories/bloc/categories_event.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
+import 'package:lista_compras/features/shopping/cubit/current_shopping_list_state.dart';
 
 class DetailShoppingListScreen extends StatefulWidget {
-  const DetailShoppingListScreen({
-    super.key,
-  });
+  const DetailShoppingListScreen({super.key});
 
   @override
   State<DetailShoppingListScreen> createState() =>
@@ -45,15 +45,25 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
 
       child: BlocBuilder<DetailShoppinglistBloc, DetailShoppinglistState>(
         builder: (context, state) {
+          final currentShoppingListState = context
+              .watch<CurrentShoppingListCubit>()
+              .state;
+          final currentShoppingList =
+              currentShoppingListState is CurrentShoppingListLoaded
+              ? currentShoppingListState.currentShoppingList
+              : null;
+
           final isLoading = state is DetailSShoppingListItemLoading;
           final shoppingList = state is DetailSShoppingListItemFetchSuccess
               ? state
               : null;
-          
-         final shoppingListName = shoppingList?.shoppingListName ?? '';
-         final shoppingListCreatedAt = shoppingList?.shoppingListCreatedAt ?? DateTime.now().toIso8601String();
-         final shoppingListItems = shoppingList?.items ?? [];
-         final shoppingListLocate = shoppingList?.locate ?? '';
+
+          final shoppingListName = currentShoppingList?.name ?? '';
+          final shoppingListCreatedAt =
+              currentShoppingList?.createdAt ??
+              DateTime.now().toIso8601String();
+          final shoppingListItems = shoppingList?.items ?? [];
+          final shoppingListLocate = currentShoppingList?.local ?? '';
 
           // Lógica para construir a UI com base no estado atual
           return Scaffold(
@@ -126,9 +136,11 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                           ),
 
                                           Text(
-                                            DateFormat(
-                                              'dd/MM/yyyy',
-                                            ).format(DateTime.parse(shoppingListCreatedAt)),
+                                            DateFormat('dd/MM/yyyy').format(
+                                              DateTime.parse(
+                                                shoppingListCreatedAt,
+                                              ),
+                                            ),
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: Colors.grey,

@@ -15,15 +15,9 @@ import 'package:lista_compras/features/shopping/view/detail_shopping_list_screen
 
 class ShoppingListDetailArgs {
   final String shoppingListId;
-  final String shoppingListName;
-  final String shoppingListCreatedAt;
-  final String locate;
 
   const ShoppingListDetailArgs({
     required this.shoppingListId,
-    required this.shoppingListName,
-    required this.shoppingListCreatedAt,
-    required this.locate,
   });
 }
 
@@ -75,11 +69,8 @@ class Routes {
           builder: (_) => BlocProvider(
             create: (_) => DetailShoppinglistBloc()
               ..add(
-                DetailSShoppingListSelected(
-                  shoppingListId: arguments.shoppingListId,
-                  shoppingListName: arguments.shoppingListName,
-                  shoppingListCreatedAt: arguments.shoppingListCreatedAt,
-                  locate: arguments.locate,
+                DetailFetchShoppingListItemsRequested(
+                  arguments.shoppingListId,
                 ),
               ),
             child: DetailShoppingListScreen(),
