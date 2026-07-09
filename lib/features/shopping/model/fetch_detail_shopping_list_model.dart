@@ -12,7 +12,6 @@ class FetchDetailShoppingListModel {
   final DateTime? createdAt;
   final double price;
   
-
   FetchDetailShoppingListModel({
     required this.id,
     required this.shoppingListId,
@@ -24,6 +23,7 @@ class FetchDetailShoppingListModel {
     required this.checked,
     this.createdAt,  
     required this.price,
+
   });
 
   factory FetchDetailShoppingListModel.fromMap(Map<String, dynamic> map) {
@@ -37,7 +37,7 @@ class FetchDetailShoppingListModel {
       checked: map['checked'] as bool? ?? false,
       order: map['position'] as int?,
       createdAt: map['created_at'] != null ? DateTime.parse(map['created_at']) : null,
-      price: map['price'] != null ? (map['price'] as num).toDouble() : 0.0,
+      price: map['price'] != null ? (map['price'] as num).toDouble() : 0.0, 
     );
   }
 

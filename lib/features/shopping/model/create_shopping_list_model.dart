@@ -5,7 +5,7 @@ class CreateShoppingListModel {
   final String name;
   final String local;
   final String? supermarketName;
-  final DateTime createdAt;
+  final String createdAt;
 
   CreateShoppingListModel({
     required this.id,
@@ -21,7 +21,7 @@ class CreateShoppingListModel {
       name: map['name'] as String,
       local: map['local'] as String? ?? '',
       supermarketName: map['supermarket_name'] as String?,
-      createdAt: DateTime.parse(map['created_at'] as String),
+      createdAt: map['created_at'] as String,
     );
   }
 

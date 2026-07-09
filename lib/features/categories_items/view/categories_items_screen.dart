@@ -1,0 +1,276 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lista_compras/components/SMButtom/SMButtom.dart';
+import 'package:lista_compras/core/helpers/enum.dart';
+import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_bloc.dart';
+import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_event.dart';
+import 'package:lista_compras/features/categories_items/bloc/categories_items_bloc.dart';
+import 'package:lista_compras/features/categories_items/bloc/categories_items_event.dart';
+import 'package:lista_compras/features/categories_items/bloc/categories_items_state.dart';
+import 'package:lista_compras/features/categories_items/domain/entity/categories_item_entity.dart';
+import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
+import 'package:lista_compras/features/shopping/cubit/current_shopping_list_state.dart';
+
+class CategoriesItemsScreen extends StatefulWidget {
+  final String categoryId;
+  const CategoriesItemsScreen({super.key, required this.categoryId});
+
+  @override
+  State<CategoriesItemsScreen> createState() => _CategoriesItemsScreenState();
+}
+
+class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
+  List<String> itemsSelected = [];
+  List<CategoriesItemEntity> searchItemList = [];
+
+  final _searchController = TextEditingController();
+  var _clearButtonVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<CategoriesItemsBloc>().add(
+      CategoriesItemsFetchRequest(categoryId: widget.categoryId),
+    );
+  }
+
+  void _clearTextField() {
+    _searchController.clear();
+    setState(() {
+      _clearButtonVisible = false;
+    });
+  }
+
+  void _searchItem(List<CategoriesItemEntity> categoriesItemsList) {
+    final searchText = _searchController.text.toLowerCase();
+    if (searchText.isEmpty) {
+      searchItemList = categoriesItemsList;
+    } else {
+      searchItemList = categoriesItemsList.where((item) {
+        return item.name.toLowerCase().contains(searchText);
+      }).toList();
+    }
+  }
+
+  Widget showClearButtom() {
+    if (_clearButtonVisible) {
+      return IconButton(
+        onPressed: _clearTextField,
+        icon: Icon(Icons.close, size: 20, color: Colors.grey[600]),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
+  void _toggleSelectedItem(String itemId) {
+    setState(() {
+      if (itemsSelected.contains(itemId)) {
+        itemsSelected.remove(itemId);
+      } else {
+        itemsSelected.add(itemId);
+      }
+    });
+  }
+
+  Future<void> _addSelectedItems(
+    String listId,
+    String productId,
+    String name,
+    String quantity,
+    String unit,
+    int position,
+    double price,
+  ) async {
+    context.read<AddItemsInListBloc>().add(
+      AddItemsInListRequested(
+        listId: listId,
+        productId: productId,
+        name: name,
+        quantity: quantity,
+        unit: unit,
+        checked: true,
+        position: position,
+        price: price,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<CategoriesItemsBloc, CategoriesItemsState>(
+      listener: (context, state) {
+        if (!mounted) return;
+
+        if (state is CategoriesItemsLoadingError) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      child: BlocBuilder<CategoriesItemsBloc, CategoriesItemsState>(
+        builder: (context, state) {
+          final currentShoppingListState = context
+              .watch<CurrentShoppingListCubit>()
+              .state;
+          final currentShoppingList =
+              currentShoppingListState is CurrentShoppingListLoaded
+              ? currentShoppingListState.currentShoppingList
+              : null;
+          final isLoading = state is CategoriesItemsLoading;
+          final categoriesItemsList = state is CategoriesItemsLoadingSuccess
+              ? state.categoriesItemsList
+              : [];
+
+          final shoppingListLocate = currentShoppingList?.local ?? '';
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Itens da Categorias'),
+              centerTitle: true,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black54),
+                onPressed: () => {
+                  itemsSelected.clear(),
+                  Navigator.pop(context),
+                },
+              ),
+            ),
+            body: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : categoriesItemsList.isEmpty
+                ? const Center(child: Text('Nenhum item encontrado.'))
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16, 0.0),
+                        child: TextField(
+                          controller: _searchController,
+                          maxLines: 1,
+                          onChanged: (value) {
+                            setState(() {
+                              if (_searchController.text.isEmpty) {
+                                _clearButtonVisible = false;
+                              } else {
+                                _clearButtonVisible = true;
+                                _searchItem(
+                                  categoriesItemsList
+                                      as List<CategoriesItemEntity>,
+                                );
+                              }
+                            });
+                          },
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.zero,
+                            hintText: 'Pesquisar item',
+                            prefixIcon: const Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            suffixIcon: showClearButtom(),
+                          ),
+                        ),
+                      ),
+
+                      searchItemList.isEmpty &&
+                              _searchController.text.isNotEmpty
+                          ? const Center(
+                              child: Text('Item pesquisado não encontrado.'),
+                            )
+                          : Expanded(
+                              child: _searchController.text.isNotEmpty
+                                  ? ListView.builder(
+                                      itemCount: searchItemList.length,
+                                      itemBuilder: (context, index) {
+                                        final categoryItem =
+                                            searchItemList[index];
+                                        return CheckboxListTile(
+                                          title: Text(categoryItem.name),
+                                          value:
+                                              itemsSelected.contains(
+                                                categoryItem.id,
+                                              )
+                                              ? true
+                                              : false,
+                                          onChanged: (_) => _toggleSelectedItem(
+                                            categoryItem.id,
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : ListView.builder(
+                                      itemCount: categoriesItemsList.length,
+                                      itemBuilder: (context, index) {
+                                        final categoryItem =
+                                            categoriesItemsList[index];
+                                        return shoppingListLocate ==
+                                                ShoppingListLocateEnum.casa.value
+                                            ? CheckboxListTile(
+                                                title: Text(categoryItem.name),
+                                                value:
+                                                    itemsSelected.contains(
+                                                      categoryItem.id,
+                                                    )
+                                                    ? true
+                                                    : false,
+                                                onChanged: (_) =>
+                                                    _toggleSelectedItem(
+                                                      categoryItem.id,
+                                                    ),
+                                              )
+                                            : ListTile(
+                                                title: Text(categoryItem.name),
+                                                trailing: Icon(
+                                                  Icons.chevron_right,
+                                                  size: 20,
+                                                  color: Colors.grey[600],
+                                                ),
+                                                onTap: () => {},
+                                              );
+                                      },
+                                    ),
+                            ),
+                      if (shoppingListLocate ==
+                          ShoppingListLocateEnum.casa.value)
+                        SizedBox(
+                          width: double.infinity,
+                          height: 150,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              16.0,
+                              0.0,
+                              16.0,
+                              20.0,
+                            ),
+                            child: Column(
+                              spacing: 5,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Itens selecionados: ${itemsSelected.length}',
+                                  textAlign: TextAlign.start,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SMButton(
+                                  text: 'Adicionar',
+                                  isDisabled: itemsSelected.isEmpty,
+                                  onPressed: () {},
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+          );
+        },
+      ),
+    );
+  }
+}

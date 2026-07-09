@@ -29,14 +29,21 @@ class CreateShoppinglistBloc
     emit(CreateShoppingListLoading());
 
     try {
-      await _createShoppingListUsecase.createShoppingList(
+      final shoppingList = await _createShoppingListUsecase.createShoppingList(
         name: event.name,
         local: event.local,
         userId: event.userId,
         supermarketName: event.supermarketName,
       );
 
-      emit(CreateShoppingListCreationSuccess(''));
+      emit(
+        CreateShoppingListCreationSuccess(
+          shoppingListId: shoppingList.id,
+          shoppingListName: shoppingList.name,
+          shoppingListCreatedAt: shoppingList.createdAt,
+          locate: shoppingList.local,
+        ),
+      );
     } catch (e) {
       emit(CreateShoppingListCreationError('Erro ao criar lista. Tente novamente. $e'));
     }

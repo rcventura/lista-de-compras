@@ -8,6 +8,7 @@ import 'package:lista_compras/features/auth/bloc/auth_state.dart';
 import 'package:lista_compras/features/home/bloc/home_bloc.dart';
 import 'package:lista_compras/features/home/bloc/home_event.dart';
 import 'package:lista_compras/features/home/bloc/home_state.dart';
+import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -42,16 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _navigateToListDetails(
     String shoppingListId,
-    String shoppingListName,
-    DateTime dataCriacao,
   ) async {
     await Navigator.pushNamed(
       context,
       Routes.shoppingListDetail,
       arguments: ShoppingListDetailArgs(
         shoppingListId: shoppingListId,
-        shoppingListName: shoppingListName,
-        dataCriacao: dataCriacao,
       ),
     );
   }
@@ -80,7 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
         if (!mounted) return;
 
         if (state is AuthInitial) {
-          Navigator.of(context).pushNamedAndRemoveUntil(Routes.login, (route) => false);
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil(Routes.login, (route) => false);
         }
       },
       child: BlocBuilder<HomeBloc, HomeState>(
@@ -371,10 +370,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Icons.chevron_right,
                                             ),
                                             onTap: () {
+                                              context
+                                                  .read<
+                                                    CurrentShoppingListCubit
+                                                  >()
+                                                  .setCurrentList(
+                                                    id: listas[index].id,
+                                                    name: listas[index].name,
+                                                    local: listas[index].local,
+                                                    createdAt: listas[index]
+                                                        .createdAt
+                                                        .toIso8601String(),
+                                                  );
+
                                               _navigateToListDetails(
                                                 listas[index].id,
-                                                listas[index].name,
-                                                listas[index].createdAt,
                                               );
                                             },
                                           );

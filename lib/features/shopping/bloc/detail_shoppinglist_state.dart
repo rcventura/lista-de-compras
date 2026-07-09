@@ -9,7 +9,9 @@ class DetailSShoppingListItemLoading extends DetailShoppinglistState {}
 class DetailSShoppingListItemFetchSuccess extends DetailShoppinglistState {
   final List<FetchDetailShoppingListEntity> items;
 
-  DetailSShoppingListItemFetchSuccess(this.items);
+  DetailSShoppingListItemFetchSuccess(
+    this.items,
+  );
 }
 
 class DetailSShoppingListItemAddSuccess extends DetailShoppinglistState {}
