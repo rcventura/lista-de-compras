@@ -49,7 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           listener: (context, state) {
             if (state is RegisterSuccess) {
               Navigator.pop(context);
-              ToastAlert.show(context, 'Conta criada com sucesso!');
+              ToastAlert.show(context, Text('Conta criada com sucesso!'));
             }
 
             if (state is AuthError) {
