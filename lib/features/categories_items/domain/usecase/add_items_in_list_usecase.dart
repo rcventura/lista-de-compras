@@ -10,7 +10,7 @@ class AddItemsItemsUsecase {
         String listId,
         String productId,
         String name,
-        String quantity,
+        int quantity,
         String unit,
         bool checked,
         int position,

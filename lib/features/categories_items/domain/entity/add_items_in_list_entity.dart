@@ -2,7 +2,7 @@ class AddItemsInListEntity {
   final String listId;
   final String productId;
   final String name;
-  final String quantity;
+  final int quantity;
   final String unit;
   final bool checked;
   final int position;
