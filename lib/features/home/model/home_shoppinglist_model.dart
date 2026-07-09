@@ -18,7 +18,7 @@ class HomeShoppinglistModel {
       id: map['id'] as String,
       name: map['name'] as String,
       local: map['local'] as String? ?? '',
-      createdAt: DateTime.parse(map['created_at'] as String),
+      createdAt: DateTime.parse(map['created_at'] as String).toUtc().subtract(const Duration(hours: 3)),
     );
   }
 

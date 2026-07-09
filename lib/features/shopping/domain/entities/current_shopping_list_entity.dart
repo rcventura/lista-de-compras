@@ -1,15 +1,13 @@
-class CreateShoppingListEntity {
+class CurrentShoppingListEntity {
   final String id;
   final String name;
   final String local;
-  final String? supermarketName;
   final String createdAt;
 
-  const CreateShoppingListEntity({
+  const CurrentShoppingListEntity({
     required this.id,
     required this.name,
     required this.local,
-    this.supermarketName,
     required this.createdAt,
   });
 }

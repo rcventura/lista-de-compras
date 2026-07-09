@@ -71,8 +71,6 @@ class _CreateShoppingListScreenState extends State<CreateShoppingListScreen> {
                 Routes.shoppingListDetail,
                 arguments: ShoppingListDetailArgs(
                   shoppingListId: state.shoppingListId,
-                  shoppingListName: _nameTextFieldController.text.trim(),
-                  dataCriacao: DateTime.now(),
                 ),
               );
             }

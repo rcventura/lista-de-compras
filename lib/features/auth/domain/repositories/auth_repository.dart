@@ -27,7 +27,7 @@ class AuthRepository {
 
   // LOGOUT
   Future<void> logoutAccount() async {
-    await client.auth.signOut();
+    client.auth.signOut();
   }
 
   // CREATE ACCOUNT
