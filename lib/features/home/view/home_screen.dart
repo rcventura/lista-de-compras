@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:lista_compras/components/BottomSheet/OptionsButtomSheet.dart';
 import 'package:lista_compras/components/BottomSheet/Person/personButtomSheet.dart';
 import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/auth/bloc/auth_bloc.dart';
@@ -41,15 +42,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _navigateToListDetails(
-    String shoppingListId,
-  ) async {
+  Future<void> _navigateToListDetails(String shoppingListId) async {
     await Navigator.pushNamed(
       context,
       Routes.shoppingListDetail,
-      arguments: ShoppingListDetailArgs(
-        shoppingListId: shoppingListId,
-      ),
+      arguments: ShoppingListDetailArgs(shoppingListId: shoppingListId),
     );
   }
 
@@ -350,12 +347,53 @@ class _HomeScreenState extends State<HomeScreen> {
                                         itemCount: listas.length,
                                         itemBuilder: (context, index) {
                                           return ListTile(
-                                            title: Text(
-                                              listas[index].name,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500,
-                                              ),
+                                            title: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    listas[index].name,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Container(
+                                                  width: 80,
+                                                  height: 30,
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.green[50],
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    '${listas[index].itemsCount} ${listas[index].itemsCount == 1 ? 'Item' : 'Itens'}',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                            56,
+                                                            142,
+                                                            60,
+                                                            1,
+                                                          ),
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                             subtitle: Text(
                                               DateFormat(
@@ -387,6 +425,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 listas[index].id,
                                               );
                                             },
+                                            onLongPress: () =>
+                                                OptionsButtomSheet.show(context),
                                           );
                                         },
                                       ),
