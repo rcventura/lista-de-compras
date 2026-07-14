@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lista_compras/components/BottomSheet/OptionsButtomSheet.dart';
-import 'package:lista_compras/components/BottomSheet/Person/personButtomSheet.dart';
+import 'package:lista_compras/components/BottomSheet/PersonButtomSheet.dart';
 import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/auth/bloc/auth_bloc.dart';
 import 'package:lista_compras/features/auth/bloc/auth_state.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lista_compras/components/BottomSheet/Person/personButtomSheet.dart';
+import 'package:lista_compras/components/BottomSheet/personButtomSheet.dart';
 import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_event.dart';

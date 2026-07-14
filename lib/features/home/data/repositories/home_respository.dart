@@ -70,4 +70,24 @@ class HomeRespository {
       return HomeShoppinglistModel.fromMap(map).toEntity();
     }).toList();
   }
+
+  Future<String> _deleteShoppingList(String listId) async {
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('Usuario nao autenticado.');
+    }
+
+try {
+    final response = await client
+        .from('shopping_lists')
+        .delete()
+        .eq('list_id', listId);
+      return 'Lista excluida com sucesso!';
+
+  } catch (e) {
+    throw Exception('Erro ao excluir lista: $e')
+  }
+
+
+
 }

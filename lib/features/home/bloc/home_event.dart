@@ -10,3 +10,5 @@ class HomeShoppingListDetailedRequested extends HomeEvent {
 class HomeLogoutRequest extends HomeEvent {}
 
 class HomeRefreshShoppingListsRequest extends HomeEvent {}
+
+class HomeDeleteShoppingList extends HomeEvent {}
