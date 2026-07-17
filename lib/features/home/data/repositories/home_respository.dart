@@ -43,6 +43,16 @@ class HomeRespository {
     return _mapShoppingListsWithItemsCount(response as List);
   }
 
+  // DELETE LIST
+  Future<List<HomeEntity>> deleteShoppingList(String listId) async {
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('Usuario nao autenticado.');
+    }
+    final response = await client.from('shopping_lists').delete().eq('id', listId);
+    return _mapShoppingListsWithItemsCount(response as List);
+  }
+
   Future<List<HomeEntity>> _mapShoppingListsWithItemsCount(
     List<dynamic> shoppingLists,
   ) async {
@@ -70,24 +80,4 @@ class HomeRespository {
       return HomeShoppinglistModel.fromMap(map).toEntity();
     }).toList();
   }
-
-  Future<String> _deleteShoppingList(String listId) async {
-    final userId = client.auth.currentUser?.id;
-    if (userId == null) {
-      throw Exception('Usuario nao autenticado.');
-    }
-
-try {
-    final response = await client
-        .from('shopping_lists')
-        .delete()
-        .eq('list_id', listId);
-      return 'Lista excluida com sucesso!';
-
-  } catch (e) {
-    throw Exception('Erro ao excluir lista: $e')
-  }
-
-
-
 }

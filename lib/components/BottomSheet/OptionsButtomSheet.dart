@@ -1,29 +1,26 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../features/auth/bloc/auth_bloc.dart';
-import '../../features/auth/bloc/auth_event.dart';
 
 class OptionsButtomSheet extends StatelessWidget {
-  const OptionsButtomSheet({super.key});
+  final VoidCallback? onShare;
+  final VoidCallback? onDelete;
 
-  static void show(BuildContext context) {
+  const OptionsButtomSheet({super.key, this.onShare, this.onDelete});
+
+  static void show(
+    BuildContext context, {
+    VoidCallback? onShare,
+    VoidCallback? onDelete,
+  }) {
     showModalBottomSheet(
       context: context,
-      builder: (_) => const OptionsButtomSheet(),
+      builder: (_) => OptionsButtomSheet(onShare: onShare, onDelete: onDelete),
     );
-  }
-
-  void _logout(BuildContext context) {
-    context.read<AuthBloc>().add(LogoutRequested());
-    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       width: double.infinity,
       height: MediaQuery.sizeOf(context).height * 0.22,
@@ -50,7 +47,10 @@ class OptionsButtomSheet extends StatelessWidget {
                 children: [
                   Icon(Icons.share, size: 16),
                   TextButton(
-                    onPressed: () => _logout(context),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      onShare?.call();
+                    },
                     child: const Text(
                       'Compartilhar',
                       textAlign: TextAlign.center,
@@ -64,7 +64,10 @@ class OptionsButtomSheet extends StatelessWidget {
                 children: [
                   Icon(Icons.delete, size: 16, color: Colors.red),
                   TextButton(
-                    onPressed: () => _logout(context),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      onDelete?.call();
+                    },
                     child: const Text(
                       'Excluir',
                       textAlign: TextAlign.center,

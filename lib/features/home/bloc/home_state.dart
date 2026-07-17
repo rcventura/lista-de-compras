@@ -16,7 +16,8 @@ class HomeShoppingListFetchError extends HomeState {
   HomeShoppingListFetchError(this.message);
 }
 
-class HomeDeleteShoppingList extends HomeState { 
+class DeleteShoppingListSuccess extends HomeState {
   final String message;
-  HomeDeleteShoppingList(this.message);
+  final List<HomeEntity> shoppingLists;
+  DeleteShoppingListSuccess(this.message, this.shoppingLists);
 }

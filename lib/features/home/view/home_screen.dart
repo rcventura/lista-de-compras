@@ -9,6 +9,7 @@ import 'package:lista_compras/features/auth/bloc/auth_state.dart';
 import 'package:lista_compras/features/home/bloc/home_bloc.dart';
 import 'package:lista_compras/features/home/bloc/home_event.dart';
 import 'package:lista_compras/features/home/bloc/home_state.dart';
+import 'package:lista_compras/features/home/domain/entities/home_entity.dart';
 import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,7 +20,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final HomeBloc _homeBloc = HomeBloc()..add(HomeFetchShoppingListsRequest());
+  final HomeBloc _homeBloc = HomeBloc();
   final _searchController = TextEditingController();
   var _clearButtonVisible = false;
 
@@ -67,24 +68,40 @@ class _HomeScreenState extends State<HomeScreen> {
     return const SizedBox.shrink();
   }
 
+  void _deleteList(String listID) {
+    if (mounted) {
+      _homeBloc.add(HomeDeleteShoppingList(listID));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (!mounted) return;
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (!mounted) return;
 
-        if (state is AuthInitial) {
-          Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil(Routes.login, (route) => false);
-        }
-      },
+            if (state is AuthInitial) {
+              Navigator.of(
+                context,
+              ).pushNamedAndRemoveUntil(Routes.login, (route) => false);
+            }
+          },
+        ),
+      ],
+
       child: BlocBuilder<HomeBloc, HomeState>(
-        bloc: _homeBloc,
+        bloc: _homeBloc..add(HomeFetchShoppingListsRequest()),
         builder: (context, state) {
-          final listas = state is HomeShoppingListFetchSuccess
-              ? state.shoppingLists
-              : [];
+          final List<HomeEntity> listas;
+          if (state is DeleteShoppingListSuccess) {
+            listas = state.shoppingLists;
+          } else {
+            listas = state is HomeShoppingListFetchSuccess
+                ? state.shoppingLists
+                : [];
+          }
           final isLoading = state is HomeShoppingListLoading;
 
           return Scaffold(
@@ -426,7 +443,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                               );
                                             },
                                             onLongPress: () =>
-                                                OptionsButtomSheet.show(context),
+                                                OptionsButtomSheet.show(
+                                                  context,
+                                                  onDelete: () => _deleteList(
+                                                    listas[index].id,
+                                                  ),
+                                                ),
                                           );
                                         },
                                       ),
