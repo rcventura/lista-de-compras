@@ -89,6 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           },
         ),
+
       ],
 
       child: BlocBuilder<HomeBloc, HomeState>(
@@ -96,6 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, state) {
           final List<HomeEntity> listas;
           if (state is DeleteShoppingListSuccess) {
+            _homeBloc.add(HomeFetchShoppingListsRequest());
             listas = state.shoppingLists;
           } else {
             listas = state is HomeShoppingListFetchSuccess

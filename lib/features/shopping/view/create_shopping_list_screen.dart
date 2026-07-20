@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lista_compras/core/routes/routes.dart';
+import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/helpers/validators.dart';
 import '../../../components/SMButtom/SMButtom.dart';
@@ -66,6 +67,12 @@ class _CreateShoppingListScreenState extends State<CreateShoppingListScreen> {
         child: BlocConsumer<CreateShoppinglistBloc, CreateShoppingListState>(
           listener: (context, state) {
             if (state is CreateShoppingListCreationSuccess) {
+              context.read<CurrentShoppingListCubit>().setCurrentList(
+                id: state.shoppingListId,
+                name: state.shoppingListName,
+                local: state.locate,
+                createdAt: state.shoppingListCreatedAt,
+              );
               Navigator.pushReplacementNamed(
                 context,
                 Routes.shoppingListDetail,
