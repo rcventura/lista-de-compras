@@ -44,13 +44,21 @@ class HomeRespository {
   }
 
   // DELETE LIST
-  Future<List<HomeEntity>> deleteShoppingList(String listId) async {
+  Future<void> deleteShoppingList(String listId) async {
     final userId = client.auth.currentUser?.id;
     if (userId == null) {
       throw Exception('Usuario nao autenticado.');
     }
-    final response = await client.from('shopping_lists').delete().eq('id', listId);
-    return _mapShoppingListsWithItemsCount(response as List);
+    final deleted = await client
+        .from('shopping_lists')
+        .delete()
+        .eq('id', listId)
+        .eq('user_id', userId)
+        .select();
+
+    if (deleted.isEmpty) {
+      throw Exception('Lista nao encontrada ou sem permissao para excluir.');
+    }
   }
 
   Future<List<HomeEntity>> _mapShoppingListsWithItemsCount(

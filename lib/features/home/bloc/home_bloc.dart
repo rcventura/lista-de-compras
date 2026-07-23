@@ -29,7 +29,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     emit(HomeShoppingListLoading());
-
     try {
       final shoppingLists = await _fetchShoppingListUsecase.fetchShoppingList();
       emit(HomeShoppingListFetchSuccess(shoppingLists));
@@ -46,8 +45,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     emit(HomeShoppingListLoading());
     try {
-      final shoppingLists = await _deleteShoppingListUseCase.deleteShoppingList(event.shoppingListId);
-      emit(DeleteShoppingListSuccess('Lista deletada com sucesso!', shoppingLists));
+      await _deleteShoppingListUseCase(event.shoppingListId);
+      
+      emit(
+        DeleteShoppingListSuccess('Lista deletada com sucesso!'),
+      );
+      add(HomeFetchShoppingListsRequest()); 
     } catch (e) {
       emit(
         HomeShoppingListFetchError('Erro ao deletar listas. Tente novamente.'),

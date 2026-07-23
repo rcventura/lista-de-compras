@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lista_compras/components/BottomSheet/OptionsButtomSheet.dart';
 import 'package:lista_compras/components/BottomSheet/PersonButtomSheet.dart';
+import 'package:lista_compras/components/toastAlert/toastAlert.dart';
 import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/auth/bloc/auth_bloc.dart';
 import 'package:lista_compras/features/auth/bloc/auth_state.dart';
@@ -72,6 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted) {
       _homeBloc.add(HomeDeleteShoppingList(listID));
     }
+
+    ToastAlert.show(context, Text('Lista excluida com sucesso!'));
   }
 
   @override
@@ -89,21 +92,17 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           },
         ),
-
       ],
 
       child: BlocBuilder<HomeBloc, HomeState>(
         bloc: _homeBloc..add(HomeFetchShoppingListsRequest()),
         builder: (context, state) {
           final List<HomeEntity> listas;
-          if (state is DeleteShoppingListSuccess) {
-            _homeBloc.add(HomeFetchShoppingListsRequest());
-            listas = state.shoppingLists;
-          } else {
+        
             listas = state is HomeShoppingListFetchSuccess
                 ? state.shoppingLists
                 : [];
-          }
+          
           final isLoading = state is HomeShoppingListLoading;
 
           return Scaffold(
