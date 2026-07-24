@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lista_compras/components/BottomSheet/Person/personButtomSheet.dart';
+import 'package:lista_compras/components/BottomSheet/personButtomSheet.dart';
 import 'package:lista_compras/core/routes/routes.dart';
-import 'package:lista_compras/features/categories/bloc/categories_bloc.dart';
-import 'package:lista_compras/features/categories/bloc/categories_event.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
+import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_event.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
 import 'package:lista_compras/features/shopping/cubit/current_shopping_list_state.dart';
 
 class DetailShoppingListScreen extends StatefulWidget {
-  const DetailShoppingListScreen({super.key});
+  final String shoppingListId;
+
+  const DetailShoppingListScreen({super.key, required this.shoppingListId});
 
   @override
   State<DetailShoppingListScreen> createState() =>
@@ -19,15 +20,19 @@ class DetailShoppingListScreen extends StatefulWidget {
 }
 
 class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
-  final CategoriesBloc _categoriesBloc = CategoriesBloc()
-    ..add(CategoriesFetchItemRequest());
-
   Future<void> _navigateToCategories() async {
     await Navigator.pushNamed(context, Routes.categories);
 
     if (mounted) {
-      _categoriesBloc.add(CategoriesFetchItemRequest());
+      context.read<DetailShoppinglistBloc>().add(
+        DetailFetchShoppingListItemsRequested(widget.shoppingListId),
+      );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -72,7 +77,10 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
               centerTitle: true,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black54),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  context.read<CurrentShoppingListCubit>().clear();
+                  Navigator.pop(context);
+                },
               ),
               actions: [
                 IconButton(

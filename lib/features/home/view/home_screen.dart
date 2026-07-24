@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:lista_compras/components/BottomSheet/Person/personButtomSheet.dart';
+import 'package:lista_compras/components/BottomSheet/OptionsButtomSheet.dart';
+import 'package:lista_compras/components/BottomSheet/PersonButtomSheet.dart';
+import 'package:lista_compras/components/toastAlert/toastAlert.dart';
 import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/auth/bloc/auth_bloc.dart';
 import 'package:lista_compras/features/auth/bloc/auth_state.dart';
 import 'package:lista_compras/features/home/bloc/home_bloc.dart';
 import 'package:lista_compras/features/home/bloc/home_event.dart';
 import 'package:lista_compras/features/home/bloc/home_state.dart';
+import 'package:lista_compras/features/home/domain/entities/home_entity.dart';
 import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,7 +21,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final HomeBloc _homeBloc = HomeBloc()..add(HomeFetchShoppingListsRequest());
+  final HomeBloc _homeBloc = HomeBloc();
   final _searchController = TextEditingController();
   var _clearButtonVisible = false;
 
@@ -41,15 +44,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _navigateToListDetails(
-    String shoppingListId,
-  ) async {
+  Future<void> _navigateToListDetails(String shoppingListId) async {
     await Navigator.pushNamed(
       context,
       Routes.shoppingListDetail,
-      arguments: ShoppingListDetailArgs(
-        shoppingListId: shoppingListId,
-      ),
+      arguments: ShoppingListDetailArgs(shoppingListId: shoppingListId),
     );
   }
 
@@ -70,24 +69,40 @@ class _HomeScreenState extends State<HomeScreen> {
     return const SizedBox.shrink();
   }
 
+  void _deleteList(String listID) {
+    if (mounted) {
+      _homeBloc.add(HomeDeleteShoppingList(listID));
+    }
+
+    ToastAlert.show(context, Text('Lista excluida com sucesso!'));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (!mounted) return;
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (!mounted) return;
 
-        if (state is AuthInitial) {
-          Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil(Routes.login, (route) => false);
-        }
-      },
+            if (state is AuthInitial) {
+              Navigator.of(
+                context,
+              ).pushNamedAndRemoveUntil(Routes.login, (route) => false);
+            }
+          },
+        ),
+      ],
+
       child: BlocBuilder<HomeBloc, HomeState>(
-        bloc: _homeBloc,
+        bloc: _homeBloc..add(HomeFetchShoppingListsRequest()),
         builder: (context, state) {
-          final listas = state is HomeShoppingListFetchSuccess
-              ? state.shoppingLists
-              : [];
+          final List<HomeEntity> listas;
+        
+            listas = state is HomeShoppingListFetchSuccess
+                ? state.shoppingLists
+                : [];
+          
           final isLoading = state is HomeShoppingListLoading;
 
           return Scaffold(
@@ -350,12 +365,53 @@ class _HomeScreenState extends State<HomeScreen> {
                                         itemCount: listas.length,
                                         itemBuilder: (context, index) {
                                           return ListTile(
-                                            title: Text(
-                                              listas[index].name,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500,
-                                              ),
+                                            title: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    listas[index].name,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Container(
+                                                  width: 80,
+                                                  height: 30,
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.green[50],
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    '${listas[index].itemsCount} ${listas[index].itemsCount == 1 ? 'Item' : 'Itens'}',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                            56,
+                                                            142,
+                                                            60,
+                                                            1,
+                                                          ),
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                             subtitle: Text(
                                               DateFormat(
@@ -387,6 +443,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 listas[index].id,
                                               );
                                             },
+                                            onLongPress: () =>
+                                                OptionsButtomSheet.show(
+                                                  context,
+                                                  onDelete: () => _deleteList(
+                                                    listas[index].id,
+                                                  ),
+                                                ),
                                           );
                                         },
                                       ),

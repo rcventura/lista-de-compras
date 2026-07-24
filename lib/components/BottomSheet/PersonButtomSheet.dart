@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../features/auth/bloc/auth_bloc.dart';
-import '../../../features/auth/bloc/auth_event.dart';
-import '../../../features/auth/bloc/auth_state.dart';
+import '../../features/auth/bloc/auth_bloc.dart';
+import '../../features/auth/bloc/auth_event.dart';
+import '../../features/auth/bloc/auth_state.dart';
 
 class ShowPersonBottomSheet extends StatelessWidget {
   const ShowPersonBottomSheet({super.key});
@@ -28,6 +28,7 @@ class ShowPersonBottomSheet extends StatelessWidget {
 
     return Container(
       width: double.infinity,
+      height: 330,
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -36,7 +37,7 @@ class ShowPersonBottomSheet extends StatelessWidget {
           Center(
             child: Container(
               width: 80,
-              height: 10,
+              height: 8,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: Colors.grey[300],
@@ -47,7 +48,7 @@ class ShowPersonBottomSheet extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image(image: AssetImage('assets/images/logo.png'), width: 200, height: 200),
+              Image(image: AssetImage('assets/images/logo.png'), width: 100, height: 100),
 
               Text(
                 user?.name ?? '',

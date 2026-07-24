@@ -40,7 +40,6 @@ class AddItemsInListBloc
         event.position,
         event.price
       );
-
       emit(AddItemsInListSuccess(''));
     } catch (e) {
       emit(AddItemsInListError('Erro ao criar lista. Tente novamente. $e'));

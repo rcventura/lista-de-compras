@@ -22,8 +22,10 @@ class AddItemsInListRepository {
               'price': item.price
             }
           ])
-          .select();
-      return AddItemsInListModal.fromMap(response.first).toEntity();
+          .select()
+          .single();
+          
+      return AddItemsInListModal.fromMap(response).toEntity();
     } catch (e) {
       throw Exception('Failed to add item to list: $e');
     }

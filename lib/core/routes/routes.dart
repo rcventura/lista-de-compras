@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/features/auth/view/login_screen.dart';
 import 'package:lista_compras/features/categories/bloc/categories_bloc.dart';
 import 'package:lista_compras/features/categories/view/categories_screen.dart';
+import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_event.dart';
 import 'package:lista_compras/features/categories_items/view/categories_items_screen.dart';
@@ -16,17 +17,13 @@ import 'package:lista_compras/features/shopping/view/detail_shopping_list_screen
 class ShoppingListDetailArgs {
   final String shoppingListId;
 
-  const ShoppingListDetailArgs({
-    required this.shoppingListId,
-  });
+  const ShoppingListDetailArgs({required this.shoppingListId});
 }
 
 class CategoriesItemsArgs {
   final String categoryId;
 
-  const CategoriesItemsArgs({
-    required this.categoryId,
-  });
+  const CategoriesItemsArgs({required this.categoryId});
 }
 
 class Routes {
@@ -40,11 +37,18 @@ class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case login:
-        return MaterialPageRoute(builder: (_) => const LoginScreen());
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const LoginScreen(),
+        );
       case home:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => const HomeScreen(),
+        );
       case addShoppingList:
         return MaterialPageRoute(
+          settings: settings,
           builder: (_) => BlocProvider(
             create: (_) => CreateShoppinglistBloc(),
             child: const CreateShoppingListScreen(),
@@ -66,14 +70,15 @@ class Routes {
         }
 
         return MaterialPageRoute(
+          settings: settings,
           builder: (_) => BlocProvider(
             create: (_) => DetailShoppinglistBloc()
               ..add(
-                DetailFetchShoppingListItemsRequested(
-                  arguments.shoppingListId,
-                ),
+                DetailFetchShoppingListItemsRequested(arguments.shoppingListId),
               ),
-            child: DetailShoppingListScreen(),
+            child: DetailShoppingListScreen(
+              shoppingListId: arguments.shoppingListId,
+            ),
           ),
         );
 
@@ -90,6 +95,7 @@ class Routes {
 
         if (arguments is! CategoriesItemsArgs) {
           return MaterialPageRoute(
+            settings: settings,
             builder: (_) => Scaffold(
               body: Center(
                 child: Text(
@@ -101,17 +107,25 @@ class Routes {
         }
 
         return MaterialPageRoute(
-          builder: (_) => BlocProvider(
-            create: (_) => CategoriesItemsBloc()
-              ..add(
-                CategoriesItemsFetchRequest(categoryId: arguments.categoryId),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (_) => CategoriesItemsBloc()
+                  ..add(
+                    CategoriesItemsFetchRequest(
+                      categoryId: arguments.categoryId,
+                    ),
+                  ),
               ),
+              BlocProvider(create: (_) => AddItemsInListBloc()),
+            ],
             child: CategoriesItemsScreen(categoryId: arguments.categoryId),
           ),
         );
 
       default:
         return MaterialPageRoute(
+          settings: settings,
           builder: (_) => Scaffold(
             body: Center(child: Text('Rota desconhecida: ${settings.name}')),
           ),

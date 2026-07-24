@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/components/SMButtom/SMButtom.dart';
+import 'package:lista_compras/components/toastAlert/toastAlert.dart';
 import 'package:lista_compras/core/helpers/enum.dart';
+import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_event.dart';
+import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_state.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_event.dart';
 import 'package:lista_compras/features/categories_items/bloc/categories_items_state.dart';
@@ -20,11 +23,13 @@ class CategoriesItemsScreen extends StatefulWidget {
 }
 
 class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
-  List<String> itemsSelected = [];
+  List<CategoriesItemEntity> itemsSelected = [];
   List<CategoriesItemEntity> searchItemList = [];
 
   final _searchController = TextEditingController();
   var _clearButtonVisible = false;
+  var _isAddingItems = false;
+  var _pendingItemsToAdd = 0;
 
   @override
   void initState() {
@@ -62,7 +67,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     return const SizedBox.shrink();
   }
 
-  void _toggleSelectedItem(String itemId) {
+  void _toggleSelectedItem(CategoriesItemEntity itemId) {
     setState(() {
       if (itemsSelected.contains(itemId)) {
         itemsSelected.remove(itemId);
@@ -72,41 +77,92 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     });
   }
 
-  Future<void> _addSelectedItems(
-    String listId,
-    String productId,
-    String name,
-    String quantity,
-    String unit,
-    int position,
-    double price,
-  ) async {
-    context.read<AddItemsInListBloc>().add(
-      AddItemsInListRequested(
-        listId: listId,
-        productId: productId,
-        name: name,
-        quantity: quantity,
-        unit: unit,
-        checked: true,
-        position: position,
-        price: price,
-      ),
-    );
+  Future<void> _addSelectedItems({
+    required String listId,
+    required String productId,
+    required String name,
+    required int quantity,
+    required String unit,
+    required bool checked,
+    required int position,
+    required double price,
+  }) async {
+    if (itemsSelected.isEmpty) return;
+
+    final categoriesState = context.read<CategoriesItemsBloc>().state;
+    if (categoriesState is! CategoriesItemsLoadingSuccess) return;
+
+    final selectedItems = categoriesState.categoriesItemsList
+        .where((item) => itemsSelected.contains(item))
+        .toList();
+
+    setState(() {
+      _isAddingItems = true;
+      _pendingItemsToAdd = selectedItems.length;
+    });
+
+    for (final categoryItem in selectedItems) {
+      context.read<AddItemsInListBloc>().add(
+        AddItemsInListRequested(
+          listId: listId,
+          productId: productId,
+          name: categoryItem.name,
+          quantity: quantity,
+          unit: unit,
+          checked: false,
+          position: position,
+          price: price,
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<CategoriesItemsBloc, CategoriesItemsState>(
-      listener: (context, state) {
-        if (!mounted) return;
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<CategoriesItemsBloc, CategoriesItemsState>(
+          listener: (context, state) {
+            if (!mounted) return;
 
-        if (state is CategoriesItemsLoadingError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
-        }
-      },
+            if (state is CategoriesItemsLoadingError) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
+            }
+          },
+        ),
+        BlocListener<AddItemsInListBloc, AddItemsInListState>(
+          listener: (context, state) {
+            if (!mounted) return;
+
+            if (state is AddItemsInListSuccess) {
+              _pendingItemsToAdd--;
+
+              if (_pendingItemsToAdd <= 0) {
+                setState(() {
+                  _isAddingItems = false;
+                  _pendingItemsToAdd = 0;
+                  itemsSelected.clear();
+                });
+
+                Navigator.of(
+                  context,
+                ).popUntil(ModalRoute.withName(Routes.shoppingListDetail));
+                ToastAlert.show(context, Text('Itens adicionado com sucesso!'));
+              }
+            }
+
+            if (state is AddItemsInListError) {
+              setState(() {
+                _isAddingItems = false;
+                _pendingItemsToAdd = 0;
+              });
+              ToastAlert.show(context, Text(state.message));
+            }
+          },
+        ),
+      ],
       child: BlocBuilder<CategoriesItemsBloc, CategoriesItemsState>(
         builder: (context, state) {
           final currentShoppingListState = context
@@ -190,13 +246,12 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                                           title: Text(categoryItem.name),
                                           value:
                                               itemsSelected.contains(
-                                                categoryItem.id,
+                                                categoryItem,
                                               )
                                               ? true
                                               : false,
-                                          onChanged: (_) => _toggleSelectedItem(
-                                            categoryItem.id,
-                                          ),
+                                          onChanged: (_) =>
+                                              _toggleSelectedItem(categoryItem),
                                         );
                                       },
                                     )
@@ -206,18 +261,20 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                                         final categoryItem =
                                             categoriesItemsList[index];
                                         return shoppingListLocate ==
-                                                ShoppingListLocateEnum.casa.value
+                                                ShoppingListLocateEnum
+                                                    .casa
+                                                    .value
                                             ? CheckboxListTile(
                                                 title: Text(categoryItem.name),
                                                 value:
                                                     itemsSelected.contains(
-                                                      categoryItem.id,
+                                                      categoryItem,
                                                     )
                                                     ? true
                                                     : false,
                                                 onChanged: (_) =>
                                                     _toggleSelectedItem(
-                                                      categoryItem.id,
+                                                      categoryItem,
                                                     ),
                                               )
                                             : ListTile(
@@ -258,9 +315,21 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                                   ),
                                 ),
                                 SMButton(
-                                  text: 'Adicionar',
-                                  isDisabled: itemsSelected.isEmpty,
-                                  onPressed: () {},
+                                  text: _isAddingItems
+                                      ? 'Adicionando...'
+                                      : 'Adicionar',
+                                  isDisabled:
+                                      itemsSelected.isEmpty || _isAddingItems,
+                                  onPressed: () => _addSelectedItems(
+                                    listId: currentShoppingList?.id ?? '',
+                                    productId: itemsSelected[0].id,
+                                    name: itemsSelected[0].name,
+                                    quantity: 1,
+                                    unit: '',
+                                    checked: false,
+                                    position: 1,
+                                    price: 0.0,
+                                  ),
                                 ),
                               ],
                             ),
