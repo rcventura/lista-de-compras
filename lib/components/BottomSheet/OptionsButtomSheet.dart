@@ -23,11 +23,12 @@ class OptionsButtomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: MediaQuery.sizeOf(context).height * 0.22,
+      height: MediaQuery.sizeOf(context).height * 0.28,
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 10,
         children: [
           Center(
             child: Container(
@@ -39,13 +40,13 @@ class OptionsButtomSheet extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 30),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 children: [
-                  Icon(Icons.share, size: 16),
+                  Icon(Icons.share, size: 20),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -62,7 +63,7 @@ class OptionsButtomSheet extends StatelessWidget {
 
               Row(
                 children: [
-                  Icon(Icons.delete, size: 16, color: Colors.red),
+                  Icon(Icons.delete, size: 20, color: Colors.red),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();

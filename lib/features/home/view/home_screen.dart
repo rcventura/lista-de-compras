@@ -24,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final HomeBloc _homeBloc = HomeBloc();
   final _searchController = TextEditingController();
   var _clearButtonVisible = false;
+  List<HomeEntity> searchItemList = [];
 
   @override
   void dispose() {
@@ -41,6 +42,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (mounted) {
       _homeBloc.add(HomeFetchShoppingListsRequest());
+    }
+  }
+
+  void _searchItem(List<HomeEntity> homeShoppingList) {
+    final searchText = _searchController.text.toLowerCase();
+    if (searchText.isEmpty) {
+      searchItemList = homeShoppingList;
+    } else {
+      searchItemList = homeShoppingList.where((item) {
+        return item.name.toLowerCase().contains(searchText);
+      }).toList();
     }
   }
 
@@ -97,12 +109,10 @@ class _HomeScreenState extends State<HomeScreen> {
       child: BlocBuilder<HomeBloc, HomeState>(
         bloc: _homeBloc..add(HomeFetchShoppingListsRequest()),
         builder: (context, state) {
-          final List<HomeEntity> listas;
-        
-            listas = state is HomeShoppingListFetchSuccess
-                ? state.shoppingLists
-                : [];
-          
+          final listas = state is HomeShoppingListFetchSuccess
+              ? state.shoppingLists
+              : [];
+
           final isLoading = state is HomeShoppingListLoading;
 
           return Scaffold(
@@ -258,11 +268,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             maxLines: 1,
                             onChanged: (value) {
                               setState(() {
-                                _searchController.text.isEmpty
-                                    ? _clearButtonVisible = false
-                                    : _clearButtonVisible = true;
+                                if (_searchController.text.isEmpty) {
+                                  _clearButtonVisible = false;
+                                } else {
+                                  _clearButtonVisible = true;
+                                  _searchItem(
+                                    listas as List<HomeEntity>,
+                                  );
+                                }
                               });
-                            },
+                            }, 
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.zero,
                               hintText: 'Pesquisar listas',
@@ -304,6 +319,45 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? const Center(
                           child: CircularProgressIndicator.adaptive(),
                         )
+                      : listas.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.shopping_cart_outlined,
+                                size: 64,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 16),
+                              searchItemList.isEmpty &&
+                                      _searchController.text.isNotEmpty
+                                  ? Text(
+                                      'Item pesquisado não encontrado.',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                      ),
+                                    )
+                                  : Text(
+                                      'Nenhuma lista criada ainda.',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                              SizedBox(height: 8),
+                              if (listas.isEmpty)
+                                Text(
+                                  'Toque no + para criar sua primeira lista.',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        )
                       : Column(
                           children: [
                             if (listas.isNotEmpty)
@@ -325,136 +379,221 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ),
-                            Expanded(
-                              child: listas.isEmpty
-                                  ? const Center(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.shopping_cart_outlined,
-                                            size: 64,
-                                            color: Colors.grey,
-                                          ),
-                                          SizedBox(height: 16),
-                                          Text(
-                                            'Nenhuma lista criada ainda.',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                          SizedBox(height: 8),
-                                          Text(
-                                            'Toque no + para criar sua primeira lista.',
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : RefreshIndicator.adaptive(
+                              Expanded(
+                                    child: RefreshIndicator.adaptive(
                                       onRefresh: () async {
                                         _homeBloc.add(
                                           HomeFetchShoppingListsRequest(),
                                         );
                                       },
-                                      child: ListView.builder(
-                                        itemCount: listas.length,
-                                        itemBuilder: (context, index) {
-                                          return ListTile(
-                                            title: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    listas[index].name,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Container(
-                                                  width: 80,
-                                                  height: 30,
-                                                  alignment: Alignment.center,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.green[50],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          20,
+                                      child: _searchController.text.isNotEmpty
+                                          ? ListView.builder(
+                                              itemCount: searchItemList.length,
+                                              itemBuilder: (context, index) {
+                                                final listSearch =
+                                                    searchItemList[index];
+                                                return ListTile(
+                                                  title: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          listSearch.name,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style:
+                                                              const TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
                                                         ),
-                                                  ),
-                                                  child: Text(
-                                                    '${listas[index].itemsCount} ${listas[index].itemsCount == 1 ? 'Item' : 'Itens'}',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color:
-                                                          const Color.fromRGBO(
-                                                            56,
-                                                            142,
-                                                            60,
-                                                            1,
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Container(
+                                                        width: 80,
+                                                        height: 30,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        decoration: BoxDecoration(
+                                                          color:
+                                                              Colors.green[50],
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                20,
+                                                              ),
+                                                        ),
+                                                        child: Text(
+                                                          '${listSearch.itemsCount} ${listSearch.itemsCount == 1 ? 'Item' : 'Itens'}',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            color:
+                                                                const Color.fromRGBO(
+                                                                  56,
+                                                                  142,
+                                                                  60,
+                                                                  1,
+                                                                ),
+                                                            fontWeight:
+                                                                FontWeight.w500,
                                                           ),
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  subtitle: Text(
+                                                    DateFormat(
+                                                      'dd/MM/yyyy',
+                                                    ).format(
+                                                      listSearch.createdAt,
+                                                    ),
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.grey,
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                            subtitle: Text(
-                                              DateFormat(
-                                                'dd/MM/yyyy',
-                                              ).format(listas[index].createdAt),
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                            trailing: const Icon(
-                                              Icons.chevron_right,
-                                            ),
-                                            onTap: () {
-                                              context
-                                                  .read<
-                                                    CurrentShoppingListCubit
-                                                  >()
-                                                  .setCurrentList(
-                                                    id: listas[index].id,
-                                                    name: listas[index].name,
-                                                    local: listas[index].local,
-                                                    createdAt: listas[index]
-                                                        .createdAt
-                                                        .toIso8601String(),
-                                                  );
-
-                                              _navigateToListDetails(
-                                                listas[index].id,
-                                              );
-                                            },
-                                            onLongPress: () =>
-                                                OptionsButtomSheet.show(
-                                                  context,
-                                                  onDelete: () => _deleteList(
-                                                    listas[index].id,
+                                                  trailing: const Icon(
+                                                    Icons.chevron_right,
                                                   ),
-                                                ),
-                                          );
-                                        },
-                                      ),
+                                                  onTap: () {
+                                                    context
+                                                        .read<
+                                                          CurrentShoppingListCubit
+                                                        >()
+                                                        .setCurrentList(
+                                                          id: listSearch.id,
+                                                          name: listSearch.name,
+                                                          local:
+                                                              listSearch.local,
+                                                          createdAt: listSearch
+                                                              .createdAt
+                                                              .toIso8601String(),
+                                                        );
+
+                                                    _navigateToListDetails(
+                                                      listSearch.id,
+                                                    );
+                                                  },
+                                                  onLongPress: () =>
+                                                      OptionsButtomSheet.show(
+                                                        context,
+                                                        onDelete: () =>
+                                                            _deleteList(
+                                                              listas[index].id,
+                                                            ),
+                                                      ),
+                                                );
+                                              },
+                                            )
+                                          : ListView.builder(
+                                              itemCount: listas.length,
+                                              itemBuilder: (context, index) {
+                                                return ListTile(
+                                                  title: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          listas[index].name,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style:
+                                                              const TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Container(
+                                                        width: 80,
+                                                        height: 30,
+                                                        alignment:
+                                                            Alignment.center,
+                                                        decoration: BoxDecoration(
+                                                          color:
+                                                              Colors.green[50],
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                20,
+                                                              ),
+                                                        ),
+                                                        child: Text(
+                                                          '${listas[index].itemsCount} ${listas[index].itemsCount == 1 ? 'Item' : 'Itens'}',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            color:
+                                                                const Color.fromRGBO(
+                                                                  56,
+                                                                  142,
+                                                                  60,
+                                                                  1,
+                                                                ),
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  subtitle: Text(
+                                                    DateFormat(
+                                                      'dd/MM/yyyy',
+                                                    ).format(
+                                                      listas[index].createdAt,
+                                                    ),
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                  trailing: const Icon(
+                                                    Icons.chevron_right,
+                                                  ),
+                                                  onTap: () {
+                                                    context
+                                                        .read<
+                                                          CurrentShoppingListCubit
+                                                        >()
+                                                        .setCurrentList(
+                                                          id: listas[index].id,
+                                                          name: listas[index]
+                                                              .name,
+                                                          local: listas[index]
+                                                              .local,
+                                                          createdAt: listas[index]
+                                                              .createdAt
+                                                              .toIso8601String(),
+                                                        );
+
+                                                    _navigateToListDetails(
+                                                      listas[index].id,
+                                                    );
+                                                  },
+                                                  onLongPress: () =>
+                                                      OptionsButtomSheet.show(
+                                                        context,
+                                                        onDelete: () =>
+                                                            _deleteList(
+                                                              listas[index].id,
+                                                            ),
+                                                      ),
+                                                );
+                                              },
+                                            ),
                                     ),
-                            ),
+                                  ),
                           ],
                         ),
                 ),

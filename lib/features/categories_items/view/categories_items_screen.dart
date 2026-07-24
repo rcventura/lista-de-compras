@@ -46,12 +46,12 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     });
   }
 
-  void _searchItem(List<CategoriesItemEntity> categoriesItemsList) {
+  void _searchItem(List<CategoriesItemEntity> categoriesItemsLists) {
     final searchText = _searchController.text.toLowerCase();
     if (searchText.isEmpty) {
-      searchItemList = categoriesItemsList;
+      searchItemList = categoriesItemsLists;
     } else {
-      searchItemList = categoriesItemsList.where((item) {
+      searchItemList = categoriesItemsLists.where((item) {
         return item.name.toLowerCase().contains(searchText);
       }).toList();
     }
@@ -191,7 +191,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
               ),
             ),
             body: isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator.adaptive())
                 : categoriesItemsList.isEmpty
                 ? const Center(child: Text('Nenhum item encontrado.'))
                 : Column(
