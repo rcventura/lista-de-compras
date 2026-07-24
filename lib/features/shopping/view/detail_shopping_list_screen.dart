@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lista_compras/components/BottomSheet/Person/personButtomSheet.dart';
+import 'package:lista_compras/components/BottomSheet/personButtomSheet.dart';
 import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_event.dart';
@@ -12,10 +12,7 @@ import 'package:lista_compras/features/shopping/cubit/current_shopping_list_stat
 class DetailShoppingListScreen extends StatefulWidget {
   final String shoppingListId;
 
-  const DetailShoppingListScreen({
-    super.key,
-    required this.shoppingListId,
-  });
+  const DetailShoppingListScreen({super.key, required this.shoppingListId});
 
   @override
   State<DetailShoppingListScreen> createState() =>
@@ -80,7 +77,10 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
               centerTitle: true,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black54),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  context.read<CurrentShoppingListCubit>().clear();
+                  Navigator.pop(context);
+                },
               ),
               actions: [
                 IconButton(

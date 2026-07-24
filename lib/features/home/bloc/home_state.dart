@@ -15,3 +15,9 @@ class HomeShoppingListFetchError extends HomeState {
   final String message;
   HomeShoppingListFetchError(this.message);
 }
+
+class DeleteShoppingListSuccess extends HomeState {
+  final String message;
+  
+  DeleteShoppingListSuccess(this.message);
+}
