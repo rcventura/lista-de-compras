@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:lista_compras/components/Alert/ConfirmationAlert.dart';
 import 'package:lista_compras/components/BottomSheet/OptionsButtomSheet.dart';
 import 'package:lista_compras/components/BottomSheet/PersonButtomSheet.dart';
 import 'package:lista_compras/components/toastAlert/toastAlert.dart';
@@ -86,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _homeBloc.add(HomeDeleteShoppingList(listID));
     }
 
-    ToastAlert.show(context, Text('Lista excluida com sucesso!'));
+    ToastAlert.show(context, 'Lista excluida com sucesso!');
   }
 
   @override
@@ -272,12 +273,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   _clearButtonVisible = false;
                                 } else {
                                   _clearButtonVisible = true;
-                                  _searchItem(
-                                    listas as List<HomeEntity>,
-                                  );
+                                  _searchItem(listas as List<HomeEntity>);
                                 }
                               });
-                            }, 
+                            },
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.zero,
                               hintText: 'Pesquisar listas',
@@ -379,221 +378,212 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ),
-                              Expanded(
-                                    child: RefreshIndicator.adaptive(
-                                      onRefresh: () async {
-                                        _homeBloc.add(
-                                          HomeFetchShoppingListsRequest(),
-                                        );
-                                      },
-                                      child: _searchController.text.isNotEmpty
-                                          ? ListView.builder(
-                                              itemCount: searchItemList.length,
-                                              itemBuilder: (context, index) {
-                                                final listSearch =
-                                                    searchItemList[index];
-                                                return ListTile(
-                                                  title: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Expanded(
-                                                        child: Text(
-                                                          listSearch.name,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style:
-                                                              const TextStyle(
-                                                                fontSize: 16,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 8),
-                                                      Container(
-                                                        width: 80,
-                                                        height: 30,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        decoration: BoxDecoration(
-                                                          color:
-                                                              Colors.green[50],
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                20,
-                                                              ),
-                                                        ),
-                                                        child: Text(
-                                                          '${listSearch.itemsCount} ${listSearch.itemsCount == 1 ? 'Item' : 'Itens'}',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            color:
-                                                                const Color.fromRGBO(
-                                                                  56,
-                                                                  142,
-                                                                  60,
-                                                                  1,
-                                                                ),
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  subtitle: Text(
-                                                    DateFormat(
-                                                      'dd/MM/yyyy',
-                                                    ).format(
-                                                      listSearch.createdAt,
-                                                    ),
+                            Expanded(
+                              child: RefreshIndicator.adaptive(
+                                onRefresh: () async {
+                                  _homeBloc.add(
+                                    HomeFetchShoppingListsRequest(),
+                                  );
+                                },
+                                child: _searchController.text.isNotEmpty
+                                    ? ListView.builder(
+                                        itemCount: searchItemList.length,
+                                        itemBuilder: (context, index) {
+                                          final listSearch =
+                                              searchItemList[index];
+                                          return ListTile(
+                                            title: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    listSearch.name,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                     style: const TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.grey,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                     ),
                                                   ),
-                                                  trailing: const Icon(
-                                                    Icons.chevron_right,
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Container(
+                                                  width: 80,
+                                                  height: 30,
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.green[50],
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20,
+                                                        ),
                                                   ),
-                                                  onTap: () {
-                                                    context
-                                                        .read<
-                                                          CurrentShoppingListCubit
-                                                        >()
-                                                        .setCurrentList(
-                                                          id: listSearch.id,
-                                                          name: listSearch.name,
-                                                          local:
-                                                              listSearch.local,
-                                                          createdAt: listSearch
-                                                              .createdAt
-                                                              .toIso8601String(),
-                                                        );
-
-                                                    _navigateToListDetails(
-                                                      listSearch.id,
-                                                    );
-                                                  },
-                                                  onLongPress: () =>
-                                                      OptionsButtomSheet.show(
-                                                        context,
-                                                        onDelete: () =>
-                                                            _deleteList(
-                                                              listas[index].id,
-                                                            ),
-                                                      ),
-                                                );
-                                              },
-                                            )
-                                          : ListView.builder(
-                                              itemCount: listas.length,
-                                              itemBuilder: (context, index) {
-                                                return ListTile(
-                                                  title: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Expanded(
-                                                        child: Text(
-                                                          listas[index].name,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style:
-                                                              const TextStyle(
-                                                                fontSize: 16,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 8),
-                                                      Container(
-                                                        width: 80,
-                                                        height: 30,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        decoration: BoxDecoration(
-                                                          color:
-                                                              Colors.green[50],
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                20,
-                                                              ),
-                                                        ),
-                                                        child: Text(
-                                                          '${listas[index].itemsCount} ${listas[index].itemsCount == 1 ? 'Item' : 'Itens'}',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            color:
-                                                                const Color.fromRGBO(
-                                                                  56,
-                                                                  142,
-                                                                  60,
-                                                                  1,
-                                                                ),
-                                                            fontWeight:
-                                                                FontWeight.w500,
+                                                  child: Text(
+                                                    '${listSearch.itemsCount} ${listSearch.itemsCount == 1 ? 'Item' : 'Itens'}',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                            56,
+                                                            142,
+                                                            60,
+                                                            1,
                                                           ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  subtitle: Text(
-                                                    DateFormat(
-                                                      'dd/MM/yyyy',
-                                                    ).format(
-                                                      listas[index].createdAt,
-                                                    ),
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                     ),
                                                   ),
-                                                  trailing: const Icon(
-                                                    Icons.chevron_right,
-                                                  ),
-                                                  onTap: () {
-                                                    context
-                                                        .read<
-                                                          CurrentShoppingListCubit
-                                                        >()
-                                                        .setCurrentList(
-                                                          id: listas[index].id,
-                                                          name: listas[index]
-                                                              .name,
-                                                          local: listas[index]
-                                                              .local,
-                                                          createdAt: listas[index]
-                                                              .createdAt
-                                                              .toIso8601String(),
-                                                        );
-
-                                                    _navigateToListDetails(
-                                                      listas[index].id,
-                                                    );
-                                                  },
-                                                  onLongPress: () =>
-                                                      OptionsButtomSheet.show(
-                                                        context,
-                                                        onDelete: () =>
-                                                            _deleteList(
-                                                              listas[index].id,
-                                                            ),
-                                                      ),
-                                                );
-                                              },
+                                                ),
+                                              ],
                                             ),
-                                    ),
-                                  ),
+                                            subtitle: Text(
+                                              DateFormat(
+                                                'dd/MM/yyyy',
+                                              ).format(listSearch.createdAt),
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            trailing: const Icon(
+                                              Icons.chevron_right,
+                                            ),
+                                            onTap: () {
+                                              context
+                                                  .read<
+                                                    CurrentShoppingListCubit
+                                                  >()
+                                                  .setCurrentList(
+                                                    id: listSearch.id,
+                                                    name: listSearch.name,
+                                                    local: listSearch.local,
+                                                    createdAt: listSearch
+                                                        .createdAt
+                                                        .toIso8601String(),
+                                                  );
+                                              _navigateToListDetails(
+                                                listSearch.id,
+                                              );
+                                            },
+                                            onLongPress: () => OptionsButtomSheet.show(
+                                              context,
+                                              onDelete: () => ConfirmationAlert(
+                                                titleAlert: 'Atenção',
+                                                messageAlert:
+                                                    'Deseja realmente excluir esta lista de compras?',
+                                                onConfirmation: () => {
+                                                  _deleteList(listas[index].id),
+                                                },
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    : ListView.builder(
+                                        itemCount: listas.length,
+                                        itemBuilder: (context, index) {
+                                          return ListTile(
+                                            title: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    listas[index].name,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Container(
+                                                  width: 80,
+                                                  height: 30,
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.green[50],
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    '${listas[index].itemsCount} ${listas[index].itemsCount == 1 ? 'Item' : 'Itens'}',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                            56,
+                                                            142,
+                                                            60,
+                                                            1,
+                                                          ),
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            subtitle: Text(
+                                              DateFormat(
+                                                'dd/MM/yyyy',
+                                              ).format(listas[index].createdAt),
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            trailing: const Icon(
+                                              Icons.chevron_right,
+                                            ),
+                                            onTap: () {
+                                              context
+                                                  .read<
+                                                    CurrentShoppingListCubit
+                                                  >()
+                                                  .setCurrentList(
+                                                    id: listas[index].id,
+                                                    name: listas[index].name,
+                                                    local: listas[index].local,
+                                                    createdAt: listas[index]
+                                                        .createdAt
+                                                        .toIso8601String(),
+                                                  );
+
+                                              _navigateToListDetails(
+                                                listas[index].id,
+                                              );
+                                            },
+                                            onLongPress: () =>
+                                                OptionsButtomSheet.show(
+                                                  context,
+                                                  
+                                                  onDelete: () =>
+                                                      ConfirmationAlert.show(
+                                                        context,
+                                                        'Atenção',
+                                                        'Deseja realmente excluir esta lista de compras?',
+                                                        () => _deleteList(
+                                                          listas[index].id,
+                                                        ),
+                                                      ),
+                                                ),
+                                          );
+                                        },
+                                      ),
+                              ),
+                            ),
                           ],
                         ),
                 ),
