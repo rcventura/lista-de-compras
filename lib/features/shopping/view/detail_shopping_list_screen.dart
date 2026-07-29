@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lista_compras/components/BottomSheet/personButtomSheet.dart';
+import 'package:lista_compras/components/toastAlert/toastAlert.dart';
 import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_event.dart';
@@ -42,9 +43,7 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
         if (!mounted) return;
 
         if (state is DetailSShoppingListItemError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          ToastAlert.show(context, state.message);
         }
       },
 

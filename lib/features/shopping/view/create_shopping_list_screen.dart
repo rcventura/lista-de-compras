@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lista_compras/components/toastAlert/toastAlert.dart';
 import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -83,9 +84,7 @@ class _CreateShoppingListScreenState extends State<CreateShoppingListScreen> {
             }
 
             if (state is CreateShoppingListCreationError) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.message)));
+              ToastAlert.show(context, state.message);
             }
           },
 
