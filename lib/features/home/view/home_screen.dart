@@ -26,12 +26,30 @@ class _HomeScreenState extends State<HomeScreen> {
   final _searchController = TextEditingController();
   var _clearButtonVisible = false;
   List<HomeEntity> searchItemList = [];
+  DateTime? firstDateSelected;
+  DateTime? endDateSelected;
+  bool filterActive = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _homeBloc.add(HomeFetchShoppingListsRequest());
+  }
 
   @override
   void dispose() {
     _homeBloc.close();
     _searchController.dispose();
     super.dispose();
+  }
+
+  void resetVariableState() {
+    setState(() {
+      filterActive = false;
+      firstDateSelected = null;
+      endDateSelected = null;
+    });
+    _homeBloc.add(HomeFetchShoppingListsRequest());
   }
 
   Future<void> _navigateToAddList() async {
@@ -44,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted) {
       _homeBloc.add(HomeFetchShoppingListsRequest());
     }
+    resetVariableState();
   }
 
   void _searchItem(List<HomeEntity> homeShoppingList) {
@@ -82,12 +101,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return const SizedBox.shrink();
   }
 
+  void filterCalendar(DateTime startDate, DateTime endDate) {
+    if (filterActive) {
+      _homeBloc.add(HomeShoppingListFilterRequest(startDate, endDate));
+    }
+  }
+
   void _deleteList(String listID) {
     if (mounted) {
       _homeBloc.add(HomeDeleteShoppingList(listID));
     }
-
     ToastAlert.show(context, 'Lista excluida com sucesso!');
+  }
+
+  String formatarData(DateTime? data) {
+    if (data == null) return 'Não selecionada';
+    return DateFormat('dd/MM/yyyy').format(data);
   }
 
   @override
@@ -108,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
 
       child: BlocBuilder<HomeBloc, HomeState>(
-        bloc: _homeBloc..add(HomeFetchShoppingListsRequest()),
+        bloc: _homeBloc,
         builder: (context, state) {
           final listas = state is HomeShoppingListFetchSuccess
               ? state.shoppingLists
@@ -251,64 +280,137 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 Padding(
                   padding: const EdgeInsets.fromLTRB(8, 0, 8, 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: 5,
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: Container(
-                          height: 45,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.grey[500]!),
-                          ),
-                          child: TextFormField(
-                            controller: _searchController,
-                            maxLines: 1,
-                            onChanged: (value) {
-                              setState(() {
-                                if (_searchController.text.isEmpty) {
-                                  _clearButtonVisible = false;
-                                } else {
-                                  _clearButtonVisible = true;
-                                  _searchItem(listas as List<HomeEntity>);
-                                }
-                              });
-                            },
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.zero,
-                              hintText: 'Pesquisar listas',
-                              prefixIcon: const Icon(Icons.search),
-                              border: OutlineInputBorder(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        spacing: 5,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 45,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide.none,
+                                border: Border.all(color: Colors.grey[500]!),
                               ),
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                              suffixIcon: showClearButtom(),
+                              child: TextFormField(
+                                controller: _searchController,
+                                maxLines: 1,
+                                onChanged: (value) {
+                                  setState(() {
+                                    if (_searchController.text.isEmpty) {
+                                      _clearButtonVisible = false;
+                                    } else {
+                                      _clearButtonVisible = true;
+                                      _searchItem(listas as List<HomeEntity>);
+                                    }
+                                  });
+                                },
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.zero,
+                                  hintText: 'Pesquisar',
+                                  prefixIcon: const Icon(Icons.search),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey[200],
+                                  suffixIcon: showClearButtom(),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          IconButton(
+                            icon: Icon(Icons.calendar_month_outlined),
+                            color: Colors.grey[600],
+                            iconSize: 24,
+                            onPressed: () async {
+                              final selectedDate = await showDateRangePicker(
+                                context: context,
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2100),
+                              );
+                              print('Entrada: $filterActive');
+                              print('Entrada: $firstDateSelected');
+                              print('Entrada: $endDateSelected');
+                              selectedDate == null
+                                  ? setState(() {
+                                      filterActive = false;
+                                      firstDateSelected = DateTime(2000);
+                                      endDateSelected = DateTime(2100);
+                                      _homeBloc.add(HomeFetchShoppingListsRequest());
+                                    })
+                                  : setState(() {
+                                      filterActive = true;
+                                      firstDateSelected = selectedDate?.start;
+                                      endDateSelected = selectedDate?.end;
+                                      filterCalendar(
+                                        firstDateSelected ?? DateTime(2000),
+                                        endDateSelected ?? DateTime(2100),
+                                      );
+                                    });
+
+                              print('Fim: $filterActive');
+                              print('Fim: $firstDateSelected');
+                              print('Fim: $endDateSelected');
+                            },
+                          ),
+                        ],
+                      ),
+
+                      if (filterActive == true)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black26),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    5,
+                                    0,
+                                    0,
+                                    0,
+                                  ),
+                                  child: Row(
+                                    spacing: 50,
+                                    children: [
+                                      Row(
+                                        spacing: 10,
+                                        children: [
+                                          Text(
+                                            'Início: ${formatarData(firstDateSelected)}',
+                                          ),
+                                          Text(
+                                            'Fim: ${formatarData(endDateSelected)}',
+                                          ),
+                                        ],
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.clear,
+                                          color: Colors.red,
+                                          size: 20,
+                                        ),
+                                        onPressed: resetVariableState,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-
-                      IconButton(
-                        icon: Icon(Icons.calendar_month_outlined),
-                        color: Colors.grey[600],
-                        iconSize: 24,
-                        onPressed: () async {
-                          final selectedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (selectedDate != null) {
-                            // Handle selected date
-                          }
-                        },
-                      ),
                     ],
                   ),
                 ),
@@ -338,6 +440,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                         color: Colors.grey,
                                       ),
                                     )
+                                  : filterActive
+                                  ? Text(
+                                      'Nenhuma lista encontrada no período selecionado.',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                      ),
+                                    )
                                   : Text(
                                       'Nenhuma lista criada ainda.',
                                       style: TextStyle(
@@ -348,7 +458,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               SizedBox(height: 8),
                               if (listas.isEmpty)
                                 Text(
-                                  'Toque no + para criar sua primeira lista.',
+                                  'Toque no + para criar uma lista.',
                                   style: TextStyle(
                                     fontSize: 13,
                                     color: Colors.grey,
@@ -442,8 +552,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                             subtitle: Text(
                                               DateFormat(
-                                                'dd/MM/yyyy',
-                                              ).format(listSearch.createdAt),
+                                                'dd/MM/yyyy hh:mm',
+                                              ).format(
+                                                listSearch.createdAt.toLocal(),
+                                              ),
                                               style: const TextStyle(
                                                 fontSize: 12,
                                                 color: Colors.grey,
@@ -537,8 +649,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                             subtitle: Text(
                                               DateFormat(
-                                                'dd/MM/yyyy',
-                                              ).format(listas[index].createdAt),
+                                                'dd/MM/yyyy HH:mm',
+                                              ).format(
+                                                listas[index].createdAt
+                                                    .toLocal(),
+                                              ),
                                               style: const TextStyle(
                                                 fontSize: 12,
                                                 color: Colors.grey,
@@ -568,7 +683,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             onLongPress: () =>
                                                 OptionsButtomSheet.show(
                                                   context,
-                                                  
+
                                                   onDelete: () =>
                                                       ConfirmationAlert.show(
                                                         context,
