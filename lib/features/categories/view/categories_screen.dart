@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lista_compras/components/toastAlert/toastAlert.dart';
 import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/categories/bloc/categories_bloc.dart';
 import 'package:lista_compras/features/categories/bloc/categories_event.dart';
@@ -34,9 +35,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         if (!mounted) return;
 
         if (state is CategoryLoadingError) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          ToastAlert.show(context, state.message);
         }
       },
 

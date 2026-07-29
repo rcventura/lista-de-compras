@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ToastAlert {
-  static void show(BuildContext context, Widget message) {
+  static void show(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
        backgroundColor: Colors.transparent,
@@ -13,7 +13,7 @@ class ToastAlert {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
-            '$message',
+            message,
             style: const TextStyle(color: Colors.white, fontSize: 16),
           ),
         ),

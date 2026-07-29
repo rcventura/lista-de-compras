@@ -28,6 +28,37 @@ class HomeRespository {
     return _mapShoppingListsWithItemsCount(response as List);
   }
 
+  Future<List<HomeEntity>> filterShoppingList(
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('Usuario nao autenticado.');
+    }
+
+    final start = DateTime(startDate.year, startDate.month, startDate.day);
+    final end = DateTime(
+      endDate.year,
+      endDate.month,
+      endDate.day,
+      23,
+      59,
+      59,
+      999,
+    );
+
+    final response = await client
+        .from('shopping_lists')
+        .select('id, name, local, created_at')
+        .eq('user_id', userId)
+        .gte('created_at', start.toUtc().toIso8601String())
+        .lt('created_at', end.toUtc().toIso8601String())
+        .order('created_at', ascending: false);
+
+    return _mapShoppingListsWithItemsCount(response as List);
+  }
+
   Future<List<HomeEntity>> searchShoppingList(List<String> query) async {
     final userId = client.auth.currentUser?.id;
     if (userId == null) {

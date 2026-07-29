@@ -7,6 +7,13 @@ class HomeShoppingListDetailedRequested extends HomeEvent {
   HomeShoppingListDetailedRequested(this.shoppingListId);
 }
 
+class HomeShoppingListFilterRequest extends HomeEvent {
+  final DateTime startDate;
+  final DateTime endDate;
+
+  HomeShoppingListFilterRequest(this.startDate, this.endDate);
+}
+
 class HomeLogoutRequest extends HomeEvent {}
 
 class HomeRefreshShoppingListsRequest extends HomeEvent {}

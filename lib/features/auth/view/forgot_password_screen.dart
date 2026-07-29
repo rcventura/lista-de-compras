@@ -41,13 +41,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             if (state is SendResetPasswordSuccess) {
               _emailController.clear();
               Navigator.pop(context);
-              ToastAlert.show(context, Text('Instruções enviadas para seu e-mail!'));
+              ToastAlert.show(context, 'Instruções enviadas para seu e-mail!');
             }
 
             if (state is AuthError) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.message)));
+              ToastAlert.show(context, state.message);
             }
           },
 

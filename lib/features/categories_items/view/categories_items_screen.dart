@@ -46,12 +46,12 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     });
   }
 
-  void _searchItem(List<CategoriesItemEntity> categoriesItemsList) {
+  void _searchItem(List<CategoriesItemEntity> categoriesItemsLists) {
     final searchText = _searchController.text.toLowerCase();
     if (searchText.isEmpty) {
-      searchItemList = categoriesItemsList;
+      searchItemList = categoriesItemsLists;
     } else {
-      searchItemList = categoriesItemsList.where((item) {
+      searchItemList = categoriesItemsLists.where((item) {
         return item.name.toLowerCase().contains(searchText);
       }).toList();
     }
@@ -126,9 +126,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
             if (!mounted) return;
 
             if (state is CategoriesItemsLoadingError) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.message)));
+              ToastAlert.show(context, state.message);
             }
           },
         ),
@@ -149,7 +147,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                 Navigator.of(
                   context,
                 ).popUntil(ModalRoute.withName(Routes.shoppingListDetail));
-                ToastAlert.show(context, Text('Itens adicionado com sucesso!'));
+                ToastAlert.show(context, 'Itens adicionado com sucesso!');
               }
             }
 
@@ -158,7 +156,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                 _isAddingItems = false;
                 _pendingItemsToAdd = 0;
               });
-              ToastAlert.show(context, Text(state.message));
+              ToastAlert.show(context, state.message);
             }
           },
         ),
@@ -191,7 +189,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
               ),
             ),
             body: isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator.adaptive())
                 : categoriesItemsList.isEmpty
                 ? const Center(child: Text('Nenhum item encontrado.'))
                 : Column(
