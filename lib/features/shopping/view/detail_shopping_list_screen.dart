@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:lista_compras/components/BottomSheet/personButtomSheet.dart';
 import 'package:lista_compras/components/toastAlert/toastAlert.dart';
 import 'package:lista_compras/core/routes/routes.dart';
+import 'package:lista_compras/features/shopping/bloc/create_detail_item_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_event.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_state.dart';
@@ -21,6 +22,11 @@ class DetailShoppingListScreen extends StatefulWidget {
 }
 
 class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   Future<void> _navigateToCategories() async {
     await Navigator.pushNamed(context, Routes.categories);
 
@@ -31,9 +37,22 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> _navigateToDetailItem(
+    String itemName,
+    String detailItemId,
+    String listId,
+    String productId,
+  ) async {
+    await Navigator.pushNamed(
+      context,
+      Routes.detailItem,
+      arguments: DetailItemArgs(
+        itemName: itemName,
+        detailItemId: detailItemId,
+        listId: listId,
+        productId: productId,
+      ),
+    );
   }
 
   @override
@@ -198,6 +217,14 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                                 trailing: Icon(
                                                   Icons
                                                       .keyboard_arrow_right_outlined,
+                                                ),
+                                                onTap: () => _navigateToDetailItem(
+                                                  shoppingListItems[index].name,
+                                                  shoppingListItems[index].detailItemId ?? '', // detailItemId
+                                                  widget
+                                                      .shoppingListId, // listId
+                                                  shoppingListItems[index]
+                                                      .productId,
                                                 ),
                                               );
                                             },

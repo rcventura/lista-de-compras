@@ -8,9 +8,11 @@ import 'package:lista_compras/features/categories_items/bloc/categories_items_bl
 import 'package:lista_compras/features/categories_items/bloc/categories_items_event.dart';
 import 'package:lista_compras/features/categories_items/view/categories_items_screen.dart';
 import 'package:lista_compras/features/home/view/home_screen.dart';
+import 'package:lista_compras/features/shopping/bloc/create_detail_item_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/create_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_event.dart';
+import 'package:lista_compras/features/shopping/view/create_detail_item_screen.dart';
 import 'package:lista_compras/features/shopping/view/create_shopping_list_screen.dart';
 import 'package:lista_compras/features/shopping/view/detail_shopping_list_screen.dart';
 
@@ -26,6 +28,22 @@ class CategoriesItemsArgs {
   const CategoriesItemsArgs({required this.categoryId});
 }
 
+class DetailItemArgs {
+  final String itemName;
+  final String detailItemId;
+  final String listId;
+  final String productId;
+
+  const DetailItemArgs({
+    required this.itemName,
+    required this.detailItemId,
+    required this.listId,
+    required this.productId,
+  });
+
+  bool get isEditing => detailItemId.isNotEmpty;
+}
+
 class Routes {
   static const String login = '/';
   static const String home = '/home';
@@ -33,6 +51,7 @@ class Routes {
   static const String shoppingListDetail = '/shopping-list-details';
   static const String categories = '/categories';
   static const String categoriesItems = '/categories/{id}';
+  static const String detailItem = '/detail-item';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -87,6 +106,35 @@ class Routes {
           builder: (_) => BlocProvider(
             create: (_) => CategoriesBloc(),
             child: const CategoriesScreen(),
+          ),
+        );
+
+      case detailItem:
+        final arguments = settings.arguments;
+
+        if (arguments is! DetailItemArgs) {
+          return MaterialPageRoute(
+            settings: settings,
+            builder: (_) => Scaffold(
+              body: Center(
+                child: Text(
+                  'Argumentos invalidos para a rota ${settings.name}.',
+                ),
+              ),
+            ),
+          );
+        }
+
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) => BlocProvider(
+            create: (_) => CreateDetailItemShoppinglistBloc(),
+            child: CreateDetailItemShoppingListScreen(
+              itemName: arguments.itemName,
+              listId: arguments.listId,
+              productId: arguments.productId,
+              detailItemId: arguments.detailItemId,
+            ),
           ),
         );
 

@@ -11,6 +11,7 @@ class FetchDetailShoppingListModel {
   final int? order;
   final DateTime? createdAt;
   final double price;
+  final String? detailItemId;
   
   FetchDetailShoppingListModel({
     required this.id,
@@ -23,6 +24,7 @@ class FetchDetailShoppingListModel {
     required this.checked,
     this.createdAt,  
     required this.price,
+    this.detailItemId,
 
   });
 
@@ -37,7 +39,8 @@ class FetchDetailShoppingListModel {
       checked: map['checked'] as bool? ?? false,
       order: map['position'] as int?,
       createdAt: map['created_at'] != null ? DateTime.parse(map['created_at']) : null,
-      price: map['price'] != null ? (map['price'] as num).toDouble() : 0.0, 
+      price: map['price'] != null ? (map['price'] as num).toDouble() : 0.0,
+      detailItemId: map['detail_item_id']  as String?
     );
   }
 
@@ -51,6 +54,7 @@ class FetchDetailShoppingListModel {
     int? order,
     DateTime? createdAt,
     double? price,
+    String? detailItemId
   }) {
     return FetchDetailShoppingListModel(
       
@@ -64,6 +68,7 @@ class FetchDetailShoppingListModel {
       order: order ?? this.order,
       createdAt: createdAt,
       price: price ?? this.price,
+      detailItemId: detailItemId ?? this.detailItemId
     );
   }
 
@@ -79,6 +84,7 @@ class FetchDetailShoppingListModel {
       order: order,
       createdAt: createdAt,
       price: price,
+      detailItemId: detailItemId,
     );
   }
 }
