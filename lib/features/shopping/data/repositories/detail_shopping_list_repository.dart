@@ -14,7 +14,7 @@ class DetailShoppingListRepository {
       throw Exception('Usuário não autenticado.');
     }
 
-    final resposne = await client
+    final response = await client
         .from('shopping_list_items')
         .select(
           'id, list_id, product_id, name, quantity, unit, '
@@ -24,7 +24,7 @@ class DetailShoppingListRepository {
         .order('position', ascending: true)
         .range(0, 100);
 
-    return (resposne as List)
+    return (response as List)
         .map((item) => FetchDetailShoppingListModel.fromMap(item).toEntity())
         .toList();
   }

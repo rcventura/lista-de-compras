@@ -334,29 +334,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                 firstDate: DateTime(2000),
                                 lastDate: DateTime(2100),
                               );
-                              print('Entrada: $filterActive');
-                              print('Entrada: $firstDateSelected');
-                              print('Entrada: $endDateSelected');
                               selectedDate == null
                                   ? setState(() {
                                       filterActive = false;
                                       firstDateSelected = DateTime(2000);
                                       endDateSelected = DateTime(2100);
-                                      _homeBloc.add(HomeFetchShoppingListsRequest());
+                                      _homeBloc.add(
+                                        HomeFetchShoppingListsRequest(),
+                                      );
                                     })
                                   : setState(() {
                                       filterActive = true;
-                                      firstDateSelected = selectedDate?.start;
-                                      endDateSelected = selectedDate?.end;
+                                      firstDateSelected = selectedDate.start;
+                                      endDateSelected = selectedDate.end;
                                       filterCalendar(
                                         firstDateSelected ?? DateTime(2000),
                                         endDateSelected ?? DateTime(2100),
                                       );
                                     });
-
-                              print('Fim: $filterActive');
-                              print('Fim: $firstDateSelected');
-                              print('Fim: $endDateSelected');
                             },
                           ),
                         ],
