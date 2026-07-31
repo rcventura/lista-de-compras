@@ -57,6 +57,7 @@ class CreateDetailItemShoppinglistBloc
 
       emit(DetailItemShoppingListItemFetchSuccess(createDetailItem));
     } catch (e) {
+       print(e);
       emit(
         DetailItemShoppingListError('Erro ao carregar itens. Tente novamente.'),
       );

@@ -3,15 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/components/toastAlert/toastAlert.dart';
 import 'package:lista_compras/components/SMButtom/SMButtom.dart';
 import 'package:lista_compras/core/helpers/validators.dart';
-
-// AJUSTE OS IMPORTS ABAIXO DE ACORDO COM O CAMINHO REAL DO SEU BLOC
+import 'package:lista_compras/features/shopping/bloc/create_detail_item_shoppinglist_event.dart';
+import 'package:lista_compras/features/shopping/domain/entities/create_detail_item_shopping_list_entity.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../bloc/create_detail_item_shoppinglist_bloc.dart';
 import '../bloc/create_detail_item_shoppinglist_state.dart';
 
-/// Tela responsável por criar/editar o detalhe de um item da lista de compras.
-///
-/// Recebe [listId] (obrigatório) e opcionalmente [productId], caso o item
-/// já esteja vinculado a um produto pré-cadastrado.
 class CreateDetailItemShoppingListScreen extends StatefulWidget {
   final String itemName;
   final String detailItemId;
@@ -35,7 +32,8 @@ class _CreateDetailItemShoppingListScreenState
     extends State<CreateDetailItemShoppingListScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController get  _itemNameController => TextEditingController(text: widget.itemName);
+  TextEditingController get _itemNameController =>
+      TextEditingController(text: widget.itemName);
   final _itemBrandController = TextEditingController();
   final _itemPriceController = TextEditingController();
   final _itemPricePromotionalController = TextEditingController();
@@ -46,6 +44,7 @@ class _CreateDetailItemShoppingListScreenState
   final List<DropdownMenuItem<String>> _typeItems = const [
     DropdownMenuItem(value: 'Unidade', child: Text('Unidade')),
     DropdownMenuItem(value: 'Kg', child: Text('Kg')),
+    DropdownMenuItem(value: 'Grama', child: Text('Grama')),
     DropdownMenuItem(value: 'Litro', child: Text('Litro')),
     DropdownMenuItem(value: 'Pacote', child: Text('Pacote')),
   ];
@@ -95,31 +94,34 @@ class _CreateDetailItemShoppingListScreenState
     }
   }
 
-  // void _saveItem() {
-  //   if (!_formKey.currentState!.validate()) {
-  //     return;
-  //   }
+  void _saveItem() {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
-  //   context.read<CreateDetailItemShoppinglistBloc>().add(
-  //         CreateDetailItemShoppingListRequested(
-  //           userId: Supabase.instance.client.auth.currentUser?.id ?? '',
-  //           listId: widget.listId,
-  //           productId: widget.productId ?? '',
-  //           itemName: _itemNameController.text,
-  //           itemBrand: _itemBrandController.text,
-  //           itemPrice: _parsedPrice,
-  //           itemPricePromotional: _parsedPromotionalPrice,
-  //           isPromotional: _isPromotional,
-  //           itemQuantity: _parsedQuantity,
-  //           itemType: _selectedType ?? '',
-  //           itemPriceTotal: _totalPrice,
-  //           itemDueDate: _itemDueDate?.toIso8601String(),
-  //           itemNotes: _itemNotesController.text.isEmpty
-  //               ? null
-  //               : _itemNotesController.text,
-  //         ),
-  //       );
-  // }
+print(Supabase.instance.client.auth.currentUser?.id ?? '');
+    context.read<CreateDetailItemShoppinglistBloc>().add(
+      CreateDetailItemRequest(
+        CreateDetailItemShoppingListEntity(
+          productId: widget.productId,
+          listId: widget.listId,
+          userId: Supabase.instance.client.auth.currentUser?.id ?? '',
+          itemName: _itemNameController.text,
+          itemBrand: _itemBrandController.value.text,
+          itemPrice: _parsedPrice,
+          itemPricePromotional: _parsedPromotionalPrice,
+          isPromotional: _isPromotional,
+          itemQuantity: _parsedQuantity,
+          itemType: _selectedType ?? '',
+          itemPriceTotal: _totalPrice,
+          itemDueDate: _itemDueDate?.toIso8601String(),
+          itemNotes: _itemNotesController.text.isEmpty
+              ? null
+              : _itemNotesController.text,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -359,7 +361,7 @@ class _CreateDetailItemShoppingListScreenState
                           width: double.infinity,
                           child: SMButton(
                             text: 'Salvar item',
-                            onPressed: () => {},
+                            onPressed: _saveItem,
                             isLoading: isLoading,
                           ),
                         ),

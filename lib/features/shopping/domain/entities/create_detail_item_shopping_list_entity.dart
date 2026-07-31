@@ -1,6 +1,6 @@
 class CreateDetailItemShoppingListEntity {
-  final String id;
-  final String createdAt;
+  final String? id;
+  final String? createdAt;
   final String productId;
   final String listId;
   final String userId;
@@ -16,8 +16,8 @@ class CreateDetailItemShoppingListEntity {
   final String? itemNotes;
 
   const CreateDetailItemShoppingListEntity({
-    required this.id,
-    required this.createdAt,
+    this.id,
+    this.createdAt,
     required this.productId,
     required this.listId,
     required this.userId,
