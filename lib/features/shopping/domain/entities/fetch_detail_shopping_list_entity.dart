@@ -10,6 +10,7 @@ class FetchDetailShoppingListEntity {
   final int? order;
   final DateTime? createdAt;
   final double? price;
+  final String? detailItemId;
 
   FetchDetailShoppingListEntity({
     required this.id,
@@ -22,5 +23,6 @@ class FetchDetailShoppingListEntity {
     required this.checked,
     this.createdAt,
     required this.price,
+    this.detailItemId
   });
 }
