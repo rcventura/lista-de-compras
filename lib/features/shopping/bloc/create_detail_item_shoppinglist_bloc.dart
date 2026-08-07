@@ -36,6 +36,21 @@ class CreateDetailItemShoppinglistBloc
   ) async {
     emit(DetailItemShoppingListItemLoading());
     try {
+      print('id: ${event.detailitem.id}');
+      print('createdAt: ${event.detailitem.createdAt}');
+      print('productId: ${event.detailitem.productId}');
+      print('listId: ${event.detailitem.listId}');
+      print('userId: ${event.detailitem.userId}');
+      print('itemName: ${event.detailitem.itemName}');
+      print('itemBrand: ${event.detailitem.itemBrand}');
+      print('itemPrice: ${event.detailitem.itemPrice}');
+      print('itemPricePromotional: ${event.detailitem.itemPricePromotional}');
+      print('isPromotional: ${event.detailitem.isPromotional}');
+      print('itemQuantity: ${event.detailitem.itemQuantity}');
+      print('itemType: ${event.detailitem.itemType}');
+      print('itemPriceTotal: ${event.detailitem.itemPriceTotal}');
+
+      
       final createDetailItem = await _createDetailItemShoppingListUsecase
           .createDetailItemShoppingList(
             detailitem: CreateDetailItemShoppingListEntity(
@@ -57,7 +72,7 @@ class CreateDetailItemShoppinglistBloc
 
       emit(DetailItemShoppingListItemFetchSuccess(createDetailItem));
     } catch (e) {
-       print(e);
+       print('aa $e');
       emit(
         DetailItemShoppingListError('Erro ao carregar itens. Tente novamente.'),
       );

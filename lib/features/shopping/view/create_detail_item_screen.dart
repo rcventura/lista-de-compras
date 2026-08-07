@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/components/toastAlert/toastAlert.dart';
 import 'package:lista_compras/components/SMButtom/SMButtom.dart';
+import 'package:lista_compras/core/helpers/enum.dart';
 import 'package:lista_compras/core/helpers/validators.dart';
+import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_bloc.dart';
+import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_event.dart';
+import 'package:lista_compras/features/categories_items/bloc/categories_items_bloc.dart';
+import 'package:lista_compras/features/categories_items/bloc/categories_items_state.dart';
 import 'package:lista_compras/features/shopping/bloc/create_detail_item_shoppinglist_event.dart';
+import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
+import 'package:lista_compras/features/shopping/cubit/current_shopping_list_state.dart';
 import 'package:lista_compras/features/shopping/domain/entities/create_detail_item_shopping_list_entity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../bloc/create_detail_item_shoppinglist_bloc.dart';
@@ -99,7 +106,6 @@ class _CreateDetailItemShoppingListScreenState
       return;
     }
 
-print(Supabase.instance.client.auth.currentUser?.id ?? '');
     context.read<CreateDetailItemShoppinglistBloc>().add(
       CreateDetailItemRequest(
         CreateDetailItemShoppingListEntity(
@@ -119,6 +125,33 @@ print(Supabase.instance.client.auth.currentUser?.id ?? '');
               ? null
               : _itemNotesController.text,
         ),
+      ),
+    );
+  }
+
+  Future<void> _addSelectedItems({
+    required String listId,
+    required String productId,
+    required String name,
+    required int quantity,
+    required String unit,
+    required bool checked,
+    required int position,
+    required double price,
+  }) async {
+    final categoriesState = context.read<CategoriesItemsBloc>().state;
+    if (categoriesState is! CategoriesItemsLoadingSuccess) return;
+
+    context.read<AddItemsInListBloc>().add(
+      AddItemsInListRequested(
+        listId: listId,
+        productId: productId,
+        name: 'categoryItem.name',
+        quantity: quantity,
+        unit: unit,
+        checked: false,
+        position: position,
+        price: price,
       ),
     );
   }
@@ -152,6 +185,17 @@ print(Supabase.instance.client.auth.currentUser?.id ?? '');
               },
               builder: (context, state) {
                 final isLoading = state is DetailItemShoppingListItemLoading;
+
+                final currentShoppingListState = context
+                    .watch<CurrentShoppingListCubit>()
+                    .state;
+
+                final currentShoppingList =
+                    currentShoppingListState is CurrentShoppingListLoaded
+                    ? currentShoppingListState.currentShoppingList
+                    : null;
+
+                final shoppingListLocate = currentShoppingList?.local ?? '';
 
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(24),
@@ -361,7 +405,13 @@ print(Supabase.instance.client.auth.currentUser?.id ?? '');
                           width: double.infinity,
                           child: SMButton(
                             text: 'Salvar item',
-                            onPressed: _saveItem,
+                            onPressed: () => {
+                              if (shoppingListLocate ==
+                                  ShoppingListLocateEnum.casa.value)
+                                {_saveItem}
+                              else
+                                {_saveItem, _addSelectedItems},
+                            },
                             isLoading: isLoading,
                           ),
                         ),

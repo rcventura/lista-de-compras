@@ -57,6 +57,24 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     }
   }
 
+  Future<void> _navigateToDetailItem(
+    String itemName,
+    String detailItemId,
+    String listId,
+    String productId,
+  ) async {
+    await Navigator.pushNamed(
+      context,
+      Routes.detailItem,
+      arguments: DetailItemArgs(
+        itemName: itemName,
+        detailItemId: detailItemId,
+        listId: listId,
+        productId: productId,
+      ),
+    );
+  }
+
   Widget showClearButtom() {
     if (_clearButtonVisible) {
       return IconButton(
@@ -282,7 +300,13 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                                                   size: 20,
                                                   color: Colors.grey[600],
                                                 ),
-                                                onTap: () => {},
+                                                onTap: () =>
+                                                    _navigateToDetailItem(
+                                                      categoryItem.name,
+                                                      categoryItem.id,
+                                                      currentShoppingList?.id ?? '',
+                                                      categoriesItemsList[index].id,
+                                                    ),
                                               );
                                       },
                                     ),

@@ -93,8 +93,6 @@ class CreateDetailItemShoppingListModel {
 
   CreateDetailItemShoppingListEntity toEntity() {
     return CreateDetailItemShoppingListEntity(
-      id: id,
-      createdAt: createdAt,
       productId: productId,
       listId: listId,
       userId: userId,

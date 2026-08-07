@@ -64,7 +64,7 @@ class _CreateShoppingListScreenState extends State<CreateShoppingListScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: SafeArea(
+      body: SingleChildScrollView(
         child: BlocConsumer<CreateShoppinglistBloc, CreateShoppingListState>(
           listener: (context, state) {
             if (state is CreateShoppingListCreationSuccess) {
