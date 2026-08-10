@@ -50,7 +50,6 @@ class CreateDetailItemShoppinglistBloc
       print('itemType: ${event.detailitem.itemType}');
       print('itemPriceTotal: ${event.detailitem.itemPriceTotal}');
 
-      
       final createDetailItem = await _createDetailItemShoppingListUsecase
           .createDetailItemShoppingList(
             detailitem: CreateDetailItemShoppingListEntity(
@@ -67,14 +66,14 @@ class CreateDetailItemShoppinglistBloc
               itemQuantity: event.detailitem.itemQuantity,
               itemType: event.detailitem.itemType,
               itemPriceTotal: event.detailitem.itemPriceTotal,
+              listItemId: event.detailitem.listItemId,
             ),
           );
-
       emit(DetailItemShoppingListItemFetchSuccess(createDetailItem));
     } catch (e) {
        print('aa $e');
       emit(
-        DetailItemShoppingListError('Erro ao carregar itens. Tente novamente.'),
+        DetailItemShoppingListError('Erro ao carregar itens1. Tente novamente.'),
       );
     }
   }

@@ -25,7 +25,8 @@ required CreateDetailItemShoppingListEntity detailitem
         itemType: detailitem.itemType,
         itemPriceTotal: detailitem.itemPriceTotal,
         itemDueDate: detailitem.itemDueDate,
-        itemNotes: detailitem.itemNotes
+        itemNotes: detailitem.itemNotes,
+        listItemId: detailitem.listItemId,
       ),
     );
   }

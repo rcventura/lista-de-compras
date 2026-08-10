@@ -30,18 +30,14 @@ class CategoriesItemsArgs {
 
 class DetailItemArgs {
   final String itemName;
-  final String detailItemId;
   final String listId;
   final String productId;
 
   const DetailItemArgs({
     required this.itemName,
-    required this.detailItemId,
     required this.listId,
     required this.productId,
   });
-
-  bool get isEditing => detailItemId.isNotEmpty;
 }
 
 class Routes {
@@ -127,13 +123,15 @@ class Routes {
 
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => BlocProvider(
-            create: (_) => CreateDetailItemShoppinglistBloc(),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => CreateDetailItemShoppinglistBloc()),
+              BlocProvider(create: (_) => AddItemsInListBloc()),
+            ],
             child: CreateDetailItemShoppingListScreen(
               itemName: arguments.itemName,
               listId: arguments.listId,
               productId: arguments.productId,
-              detailItemId: arguments.detailItemId,
             ),
           ),
         );

@@ -16,6 +16,7 @@ class CreateDetailItemShoppingListModel {
   final double itemPriceTotal;
   final String? itemDueDate;
   final String? itemNotes;
+  final String listItemId;
 
   CreateDetailItemShoppingListModel({
     required this.id,
@@ -33,6 +34,7 @@ class CreateDetailItemShoppingListModel {
     required this.itemPriceTotal,
     this.itemDueDate,
     this.itemNotes,
+    required this.listItemId,
   });
 
   factory CreateDetailItemShoppingListModel.fromMap(Map<String, dynamic> map) {
@@ -52,6 +54,7 @@ class CreateDetailItemShoppingListModel {
       itemPriceTotal: map['item_price_total'] as double,
       itemDueDate: map['item_due_date'] as String,
       itemNotes: map['item_notes'] as String,
+      listItemId: map['list_item_id'] as String,
     );
   }
 
@@ -71,6 +74,7 @@ class CreateDetailItemShoppingListModel {
     required double itemPriceTotal,
     String? itemDueDate,
     String? itemNotes,
+    required String listItemId,
   }) {
     return CreateDetailItemShoppingListModel(
       id: id,
@@ -88,6 +92,7 @@ class CreateDetailItemShoppingListModel {
       itemPriceTotal: itemPriceTotal,
       itemDueDate: itemDueDate,
       itemNotes: itemNotes,
+      listItemId: listItemId,
     );
   }
 
@@ -106,7 +111,7 @@ class CreateDetailItemShoppingListModel {
       itemPriceTotal: itemPriceTotal,
       itemDueDate: itemDueDate,
       itemNotes: itemNotes,
-      
+      listItemId: listItemId
     );
   }
 }

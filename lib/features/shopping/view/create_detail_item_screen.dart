@@ -6,8 +6,6 @@ import 'package:lista_compras/core/helpers/enum.dart';
 import 'package:lista_compras/core/helpers/validators.dart';
 import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_event.dart';
-import 'package:lista_compras/features/categories_items/bloc/categories_items_bloc.dart';
-import 'package:lista_compras/features/categories_items/bloc/categories_items_state.dart';
 import 'package:lista_compras/features/shopping/bloc/create_detail_item_shoppinglist_event.dart';
 import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
 import 'package:lista_compras/features/shopping/cubit/current_shopping_list_state.dart';
@@ -18,16 +16,16 @@ import '../bloc/create_detail_item_shoppinglist_state.dart';
 
 class CreateDetailItemShoppingListScreen extends StatefulWidget {
   final String itemName;
-  final String detailItemId;
   final String listId;
   final String productId;
+  final String? listItemId;
 
   const CreateDetailItemShoppingListScreen({
     super.key,
     required this.itemName,
-    required this.detailItemId,
     required this.listId,
     required this.productId,
+    this.listItemId,
   });
 
   @override
@@ -46,7 +44,7 @@ class _CreateDetailItemShoppingListScreenState
   final _itemPricePromotionalController = TextEditingController();
   final _itemQuantityController = TextEditingController(text: '1');
   final _itemNotesController = TextEditingController();
-  bool get isEditing => widget.detailItemId.isNotEmpty;
+//  bool get isEditing => widget.detailItemId.isNotEmpty;
 
   final List<DropdownMenuItem<String>> _typeItems = const [
     DropdownMenuItem(value: 'Unidade', child: Text('Unidade')),
@@ -124,6 +122,7 @@ class _CreateDetailItemShoppingListScreenState
           itemNotes: _itemNotesController.text.isEmpty
               ? null
               : _itemNotesController.text,
+          listItemId: widget.listItemId ?? '',
         ),
       ),
     );
@@ -133,24 +132,19 @@ class _CreateDetailItemShoppingListScreenState
     required String listId,
     required String productId,
     required String name,
-    required int quantity,
+    required double quantity,
     required String unit,
     required bool checked,
-    required int position,
     required double price,
   }) async {
-    final categoriesState = context.read<CategoriesItemsBloc>().state;
-    if (categoriesState is! CategoriesItemsLoadingSuccess) return;
-
     context.read<AddItemsInListBloc>().add(
       AddItemsInListRequested(
         listId: listId,
         productId: productId,
-        name: 'categoryItem.name',
+        name: name,
         quantity: quantity,
         unit: unit,
         checked: false,
-        position: position,
         price: price,
       ),
     );
@@ -162,7 +156,8 @@ class _CreateDetailItemShoppingListScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Editar Item' : 'Adicionar Item'),
+       // title: Text(isEditing ? 'Editar Item' : 'Adicionar Item'),
+       title: Text('Adicionar Item'),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
@@ -408,9 +403,20 @@ class _CreateDetailItemShoppingListScreenState
                             onPressed: () => {
                               if (shoppingListLocate ==
                                   ShoppingListLocateEnum.casa.value)
-                                {_saveItem}
+                                {_saveItem()}
                               else
-                                {_saveItem, _addSelectedItems},
+                                {
+                                  _addSelectedItems(
+                                    listId: widget.listId,
+                                    productId: widget.productId,
+                                    name: _itemNameController.text,
+                                    quantity: _parsedQuantity,
+                                    unit: _selectedType ?? '',
+                                    checked: false,
+                                    price: _totalPrice,
+                                  ),
+                                  _saveItem(),
+                                }
                             },
                             isLoading: isLoading,
                           ),

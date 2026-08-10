@@ -38,7 +38,6 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
 
   Future<void> _navigateToDetailItem(
     String itemName,
-    String detailItemId,
     String listId,
     String productId,
   ) async {
@@ -47,7 +46,6 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
       Routes.detailItem,
       arguments: DetailItemArgs(
         itemName: itemName,
-        detailItemId: detailItemId,
         listId: listId,
         productId: productId,
       ),
@@ -218,8 +216,7 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                                       .keyboard_arrow_right_outlined,
                                                 ),
                                                 onTap: () => _navigateToDetailItem(
-                                                  shoppingListItems[index].name,
-                                                  shoppingListItems[index].detailItemId ?? '', // detailItemId
+                                                  shoppingListItems[index].name, // detailItemId
                                                   widget
                                                       .shoppingListId, // listId
                                                   shoppingListItems[index]

@@ -18,7 +18,6 @@ class AddItemsInListRepository {
               'quantity': item.quantity,
               'unit': item.unit,
               'checked': item.checked,
-              'position': item.position,
               'price': item.price
             }
           ])

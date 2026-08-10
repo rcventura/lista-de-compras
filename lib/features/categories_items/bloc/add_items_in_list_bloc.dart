@@ -37,7 +37,6 @@ class AddItemsInListBloc
         event.quantity,
         event.unit,
         event.checked,
-        event.position,
         event.price
       );
       emit(AddItemsInListSuccess(''));

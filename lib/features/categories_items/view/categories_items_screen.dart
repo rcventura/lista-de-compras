@@ -59,7 +59,6 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
 
   Future<void> _navigateToDetailItem(
     String itemName,
-    String detailItemId,
     String listId,
     String productId,
   ) async {
@@ -68,7 +67,6 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
       Routes.detailItem,
       arguments: DetailItemArgs(
         itemName: itemName,
-        detailItemId: detailItemId,
         listId: listId,
         productId: productId,
       ),
@@ -99,10 +97,9 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     required String listId,
     required String productId,
     required String name,
-    required int quantity,
+    required double quantity,
     required String unit,
     required bool checked,
-    required int position,
     required double price,
   }) async {
     if (itemsSelected.isEmpty) return;
@@ -128,7 +125,6 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
           quantity: quantity,
           unit: unit,
           checked: false,
-          position: position,
           price: price,
         ),
       );
@@ -305,7 +301,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                                                       categoryItem.name,
                                                       categoryItem.id,
                                                       currentShoppingList?.id ?? '',
-                                                      categoriesItemsList[index].id,
+                  //                                    categoriesItemsList[index].id,
                                                     ),
                                               );
                                       },
@@ -349,7 +345,6 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                                     quantity: 1,
                                     unit: '',
                                     checked: false,
-                                    position: 1,
                                     price: 0.0,
                                   ),
                                 ),

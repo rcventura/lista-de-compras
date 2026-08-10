@@ -7,10 +7,8 @@ class FetchDetailShoppingListEntity {
   final int quantity;
   final String unit;
   final bool checked;
-  final int? order;
   final DateTime? createdAt;
   final double? price;
-  final String? detailItemId;
 
   FetchDetailShoppingListEntity({
     required this.id,
@@ -19,10 +17,8 @@ class FetchDetailShoppingListEntity {
     required this.name,
     required this.quantity,
     required this.unit,
-    required this.order,
     required this.checked,
     this.createdAt,
     required this.price,
-    this.detailItemId
   });
 }
