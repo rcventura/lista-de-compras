@@ -5,23 +5,16 @@ class FetchDetailShoppingListModel {
   final String shoppingListId;
   final String productId;
   final String name;
-  final int quantity;
-  final String unit;
   final bool checked;
   final DateTime? createdAt;
-  final double price;
   
   FetchDetailShoppingListModel({
     required this.id,
     required this.shoppingListId,
     required this.productId,
     required this.name,
-    required this.quantity,
-    required this.unit,
     required this.checked,
     this.createdAt,  
-    required this.price,
-
   });
 
   factory FetchDetailShoppingListModel.fromMap(Map<String, dynamic> map) {
@@ -30,11 +23,8 @@ class FetchDetailShoppingListModel {
       shoppingListId: map['list_id'] as String,
       productId: map['product_id'] as String,
       name: map['name'] as String,
-      quantity: map['quantity'] as int,
-      unit: map['unit'] as String,
       checked: map['checked'] as bool? ?? false,
       createdAt: map['created_at'] != null ? DateTime.parse(map['created_at']) : null,
-      price: map['price'] != null ? (map['price'] as num).toDouble() : 0.0,
     );
   }
 
@@ -43,10 +33,8 @@ class FetchDetailShoppingListModel {
     String? shoppingListId,
     String? productId,
     String? name,
-    int? quantity,
     bool? checked,
     DateTime? createdAt,
-    double? price,
   }) {
     return FetchDetailShoppingListModel(
       
@@ -54,11 +42,8 @@ class FetchDetailShoppingListModel {
       shoppingListId: shoppingListId ?? this.shoppingListId,
       productId: productId ?? this.productId,
       name: name ?? this.name,
-      quantity: quantity ?? this.quantity,
-      unit: unit,
       checked: checked ?? this.checked,
       createdAt: createdAt,
-      price: price ?? this.price,
     );
   }
 
@@ -68,11 +53,8 @@ class FetchDetailShoppingListModel {
       shoppingListId: shoppingListId,
       productId: productId,
       name: name,
-      quantity: quantity,
-      unit: unit,
       checked: checked,
       createdAt: createdAt,
-      price: price,
     );
   }
 }

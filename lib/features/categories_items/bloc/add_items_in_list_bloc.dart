@@ -34,10 +34,7 @@ class AddItemsInListBloc
         event.listId,
         event.productId,
         event.name,
-        event.quantity,
-        event.unit,
         event.checked,
-        event.price
       );
       emit(AddItemsInListSuccess(''));
     } catch (e) {

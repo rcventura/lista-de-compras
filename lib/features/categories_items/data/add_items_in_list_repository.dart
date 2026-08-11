@@ -15,10 +15,7 @@ class AddItemsInListRepository {
               'list_id': item.listId,
               'product_id': item.productId,
               'name': item.name,
-              'quantity': item.quantity,
-              'unit': item.unit,
               'checked': item.checked,
-              'price': item.price
             }
           ])
           .select()

@@ -4,19 +4,13 @@ class AddItemsInListModal {
   final String listId;
   final String productId;
   final String name;
-  final double quantity;
-  final String unit;
   final bool checked;
-  final double price;
 
   AddItemsInListModal({
     required this.listId,
     required this.productId,
     required this.name,
-    required this.quantity,
-    required this.unit,
     required this.checked,
-    required this.price,
   });
 
   factory AddItemsInListModal.fromMap(Map<String, dynamic> map) {
@@ -24,10 +18,7 @@ class AddItemsInListModal {
       listId: map['list_id'] as String,
       productId: map['product_id'] as String,
       name: map['name'] as String,
-      quantity: (map['quantity'] as num).toDouble(),
-      unit: map['unit'] as String,
       checked: map['checked'] == true ? true : false,
-      price: (map['price'] as num).toDouble(),
     );
   }
 
@@ -36,10 +27,7 @@ class AddItemsInListModal {
       listId: listId,
       productId: productId,
       name: name,
-      quantity: quantity,
-      unit: unit,
       checked: checked,
-      price: price,
     );
   }
 }

@@ -10,20 +10,14 @@ class AddItemsItemsUsecase {
         String listId,
         String productId,
         String name,
-        double quantity,
-        String unit,
         bool checked,
-        double price
   ) {
     return repository.addItemInList( 
       AddItemsInListEntity(
         listId: listId,
         productId: productId,
         name: name,
-        quantity: quantity,
-        unit: unit,
         checked: checked,
-        price: price
       )
     );
   }

@@ -17,8 +17,8 @@ class DetailShoppingListRepository {
     final response = await client
         .from('shopping_list_items')
         .select(
-          'id, list_id, product_id, name, quantity, unit, '
-          'checked, created_at, price'
+          'id, list_id, product_id, name, '
+          'checked, created_at'
         )
         .eq('list_id', shoppingListId)
         .order('created_at', ascending: true)

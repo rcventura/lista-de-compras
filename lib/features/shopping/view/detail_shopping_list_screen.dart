@@ -258,7 +258,7 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                       ),
                                       Text(
                                         shoppingListItems.isNotEmpty
-                                            ? 'R\$ ${shoppingListItems.fold(0.0, (sum, item) => sum + ((item.quantity * (item.price ?? 0.0)))).toStringAsFixed(2)}'
+                                            ? 'R\$ ${shoppingListItems.fold(0.0, (sum, item) => sum).toStringAsFixed(2)}'
                                             : 'R\$ 0.00',
                                         style: TextStyle(
                                           fontSize: 13,

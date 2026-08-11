@@ -97,10 +97,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     required String listId,
     required String productId,
     required String name,
-    required double quantity,
-    required String unit,
     required bool checked,
-    required double price,
   }) async {
     if (itemsSelected.isEmpty) return;
 
@@ -122,10 +119,8 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
           listId: listId,
           productId: productId,
           name: categoryItem.name,
-          quantity: quantity,
-          unit: unit,
           checked: false,
-          price: price,
+
         ),
       );
     }
@@ -342,10 +337,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                                     listId: currentShoppingList?.id ?? '',
                                     productId: itemsSelected[0].id,
                                     name: itemsSelected[0].name,
-                                    quantity: 1,
-                                    unit: '',
                                     checked: false,
-                                    price: 0.0,
                                   ),
                                 ),
                               ],

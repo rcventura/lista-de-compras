@@ -132,20 +132,14 @@ class _CreateDetailItemShoppingListScreenState
     required String listId,
     required String productId,
     required String name,
-    required double quantity,
-    required String unit,
     required bool checked,
-    required double price,
   }) async {
     context.read<AddItemsInListBloc>().add(
       AddItemsInListRequested(
         listId: listId,
         productId: productId,
         name: name,
-        quantity: quantity,
-        unit: unit,
         checked: false,
-        price: price,
       ),
     );
   }
@@ -410,10 +404,7 @@ class _CreateDetailItemShoppingListScreenState
                                     listId: widget.listId,
                                     productId: widget.productId,
                                     name: _itemNameController.text,
-                                    quantity: _parsedQuantity,
-                                    unit: _selectedType ?? '',
                                     checked: false,
-                                    price: _totalPrice,
                                   ),
                                   _saveItem(),
                                 }
