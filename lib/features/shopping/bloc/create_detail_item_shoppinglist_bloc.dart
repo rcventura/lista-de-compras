@@ -36,37 +36,38 @@ class CreateDetailItemShoppinglistBloc
   ) async {
     emit(DetailItemShoppingListItemLoading());
     try {
-      print('id: ${event.detailitem.id}');
-      print('createdAt: ${event.detailitem.createdAt}');
-      print('productId: ${event.detailitem.productId}');
-      print('listId: ${event.detailitem.listId}');
-      print('userId: ${event.detailitem.userId}');
-      print('itemName: ${event.detailitem.itemName}');
-      print('itemBrand: ${event.detailitem.itemBrand}');
-      print('itemPrice: ${event.detailitem.itemPrice}');
-      print('itemPricePromotional: ${event.detailitem.itemPricePromotional}');
-      print('isPromotional: ${event.detailitem.isPromotional}');
-      print('itemQuantity: ${event.detailitem.itemQuantity}');
-      print('itemType: ${event.detailitem.itemType}');
-      print('itemPriceTotal: ${event.detailitem.itemPriceTotal}');
+      print('id: ${event.detailItem.id}');
+      print('createdAt: ${event.detailItem.createdAt}');
+      print('productId: ${event.detailItem.productId}');
+      print('listId: ${event.detailItem.listId}');
+      print('userId: ${event.detailItem.userId}');
+      print('itemName: ${event.detailItem.itemName}');
+      print('itemBrand: ${event.detailItem.itemBrand}');
+      print('itemPrice: ${event.detailItem.itemPrice}');
+      print('itemPricePromotional: ${event.detailItem.itemPricePromotional}');
+      print('isPromotional: ${event.detailItem.isPromotional}');
+      print('itemQuantity: ${event.detailItem.itemQuantity}');
+      print('itemType: ${event.detailItem.itemType}');
+      print('itemPriceTotal: ${event.detailItem.itemPriceTotal}');
+      print('itemDetailId: ${event.detailItem.listItemId}');
 
       final createDetailItem = await _createDetailItemShoppingListUsecase
           .createDetailItemShoppingList(
-            detailitem: CreateDetailItemShoppingListEntity(
-              id: event.detailitem.id,
-              createdAt: event.detailitem.createdAt,
-              productId: event.detailitem.productId,
-              listId: event.detailitem.listId,
-              userId: event.detailitem.userId,
-              itemName: event.detailitem.itemName,
-              itemBrand: event.detailitem.itemBrand,
-              itemPrice: event.detailitem.itemPrice,
-              itemPricePromotional: event.detailitem.itemPricePromotional,
-              isPromotional: event.detailitem.isPromotional,
-              itemQuantity: event.detailitem.itemQuantity,
-              itemType: event.detailitem.itemType,
-              itemPriceTotal: event.detailitem.itemPriceTotal,
-              listItemId: event.detailitem.listItemId,
+            detailItem: CreateDetailItemShoppingListEntity(
+              id: event.detailItem.id,
+              createdAt: event.detailItem.createdAt,
+              productId: event.detailItem.productId,
+              listId: event.detailItem.listId,
+              userId: event.detailItem.userId,
+              itemName: event.detailItem.itemName,
+              itemBrand: event.detailItem.itemBrand,
+              itemPrice: event.detailItem.itemPrice,
+              itemPricePromotional: event.detailItem.itemPricePromotional,
+              isPromotional: event.detailItem.isPromotional,
+              itemQuantity: event.detailItem.itemQuantity,
+              itemType: event.detailItem.itemType,
+              itemPriceTotal: event.detailItem.itemPriceTotal,
+              listItemId: event.detailItem.listItemId,
             ),
           );
       emit(DetailItemShoppingListItemFetchSuccess(createDetailItem));

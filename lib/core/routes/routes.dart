@@ -32,11 +32,13 @@ class DetailItemArgs {
   final String itemName;
   final String listId;
   final String productId;
+  final String? listItemId;
 
   const DetailItemArgs({
     required this.itemName,
     required this.listId,
     required this.productId,
+    this.listItemId,
   });
 }
 
@@ -132,6 +134,7 @@ class Routes {
               itemName: arguments.itemName,
               listId: arguments.listId,
               productId: arguments.productId,
+              listItemId: arguments.listItemId ?? '',
             ),
           ),
         );

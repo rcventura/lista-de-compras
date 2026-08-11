@@ -22,7 +22,7 @@ class CreateDetailItemShoppingListRepository {
         .select(
           'id, list_id, product_id, item_name, item_brand, '
           'item_price, item_price_promotional, is_promotional, item_quantity, item_type '
-          'item_price_total, item_due_date, item_notes',
+          'item_price_total, item_due_date, item_notes, list_item_id',
         )
         .eq('list_id', shoppingListId)
         .eq('product_id', productId)
@@ -32,24 +32,25 @@ class CreateDetailItemShoppingListRepository {
   }
 
   Future<CreateDetailItemShoppingListEntity> createDetailItem({
-    required CreateDetailItemShoppingListEntity detailitem,
+    required CreateDetailItemShoppingListEntity detailItem,
   }) async {
     final data = await client
         .from('shopping_list_item_detail')
         .insert({
-          'list_id': detailitem.listId, 
-          'product_id': detailitem.productId, 
-          'user_id': detailitem.userId,
-          'item_name': detailitem.itemName, 
-          'item_brand': detailitem.itemBrand,
-          'item_price': detailitem.itemPrice,
-          'item_price_promotional': detailitem.itemPricePromotional, 
-          'is_promotional': detailitem.isPromotional, 
-          'item_quantity': detailitem.itemQuantity, 
-          'item_type': detailitem.itemType,
-          'item_price_total': detailitem.itemPriceTotal, 
-          'item_due_date': detailitem.itemDueDate, 
-          'item_notes': detailitem.itemNotes,
+          'list_id': detailItem.listId, 
+          'product_id': detailItem.productId, 
+          'user_id': detailItem.userId,
+          'item_name': detailItem.itemName, 
+          'item_brand': detailItem.itemBrand,
+          'item_price': detailItem.itemPrice,
+          'item_price_promotional': detailItem.itemPricePromotional, 
+          'is_promotional': detailItem.isPromotional, 
+          'item_quantity': detailItem.itemQuantity, 
+          'item_type': detailItem.itemType,
+          'item_price_total': detailItem.itemPriceTotal, 
+          'item_due_date': detailItem.itemDueDate, 
+          'item_notes': detailItem.itemNotes,
+          'list_item_id': detailItem.listItemId
   })
         .select()
         .single();

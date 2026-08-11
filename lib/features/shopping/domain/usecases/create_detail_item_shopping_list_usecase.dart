@@ -7,26 +7,26 @@ class CreateDetailItemShoppingListUsecase {
   CreateDetailItemShoppingListUsecase(this.repository);
 
   Future<CreateDetailItemShoppingListEntity> createDetailItemShoppingList({
-required CreateDetailItemShoppingListEntity detailitem
+required CreateDetailItemShoppingListEntity detailItem
   }) {
     return repository.createDetailItem(
-      detailitem: CreateDetailItemShoppingListEntity(
-        id: detailitem.id,
-        createdAt: detailitem.createdAt,
-        productId: detailitem.productId,
-        listId: detailitem.listId,
-        userId: detailitem.userId,
-        itemName: detailitem.itemName,
-        itemBrand: detailitem.itemBrand,
-        itemPrice: detailitem.itemPrice,
-        itemPricePromotional: detailitem.itemPricePromotional,
-        isPromotional: detailitem.isPromotional,
-        itemQuantity: detailitem.itemQuantity,
-        itemType: detailitem.itemType,
-        itemPriceTotal: detailitem.itemPriceTotal,
-        itemDueDate: detailitem.itemDueDate,
-        itemNotes: detailitem.itemNotes,
-        listItemId: detailitem.listItemId,
+      detailItem: CreateDetailItemShoppingListEntity(
+        id: detailItem.id,
+        createdAt: detailItem.createdAt,
+        productId: detailItem.productId,
+        listId: detailItem.listId,
+        userId: detailItem.userId,
+        itemName: detailItem.itemName,
+        itemBrand: detailItem.itemBrand,
+        itemPrice: detailItem.itemPrice,
+        itemPricePromotional: detailItem.itemPricePromotional,
+        isPromotional: detailItem.isPromotional,
+        itemQuantity: detailItem.itemQuantity,
+        itemType: detailItem.itemType,
+        itemPriceTotal: detailItem.itemPriceTotal,
+        itemDueDate: detailItem.itemDueDate,
+        itemNotes: detailItem.itemNotes,
+        listItemId: detailItem.listItemId,
       ),
     );
   }

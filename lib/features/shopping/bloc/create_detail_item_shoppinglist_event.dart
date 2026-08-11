@@ -3,9 +3,9 @@ import 'package:lista_compras/features/shopping/domain/entities/create_detail_it
 abstract class CreateDetailItemShoppinglistEvent {}
 
 class CreateDetailItemRequest extends CreateDetailItemShoppinglistEvent {
-  final CreateDetailItemShoppingListEntity detailitem;
+  final CreateDetailItemShoppingListEntity detailItem;
 
-  CreateDetailItemRequest(this.detailitem);
+  CreateDetailItemRequest(this.detailItem);
   
 }
 

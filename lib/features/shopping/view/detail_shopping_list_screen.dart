@@ -40,6 +40,7 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
     String itemName,
     String listId,
     String productId,
+    String listItemId
   ) async {
     await Navigator.pushNamed(
       context,
@@ -48,6 +49,7 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
         itemName: itemName,
         listId: listId,
         productId: productId,
+        listItemId: listItemId
       ),
     );
   }
@@ -221,6 +223,7 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                                       .shoppingListId, // listId
                                                   shoppingListItems[index]
                                                       .productId,
+                                                  shoppingListItems[index].id
                                                 ),
                                               );
                                             },
