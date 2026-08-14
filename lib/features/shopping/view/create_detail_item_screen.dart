@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:lista_compras/components/toastAlert/toastAlert.dart';
 import 'package:lista_compras/components/SMButtom/SMButtom.dart';
 import 'package:lista_compras/core/helpers/enum.dart';
@@ -41,10 +42,16 @@ class _CreateDetailItemShoppingListScreenState
       TextEditingController(text: widget.itemName);
   final _itemBrandController = TextEditingController();
   final _itemPriceController = TextEditingController();
+  final _itemPriceTypeController = TextEditingController();
   final _itemPricePromotionalController = TextEditingController();
   final _itemQuantityController = TextEditingController(text: '1');
   final _itemNotesController = TextEditingController();
-//  bool get isEditing => widget.detailItemId.isNotEmpty;
+  final _formatter = NumberFormat.currency(
+    locale: 'pt_BR',
+    symbol: '',
+    decimalDigits: 2,
+  );
+  //  bool get isEditing => widget.detailItemId.isNotEmpty;
 
   final List<DropdownMenuItem<String>> _typeItems = const [
     DropdownMenuItem(value: 'Unidade', child: Text('Unidade')),
@@ -70,11 +77,22 @@ class _CreateDetailItemShoppingListScreenState
   }
 
   double get _parsedPrice =>
-      double.tryParse(_itemPriceController.text.replaceAll(',', '.')) ?? 0;
+      double.tryParse(
+        _itemPriceController.text
+            .replaceAll('.', '')
+            .replaceAll(',', '.')
+            .replaceAll('R\$', '')
+            .trim(),
+      ) ??
+      0;
 
   double get _parsedPromotionalPrice =>
       double.tryParse(
-        _itemPricePromotionalController.text.replaceAll(',', '.'),
+        _itemPricePromotionalController.text
+            .replaceAll('.', '')
+            .replaceAll(',', '.')
+            .replaceAll('R\$', '')
+            .trim(),
       ) ??
       0;
 
@@ -150,8 +168,8 @@ class _CreateDetailItemShoppingListScreenState
 
     return Scaffold(
       appBar: AppBar(
-       // title: Text(isEditing ? 'Editar Item' : 'Adicionar Item'),
-       title: Text('Adicionar Item'),
+        // title: Text(isEditing ? 'Editar Item' : 'Adicionar Item'),
+        title: Text('Adicionar Item'),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
@@ -270,13 +288,39 @@ class _CreateDetailItemShoppingListScreenState
                         ),
                         const SizedBox(height: 16),
 
+                        if (_selectedType != 'Unidade' &&
+                            _selectedType != 'Kg' &&
+                            _selectedType != null) ...[
+                          TextFormField(
+                            controller: _itemPriceTypeController,
+                            inputFormatters: [_formatter],
+                            autofocus: true,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            decoration: InputDecoration(
+                              labelText: 'Preço da $_selectedType',
+                              prefixText: 'R\$ ',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                              ),
+                            ),
+                            validator: Validators.required,
+                            onChanged: (_) => setState(() {}),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+
                         TextFormField(
                           controller: _itemPriceController,
+                          inputFormatters: [_formatter],
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
                           ),
                           decoration: const InputDecoration(
-                            labelText: 'Preço unitário',
+                            labelText: 'Preço',
                             prefixText: 'R\$ ',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
@@ -301,6 +345,7 @@ class _CreateDetailItemShoppingListScreenState
                         if (_isPromotional) ...[
                           TextFormField(
                             controller: _itemPricePromotionalController,
+                            inputFormatters: [_formatter],
                             autofocus: true,
                             keyboardType: const TextInputType.numberWithOptions(
                               decimal: true,
@@ -379,7 +424,7 @@ class _CreateDetailItemShoppingListScreenState
                                 style: TextStyle(fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                'R\$ ${_totalPrice.toStringAsFixed(2)}',
+                                'R\$ ${_formatter.format(_totalPrice)}',
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   color: theme.colorScheme.primary,
                                   fontWeight: FontWeight.bold,
@@ -407,7 +452,7 @@ class _CreateDetailItemShoppingListScreenState
                                     checked: false,
                                   ),
                                   _saveItem(),
-                                }
+                                },
                             },
                             isLoading: isLoading,
                           ),
