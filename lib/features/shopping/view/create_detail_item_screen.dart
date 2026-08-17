@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lista_compras/components/toastAlert/toastAlert.dart';
 import 'package:lista_compras/components/SMButtom/SMButtom.dart';
+import 'package:lista_compras/core/helpers/currency_input_formatter.dart';
 import 'package:lista_compras/core/helpers/enum.dart';
 import 'package:lista_compras/core/helpers/validators.dart';
 import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_bloc.dart';
@@ -293,7 +294,7 @@ class _CreateDetailItemShoppingListScreenState
                             _selectedType != null) ...[
                           TextFormField(
                             controller: _itemPriceTypeController,
-                            inputFormatters: [_formatter],
+                            inputFormatters: [CurrencyInputFormatter()],
                             autofocus: true,
                             keyboardType: const TextInputType.numberWithOptions(
                               decimal: true,
@@ -315,7 +316,7 @@ class _CreateDetailItemShoppingListScreenState
 
                         TextFormField(
                           controller: _itemPriceController,
-                          inputFormatters: [_formatter],
+                          inputFormatters: [CurrencyInputFormatter()],
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
                           ),
@@ -345,7 +346,7 @@ class _CreateDetailItemShoppingListScreenState
                         if (_isPromotional) ...[
                           TextFormField(
                             controller: _itemPricePromotionalController,
-                            inputFormatters: [_formatter],
+                            inputFormatters: [CurrencyInputFormatter()],
                             autofocus: true,
                             keyboardType: const TextInputType.numberWithOptions(
                               decimal: true,
