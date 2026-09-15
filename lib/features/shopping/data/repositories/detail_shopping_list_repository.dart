@@ -17,11 +17,11 @@ class DetailShoppingListRepository {
     final response = await client
         .from('shopping_list_items')
         .select(
-          'id, list_id, product_id, name, quantity, unit, '
-          'checked, position, created_at, price'
+          'id, list_id, product_id, name, '
+          'checked, created_at'
         )
         .eq('list_id', shoppingListId)
-        .order('position', ascending: true)
+        .order('created_at', ascending: true)
         .range(0, 100);
 
     return (response as List)

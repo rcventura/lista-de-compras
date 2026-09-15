@@ -5,27 +5,16 @@ class FetchDetailShoppingListModel {
   final String shoppingListId;
   final String productId;
   final String name;
-  final int quantity;
-  final String unit;
   final bool checked;
-  final int? order;
   final DateTime? createdAt;
-  final double price;
-  final String? detailItemId;
   
   FetchDetailShoppingListModel({
     required this.id,
     required this.shoppingListId,
     required this.productId,
     required this.name,
-    required this.quantity,
-    required this.unit,
-    required this.order,
     required this.checked,
     this.createdAt,  
-    required this.price,
-    this.detailItemId,
-
   });
 
   factory FetchDetailShoppingListModel.fromMap(Map<String, dynamic> map) {
@@ -34,13 +23,8 @@ class FetchDetailShoppingListModel {
       shoppingListId: map['list_id'] as String,
       productId: map['product_id'] as String,
       name: map['name'] as String,
-      quantity: map['quantity'] as int,
-      unit: map['unit'] as String,
       checked: map['checked'] as bool? ?? false,
-      order: map['position'] as int?,
       createdAt: map['created_at'] != null ? DateTime.parse(map['created_at']) : null,
-      price: map['price'] != null ? (map['price'] as num).toDouble() : 0.0,
-      detailItemId: map['detail_item_id']  as String?
     );
   }
 
@@ -49,12 +33,8 @@ class FetchDetailShoppingListModel {
     String? shoppingListId,
     String? productId,
     String? name,
-    int? quantity,
     bool? checked,
-    int? order,
     DateTime? createdAt,
-    double? price,
-    String? detailItemId
   }) {
     return FetchDetailShoppingListModel(
       
@@ -62,13 +42,8 @@ class FetchDetailShoppingListModel {
       shoppingListId: shoppingListId ?? this.shoppingListId,
       productId: productId ?? this.productId,
       name: name ?? this.name,
-      quantity: quantity ?? this.quantity,
-      unit: unit,
       checked: checked ?? this.checked,
-      order: order ?? this.order,
       createdAt: createdAt,
-      price: price ?? this.price,
-      detailItemId: detailItemId ?? this.detailItemId
     );
   }
 
@@ -78,13 +53,8 @@ class FetchDetailShoppingListModel {
       shoppingListId: shoppingListId,
       productId: productId,
       name: name,
-      quantity: quantity,
-      unit: unit,
       checked: checked,
-      order: order,
       createdAt: createdAt,
-      price: price,
-      detailItemId: detailItemId,
     );
   }
 }
