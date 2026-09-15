@@ -36,30 +36,49 @@ class CreateDetailItemShoppinglistBloc
   ) async {
     emit(DetailItemShoppingListItemLoading());
     try {
+      print('id: ${event.detailItem.id}');
+      print('createdAt: ${event.detailItem.createdAt}');
+      print('listId: ${event.detailItem.listId}');
+      print('productId: ${event.detailItem.productId}');
+      print('userId: ${event.detailItem.userId}');
+      print('listItemId: ${event.detailItem.listItemId}');
+      print('itemName: ${event.detailItem.itemName}');
+      print('itemBrand: ${event.detailItem.itemBrand}');
+      print('itemQuantity: ${event.detailItem.itemQuantity}');
+      print('itemType: ${event.detailItem.itemType}');
+      print('itemPrice: ${event.detailItem.itemPrice}');
+      print('isPromotional: ${event.detailItem.isPromotional}');
+      print('itemPricePromotional: ${event.detailItem.itemPricePromotional}');
+      print('itemDueDate: ${event.detailItem.itemDueDate}');
+      print('itemNotes: ${event.detailItem.itemNotes}');
+      print('itemPriceTotal: ${event.detailItem.itemPriceTotal}');
+
       final createDetailItem = await _createDetailItemShoppingListUsecase
           .createDetailItemShoppingList(
-            detailitem: CreateDetailItemShoppingListEntity(
-              id: event.detailitem.id,
-              createdAt: event.detailitem.createdAt,
-              productId: event.detailitem.productId,
-              listId: event.detailitem.listId,
-              userId: event.detailitem.userId,
-              itemName: event.detailitem.itemName,
-              itemBrand: event.detailitem.itemBrand,
-              itemPrice: event.detailitem.itemPrice,
-              itemPricePromotional: event.detailitem.itemPricePromotional,
-              isPromotional: event.detailitem.isPromotional,
-              itemQuantity: event.detailitem.itemQuantity,
-              itemType: event.detailitem.itemType,
-              itemPriceTotal: event.detailitem.itemPriceTotal,
+            detailItem: CreateDetailItemShoppingListEntity(
+              listId: event.detailItem.listId,
+              productId: event.detailItem.productId,
+              userId: event.detailItem.userId,
+              listItemId: event.detailItem.listItemId,
+              itemName: event.detailItem.itemName,
+              itemBrand: event.detailItem.itemBrand,
+              itemQuantity: event.detailItem.itemQuantity,
+              itemType: event.detailItem.itemType,
+              itemPrice: event.detailItem.itemPrice,
+              isPromotional: event.detailItem.isPromotional,
+              itemPricePromotional: event.detailItem.itemPricePromotional,
+              itemDueDate: event.detailItem.itemDueDate,
+              itemNotes: event.detailItem.itemNotes,
+              itemPriceTotal: event.detailItem.itemPriceTotal,
             ),
           );
-
       emit(DetailItemShoppingListItemFetchSuccess(createDetailItem));
     } catch (e) {
-       print(e);
+      print('aa $e');
       emit(
-        DetailItemShoppingListError('Erro ao carregar itens. Tente novamente.'),
+        DetailItemShoppingListError(
+          'Erro ao carregar itens1. Tente novamente.',
+        ),
       );
     }
   }

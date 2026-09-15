@@ -6,26 +6,18 @@ class AddItemsItemsUsecase {
 
   AddItemsItemsUsecase(this.repository);
 
-  Future<void> addItemsInList(
+  Future<AddItemsInListEntity> addItemsInList(
         String listId,
         String productId,
         String name,
-        int quantity,
-        String unit,
         bool checked,
-        int position,
-        double price
   ) {
     return repository.addItemInList( 
       AddItemsInListEntity(
         listId: listId,
         productId: productId,
         name: name,
-        quantity: quantity,
-        unit: unit,
         checked: checked,
-        position: position,
-        price: price
       )
     );
   }

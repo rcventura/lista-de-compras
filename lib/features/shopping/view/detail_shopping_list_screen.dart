@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:lista_compras/components/BottomSheet/personButtomSheet.dart';
 import 'package:lista_compras/components/toastAlert/toastAlert.dart';
 import 'package:lista_compras/core/routes/routes.dart';
-import 'package:lista_compras/features/shopping/bloc/create_detail_item_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_event.dart';
 import 'package:lista_compras/features/shopping/bloc/detail_shoppinglist_state.dart';
@@ -39,18 +38,18 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
 
   Future<void> _navigateToDetailItem(
     String itemName,
-    String detailItemId,
     String listId,
     String productId,
+    String listItemId,
   ) async {
     await Navigator.pushNamed(
       context,
       Routes.detailItem,
       arguments: DetailItemArgs(
         itemName: itemName,
-        detailItemId: detailItemId,
         listId: listId,
         productId: productId,
+        listItemId: listItemId,
       ),
     );
   }
@@ -219,12 +218,10 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                                       .keyboard_arrow_right_outlined,
                                                 ),
                                                 onTap: () => _navigateToDetailItem(
-                                                  shoppingListItems[index].name,
-                                                  shoppingListItems[index].detailItemId ?? '', // detailItemId
-                                                  widget
-                                                      .shoppingListId, // listId
-                                                  shoppingListItems[index]
-                                                      .productId,
+                                                  shoppingListItems[index].name, // detailItemId
+                                                  widget.shoppingListId, // listId
+                                                  shoppingListItems[index].productId,
+                                                  shoppingListItems[index].id,
                                                 ),
                                               );
                                             },
@@ -262,7 +259,7 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                       ),
                                       Text(
                                         shoppingListItems.isNotEmpty
-                                            ? 'R\$ ${shoppingListItems.fold(0.0, (sum, item) => sum + ((item.quantity * (item.price ?? 0.0)))).toStringAsFixed(2)}'
+                                            ? 'R\$ ${shoppingListItems.fold(0.0, (sum, item) => sum).toStringAsFixed(2)}'
                                             : 'R\$ 0.00',
                                         style: TextStyle(
                                           fontSize: 13,

@@ -9,7 +9,7 @@ class DetailFetchShoppingListItemsRequested extends DetailShoppinglistEvent {
 class DetailUpdateShoppingListItemRequested extends DetailShoppinglistEvent {
   final String itemId;
   final String? name;
-  final int? quantity;
+  final double? quantity;
   final double? price;
   final bool? checked;
 

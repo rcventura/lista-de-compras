@@ -30,17 +30,13 @@ class AddItemsInListBloc
     emit(AddItemsInListLoading());
 
     try {
-      await _addItemsItemsUsecase.addItemsInList(
+      final created = await _addItemsItemsUsecase.addItemsInList(
         event.listId,
         event.productId,
         event.name,
-        event.quantity,
-        event.unit,
         event.checked,
-        event.position,
-        event.price
       );
-      emit(AddItemsInListSuccess(''));
+      emit(AddItemsInListSuccess('', listItemId: created.id ?? ''));
     } catch (e) {
       emit(AddItemsInListError('Erro ao criar lista. Tente novamente. $e'));
     }

@@ -1,21 +1,15 @@
 class AddItemsInListEntity {
+  final String? id;
   final String listId;
   final String productId;
   final String name;
-  final int quantity;
-  final String unit;
   final bool checked;
-  final int position;
-  final double price;
 
   AddItemsInListEntity({
+    this.id,
     required this.listId,
     required this.productId,
     required this.name,
-    required this.quantity,
-    required this.unit,
     required this.checked,
-    required this.position,
-    required this.price,
   });
 }

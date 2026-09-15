@@ -57,6 +57,24 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     }
   }
 
+  Future<void> _navigateToDetailItem(
+    String itemName,
+    String listId,
+    String productId,
+    String listItemId,
+  ) async {
+    await Navigator.pushNamed(
+      context,
+      Routes.detailItem,
+      arguments: DetailItemArgs(
+        itemName: itemName,
+        listId: listId,
+        productId: productId,
+        listItemId: listItemId,
+      ),
+    );
+  }
+
   Widget showClearButtom() {
     if (_clearButtonVisible) {
       return IconButton(
@@ -81,11 +99,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     required String listId,
     required String productId,
     required String name,
-    required int quantity,
-    required String unit,
     required bool checked,
-    required int position,
-    required double price,
   }) async {
     if (itemsSelected.isEmpty) return;
 
@@ -107,11 +121,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
           listId: listId,
           productId: productId,
           name: categoryItem.name,
-          quantity: quantity,
-          unit: unit,
           checked: false,
-          position: position,
-          price: price,
         ),
       );
     }
@@ -282,7 +292,14 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                                                   size: 20,
                                                   color: Colors.grey[600],
                                                 ),
-                                                onTap: () => {},
+                                                onTap: () =>
+                                                    _navigateToDetailItem(
+                                                      categoryItem.name,
+                                                      currentShoppingList?.id ??
+                                                          '',
+                                                      categoryItem.id,
+                                                      '',
+                                                    ),
                                               );
                                       },
                                     ),
@@ -322,11 +339,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                                     listId: currentShoppingList?.id ?? '',
                                     productId: itemsSelected[0].id,
                                     name: itemsSelected[0].name,
-                                    quantity: 1,
-                                    unit: '',
                                     checked: false,
-                                    position: 1,
-                                    price: 0.0,
                                   ),
                                 ),
                               ],
