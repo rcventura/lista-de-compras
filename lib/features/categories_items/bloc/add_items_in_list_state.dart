@@ -6,8 +6,9 @@ class AddItemsInListLoading extends AddItemsInListState {}
 
 class AddItemsInListSuccess extends AddItemsInListState {
   final String message;
+  final String listItemId;
 
-  AddItemsInListSuccess(this.message);
+  AddItemsInListSuccess(this.message, {this.listItemId = ''});
 }
 
 class AddItemsInListError extends AddItemsInListState {

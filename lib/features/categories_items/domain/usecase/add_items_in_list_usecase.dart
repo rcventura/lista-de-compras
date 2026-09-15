@@ -6,7 +6,7 @@ class AddItemsItemsUsecase {
 
   AddItemsItemsUsecase(this.repository);
 
-  Future<void> addItemsInList(
+  Future<AddItemsInListEntity> addItemsInList(
         String listId,
         String productId,
         String name,

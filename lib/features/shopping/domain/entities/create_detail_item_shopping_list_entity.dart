@@ -14,7 +14,7 @@ class CreateDetailItemShoppingListEntity {
   final double itemPriceTotal;
   final String? itemDueDate;
   final String? itemNotes;
-  final String listItemId;
+  final String? listItemId;
 
   const CreateDetailItemShoppingListEntity({
     this.id,
@@ -32,6 +32,8 @@ class CreateDetailItemShoppingListEntity {
     required this.itemPriceTotal,
     this.itemDueDate,
     this.itemNotes,
-    required this.listItemId,
+    this.listItemId,
   });
 }
+
+

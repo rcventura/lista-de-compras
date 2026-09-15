@@ -8,6 +8,7 @@ import 'package:lista_compras/core/helpers/enum.dart';
 import 'package:lista_compras/core/helpers/validators.dart';
 import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_event.dart';
+import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_state.dart';
 import 'package:lista_compras/features/shopping/bloc/create_detail_item_shoppinglist_event.dart';
 import 'package:lista_compras/features/shopping/cubit/current_shopping_list_cubit.dart';
 import 'package:lista_compras/features/shopping/cubit/current_shopping_list_state.dart';
@@ -45,7 +46,7 @@ class _CreateDetailItemShoppingListScreenState
   final _itemPriceController = TextEditingController();
   final _itemPriceTypeController = TextEditingController();
   final _itemPricePromotionalController = TextEditingController();
-  final _itemQuantityController = TextEditingController(text: '1');
+  final _itemQuantityController = TextEditingController();
   final _itemNotesController = TextEditingController();
   final _formatter = NumberFormat.currency(
     locale: 'pt_BR',
@@ -85,7 +86,7 @@ class _CreateDetailItemShoppingListScreenState
             .replaceAll('R\$', '')
             .trim(),
       ) ??
-      0;
+      0.0;
 
   double get _parsedPromotionalPrice =>
       double.tryParse(
@@ -95,10 +96,10 @@ class _CreateDetailItemShoppingListScreenState
             .replaceAll('R\$', '')
             .trim(),
       ) ??
-      0;
+      0.0;
 
   double get _parsedQuantity =>
-      double.tryParse(_itemQuantityController.text.replaceAll(',', '.')) ?? 0;
+      double.tryParse(_itemQuantityController.text.replaceAll(',', '.')) ?? 0.0;
 
   double get _totalPrice {
     final unitPrice = _isPromotional ? _parsedPromotionalPrice : _parsedPrice;
@@ -118,10 +119,78 @@ class _CreateDetailItemShoppingListScreenState
     }
   }
 
-  void _saveItem() {
+  Future<String?> _saveItemInList({
+    required String listId,
+    required String productId,
+    required String name,
+    required bool checked,
+  }) async {
+    final bloc = context.read<AddItemsInListBloc>();
+    bloc.add(
+      AddItemsInListRequested(
+        listId: listId,
+        productId: productId,
+        name: name,
+        checked: false,
+      ),
+    );
+
+    final state = await bloc.stream.firstWhere(
+      (s) => s is AddItemsInListSuccess || s is AddItemsInListError,
+    );
+
+    if (state is AddItemsInListSuccess) {
+      return state.listItemId;
+    }
+
+    if (state is AddItemsInListError && mounted) {
+      ToastAlert.show(context, state.message);
+    }
+
+    return null;
+  }
+
+  Future<void> _onSaveItemPressed(String shoppingListLocate) async {
+    if (shoppingListLocate == ShoppingListLocateEnum.casa.value) {
+      _saveItem(widget.listItemId ?? '');
+      return;
+    }
+
+    final listItemId = await _saveItemInList(
+      checked: false,
+      listId: widget.listId,
+      productId: widget.productId,
+      name: widget.itemName,
+    );
+
+    if (listItemId == null) return;
+
+    _saveItem(listItemId);
+  }
+
+  void _saveItem(String listItemId) {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
+print('LISTA AO SALVAR');
+      print('listId: ${widget.listId}');
+      print('productId: ${widget.productId}');
+      print('userId: ${Supabase.instance.client.auth.currentUser?.id ?? ''}');
+      print('listItemId: ${listItemId}');
+      print('itemName: ${_itemNameController.text}');
+      print('itemBrand: ${_itemBrandController.value.text}');
+      print('itemQuantity: ${_parsedQuantity}');
+      print('itemType: ${_selectedType}');
+      print('itemPrice: ${_parsedPrice}');
+      print('isPromotional: ${_isPromotional}');
+      print('itemPricePromotional: ${_parsedPromotionalPrice}');
+      print('itemDueDate: ${_itemDueDate?.toIso8601String()}');
+      print('itemNotes: ${_itemNotesController.text.isEmpty
+              ? null
+              : _itemNotesController.text}');
+      print('itemPriceTotal: ${_totalPrice}');
+      print('---------------------------------------------------------');
 
     context.read<CreateDetailItemShoppinglistBloc>().add(
       CreateDetailItemRequest(
@@ -141,24 +210,8 @@ class _CreateDetailItemShoppingListScreenState
           itemNotes: _itemNotesController.text.isEmpty
               ? null
               : _itemNotesController.text,
-          listItemId: widget.listItemId ?? '',
+          listItemId: listItemId,
         ),
-      ),
-    );
-  }
-
-  Future<void> _addSelectedItems({
-    required String listId,
-    required String productId,
-    required String name,
-    required bool checked,
-  }) async {
-    context.read<AddItemsInListBloc>().add(
-      AddItemsInListRequested(
-        listId: listId,
-        productId: productId,
-        name: name,
-        checked: false,
       ),
     );
   }
@@ -440,21 +493,8 @@ class _CreateDetailItemShoppingListScreenState
                           width: double.infinity,
                           child: SMButton(
                             text: 'Salvar item',
-                            onPressed: () => {
-                              if (shoppingListLocate ==
-                                  ShoppingListLocateEnum.casa.value)
-                                {_saveItem()}
-                              else
-                                {
-                                  _addSelectedItems(
-                                    listId: widget.listId,
-                                    productId: widget.productId,
-                                    name: _itemNameController.text,
-                                    checked: false,
-                                  ),
-                                  _saveItem(),
-                                },
-                            },
+                            onPressed: () =>
+                                _onSaveItemPressed(shoppingListLocate),
                             isLoading: isLoading,
                           ),
                         ),

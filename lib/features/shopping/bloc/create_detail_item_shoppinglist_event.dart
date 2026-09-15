@@ -19,7 +19,7 @@ class FetchDetailItemShoppingListRequested extends CreateDetailItemShoppinglistE
 class DetailItemUpdateShoppingListRequested extends CreateDetailItemShoppinglistEvent {
   final String itemId;
   final String? name;
-  final int? quantity;
+  final double? quantity;
   final double? price;
   final bool? checked;
 

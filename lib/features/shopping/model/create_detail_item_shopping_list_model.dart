@@ -3,115 +3,117 @@ import 'package:lista_compras/features/shopping/domain/entities/create_detail_it
 class CreateDetailItemShoppingListModel {
   final String id;
   final String createdAt;
-  final String productId;
   final String listId;
+  final String productId;
   final String userId;
+  final String listItemId;
   final String itemName;
   final String itemBrand;
-  final double itemPrice;
-  final double itemPricePromotional;
-  final bool isPromotional;
   final double itemQuantity;
   final String itemType;
-  final double itemPriceTotal;
+  final double itemPrice;
+  final bool isPromotional;
+  final double itemPricePromotional;
   final String? itemDueDate;
   final String? itemNotes;
-  final String listItemId;
+  final double itemPriceTotal;
 
   CreateDetailItemShoppingListModel({
     required this.id,
     required this.createdAt,
-    required this.productId,
     required this.listId,
+    required this.productId,
     required this.userId,
+    required this.listItemId,
     required this.itemName,
     required this.itemBrand,
-    required this.itemPrice,
-    required this.itemPricePromotional,
-    required this.isPromotional,
     required this.itemQuantity,
     required this.itemType,
-    required this.itemPriceTotal,
+    required this.itemPrice,
+    required this.isPromotional,
+    required this.itemPricePromotional,
     this.itemDueDate,
     this.itemNotes,
-    required this.listItemId,
+    required this.itemPriceTotal,
   });
 
   factory CreateDetailItemShoppingListModel.fromMap(Map<String, dynamic> map) {
     return CreateDetailItemShoppingListModel(
-      createdAt: map['created_at'] as String,
       id: map['id'] as String,
-      productId: map['product_id'] as String,
+      createdAt: map['created_at'] as String,
       listId: map['list_id'] as String,
+      productId: map['product_id'] as String,
       userId: map['user_id'] as String,
+      listItemId: map['list_item_id'] as String,
       itemName: map['item_name'] as String,
       itemBrand: map['item_brand'] as String,
-      itemPrice: map['item_price'] as double,
-      itemPricePromotional: map['item_price_promotional'] as double,
-      isPromotional: map['is_promotional'] as bool,
-      itemQuantity: map['item_quantity'] as double,
+      itemQuantity: (map['item_quantity'] as num).toDouble(),
       itemType: map['item_type'] as String,
-      itemPriceTotal: map['item_price_total'] as double,
-      itemDueDate: map['item_due_date'] as String,
-      itemNotes: map['item_notes'] as String,
-      listItemId: map['list_item_id'] as String,
+      itemPrice: (map['item_price'] as num).toDouble(),
+      isPromotional: map['is_promotional'] as bool,
+      itemPricePromotional: (map['item_price_promotional'] as num).toDouble(),
+      itemDueDate: map['item_due_date'] as String?,
+      itemNotes: map['item_notes'] as String?,
+      itemPriceTotal: (map['item_price_total'] as num).toDouble(),
     );
   }
 
   CreateDetailItemShoppingListModel copyWith({
     required String id,
     required String createdAt,
-    required String productId,
     required String listId,
+    required String productId,
     required String userId,
+    required String listItemId,
     required String itemName,
     required String itemBrand,
-    required double itemPrice,
-    required double itemPricePromotional,
-    required bool isPromotional,
     required double itemQuantity,
     required String itemType,
+    required double itemPrice,
+    required bool isPromotional,
+    required double itemPricePromotional,
     required double itemPriceTotal,
-    String? itemDueDate,
     String? itemNotes,
-    required String listItemId,
+    String? itemDueDate,
   }) {
     return CreateDetailItemShoppingListModel(
       id: id,
       createdAt: createdAt,
-      productId: productId,
       listId: listId,
+      productId: productId,
       userId: userId,
+      listItemId: listItemId,
       itemName: itemName,
       itemBrand: itemBrand,
-      itemPrice: itemPrice,
-      itemPricePromotional: itemPricePromotional,
-      isPromotional: isPromotional,
       itemQuantity: itemQuantity,
       itemType: itemType,
-      itemPriceTotal: itemPriceTotal,
+      itemPrice: itemPrice,
+      isPromotional: isPromotional,
+      itemPricePromotional: itemPricePromotional,
       itemDueDate: itemDueDate,
       itemNotes: itemNotes,
-      listItemId: listItemId,
+      itemPriceTotal: itemPriceTotal,
     );
   }
 
   CreateDetailItemShoppingListEntity toEntity() {
     return CreateDetailItemShoppingListEntity(
-      productId: productId,
+      id: id,
+      createdAt: createdAt,
       listId: listId,
+      productId: productId,
       userId: userId,
+      listItemId: listItemId,
       itemName: itemName,
       itemBrand: itemBrand,
-      itemPrice: itemPrice,
-      itemPricePromotional: itemPricePromotional,
-      isPromotional: isPromotional,
       itemQuantity: itemQuantity,
       itemType: itemType,
-      itemPriceTotal: itemPriceTotal,
+      itemPrice: itemPrice,
+      isPromotional: isPromotional,
+      itemPricePromotional: itemPricePromotional,
       itemDueDate: itemDueDate,
       itemNotes: itemNotes,
-      listItemId: listItemId
+      itemPriceTotal: itemPriceTotal,
     );
   }
 }

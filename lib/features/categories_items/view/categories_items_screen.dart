@@ -61,6 +61,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
     String itemName,
     String listId,
     String productId,
+    String listItemId,
   ) async {
     await Navigator.pushNamed(
       context,
@@ -69,6 +70,7 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
         itemName: itemName,
         listId: listId,
         productId: productId,
+        listItemId: listItemId,
       ),
     );
   }
@@ -120,7 +122,6 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
           productId: productId,
           name: categoryItem.name,
           checked: false,
-
         ),
       );
     }
@@ -294,9 +295,10 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                                                 onTap: () =>
                                                     _navigateToDetailItem(
                                                       categoryItem.name,
+                                                      currentShoppingList?.id ??
+                                                          '',
                                                       categoryItem.id,
-                                                      currentShoppingList?.id ?? '',
-                  //                                    categoriesItemsList[index].id,
+                                                      '',
                                                     ),
                                               );
                                       },
