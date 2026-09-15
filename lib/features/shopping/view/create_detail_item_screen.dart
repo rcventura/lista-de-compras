@@ -43,7 +43,7 @@ class _CreateDetailItemShoppingListScreenState
   TextEditingController get _itemNameController =>
       TextEditingController(text: widget.itemName);
   final _itemBrandController = TextEditingController();
-  final _itemPriceController = TextEditingController();
+  var _itemPriceController = TextEditingController();
   final _itemPriceTypeController = TextEditingController();
   final _itemPricePromotionalController = TextEditingController();
   final _itemQuantityController = TextEditingController();
@@ -53,7 +53,7 @@ class _CreateDetailItemShoppingListScreenState
     symbol: '',
     decimalDigits: 2,
   );
-  //  bool get isEditing => widget.detailItemId.isNotEmpty;
+  bool get isEditing => widget.listItemId?.isNotEmpty ?? false;
 
   final List<DropdownMenuItem<String>> _typeItems = const [
     DropdownMenuItem(value: 'Unidade', child: Text('Unidade')),
@@ -98,11 +98,36 @@ class _CreateDetailItemShoppingListScreenState
       ) ??
       0.0;
 
+  double get _parseFractionalPrice =>
+      double.tryParse(
+        _itemPriceTypeController.text
+            .replaceAll('.', '')
+            .replaceAll(',', '.')
+            .replaceAll('R\$', '')
+            .trim(),
+      ) ??
+      0.0;
+
   double get _parsedQuantity =>
       double.tryParse(_itemQuantityController.text.replaceAll(',', '.')) ?? 0.0;
 
+  double get _totalPriceFractional {
+    final unitPrice = _parseFractionalPrice * _parsedQuantity;
+    return unitPrice;
+  }
+
   double get _totalPrice {
-    final unitPrice = _isPromotional ? _parsedPromotionalPrice : _parsedPrice;
+    late final double unitPrice;
+
+    if (!_isPromotional && _itemPriceTypeController.text.isEmpty) {
+      unitPrice = _parsedPrice;
+    } else if (_isPromotional && _itemPriceTypeController.text.isEmpty) {
+      unitPrice = _parsedPromotionalPrice;
+    } else if (!_isPromotional && _itemPriceTypeController.text.isNotEmpty) {
+      unitPrice = _parseFractionalPrice;
+    } else if (_isPromotional && _itemPriceTypeController.text.isNotEmpty) {
+      unitPrice = _parsedPromotionalPrice;
+    }
     return unitPrice * _parsedQuantity;
   }
 
@@ -173,25 +198,6 @@ class _CreateDetailItemShoppingListScreenState
       return;
     }
 
-print('LISTA AO SALVAR');
-      print('listId: ${widget.listId}');
-      print('productId: ${widget.productId}');
-      print('userId: ${Supabase.instance.client.auth.currentUser?.id ?? ''}');
-      print('listItemId: ${listItemId}');
-      print('itemName: ${_itemNameController.text}');
-      print('itemBrand: ${_itemBrandController.value.text}');
-      print('itemQuantity: ${_parsedQuantity}');
-      print('itemType: ${_selectedType}');
-      print('itemPrice: ${_parsedPrice}');
-      print('isPromotional: ${_isPromotional}');
-      print('itemPricePromotional: ${_parsedPromotionalPrice}');
-      print('itemDueDate: ${_itemDueDate?.toIso8601String()}');
-      print('itemNotes: ${_itemNotesController.text.isEmpty
-              ? null
-              : _itemNotesController.text}');
-      print('itemPriceTotal: ${_totalPrice}');
-      print('---------------------------------------------------------');
-
     context.read<CreateDetailItemShoppinglistBloc>().add(
       CreateDetailItemRequest(
         CreateDetailItemShoppingListEntity(
@@ -222,8 +228,7 @@ print('LISTA AO SALVAR');
 
     return Scaffold(
       appBar: AppBar(
-        // title: Text(isEditing ? 'Editar Item' : 'Adicionar Item'),
-        title: Text('Adicionar Item'),
+        title: Text(isEditing ? 'Editar Item' : 'Adicionar Item'),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
@@ -265,10 +270,15 @@ print('LISTA AO SALVAR');
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Preencha os dados do item que você quer adicionar à lista.',
-                          style: theme.textTheme.bodyMedium,
-                        ),
+                        isEditing
+                            ? Text(
+                                'Atualize os dados do item selecionado.',
+                                style: theme.textTheme.bodyMedium,
+                              )
+                            : Text(
+                                'Preencha os dados do item que você quer adicionar à lista.',
+                                style: theme.textTheme.bodyMedium,
+                              ),
                         const SizedBox(height: 24),
 
                         TextFormField(
@@ -317,7 +327,18 @@ print('LISTA AO SALVAR');
                                   ),
                                 ),
                                 validator: Validators.required,
-                                onChanged: (_) => setState(() {}),
+                                onChanged: (_) => setState(() {
+                                  if (_selectedType != 'Unidade' &&
+                                      _selectedType != 'Kg' &&
+                                      _selectedType != null) {
+                                    _itemPriceController =
+                                        TextEditingController(
+                                          text: _formatter.format(
+                                            _totalPriceFractional,
+                                          ),
+                                        );
+                                  }
+                                }),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -325,8 +346,11 @@ print('LISTA AO SALVAR');
                               child: DropdownButtonFormField<String>(
                                 initialValue: _selectedType,
                                 items: _typeItems,
-                                onChanged: (value) =>
-                                    setState(() => _selectedType = value),
+                                onChanged: (value) => setState(() {
+                                  _selectedType = value;
+                                  _itemPriceTypeController.clear();
+                                  _itemPriceController.clear();
+                                }),
                                 decoration: const InputDecoration(
                                   labelText: 'Tipo',
                                   border: OutlineInputBorder(
@@ -362,19 +386,30 @@ print('LISTA AO SALVAR');
                               ),
                             ),
                             validator: Validators.required,
-                            onChanged: (_) => setState(() {}),
+                            onChanged: (_) => setState(() {
+                              _itemPriceController = TextEditingController(
+                                text: _formatter.format(_totalPriceFractional),
+                              );
+                            }),
                           ),
                           const SizedBox(height: 16),
                         ],
 
                         TextFormField(
                           controller: _itemPriceController,
+
                           inputFormatters: [CurrencyInputFormatter()],
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
                           ),
-                          decoration: const InputDecoration(
-                            labelText: 'Preço',
+                          decoration: InputDecoration(
+                            enabled:
+                                (_selectedType != 'Unidade' &&
+                                    _selectedType != 'Kg' &&
+                                    _selectedType != null)
+                                ? false
+                                : true,
+                            labelText: 'Preço do item',
                             prefixText: 'R\$ ',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
@@ -392,8 +427,10 @@ print('LISTA AO SALVAR');
                           title: const Text('Item em promoção'),
                           value: _isPromotional,
                           activeThumbColor: theme.colorScheme.primary,
-                          onChanged: (value) =>
-                              setState(() => _isPromotional = value),
+                          onChanged: (value) {
+                            _itemPricePromotionalController.clear();
+                            setState(() => _isPromotional = value);
+                          },
                         ),
 
                         if (_isPromotional) ...[
@@ -492,7 +529,7 @@ print('LISTA AO SALVAR');
                         SizedBox(
                           width: double.infinity,
                           child: SMButton(
-                            text: 'Salvar item',
+                            text: isEditing ? 'Atualizar' : 'Salvar',
                             onPressed: () =>
                                 _onSaveItemPressed(shoppingListLocate),
                             isLoading: isLoading,
