@@ -26,32 +26,16 @@ class CreateDetailItemShoppinglistBloc
       _detailItemShoppingListRepository,
     );
 
-    on<CreateDetailItemRequest>(_onFetchDetailItemShoppingListRequested);
+    on<CreateDetailItemRequest>(_onCreateDetailItemRequest);
     //on<DetailItemUpdateShoppingListRequested>(_onUpdateDetailitemShoppingListItemRequested);
   }
 
-  Future<void> _onFetchDetailItemShoppingListRequested(
+  Future<void> _onCreateDetailItemRequest(
     CreateDetailItemRequest event,
     Emitter<CreateDetailItemShoppinglistState> emit,
   ) async {
     emit(DetailItemShoppingListItemLoading());
     try {
-      print('id: ${event.detailItem.id}');
-      print('createdAt: ${event.detailItem.createdAt}');
-      print('listId: ${event.detailItem.listId}');
-      print('productId: ${event.detailItem.productId}');
-      print('userId: ${event.detailItem.userId}');
-      print('listItemId: ${event.detailItem.listItemId}');
-      print('itemName: ${event.detailItem.itemName}');
-      print('itemBrand: ${event.detailItem.itemBrand}');
-      print('itemQuantity: ${event.detailItem.itemQuantity}');
-      print('itemType: ${event.detailItem.itemType}');
-      print('itemPrice: ${event.detailItem.itemPrice}');
-      print('isPromotional: ${event.detailItem.isPromotional}');
-      print('itemPricePromotional: ${event.detailItem.itemPricePromotional}');
-      print('itemDueDate: ${event.detailItem.itemDueDate}');
-      print('itemNotes: ${event.detailItem.itemNotes}');
-      print('itemPriceTotal: ${event.detailItem.itemPriceTotal}');
 
       final createDetailItem = await _createDetailItemShoppingListUsecase
           .createDetailItemShoppingList(
