@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lista_compras/features/shopping/bloc/create_detail_item_shoppinglist_event.dart';
 import 'package:lista_compras/features/shopping/bloc/create_detail_item_shoppinglist_state.dart';
@@ -27,6 +29,9 @@ class CreateDetailItemShoppinglistBloc
     );
 
     on<CreateDetailItemRequest>(_onCreateDetailItemRequest);
+    on<FetchDetailItemShoppingListRequested>(
+      _onFetchDetailItemShoppingListRequested,
+    );
     //on<DetailItemUpdateShoppingListRequested>(_onUpdateDetailitemShoppingListItemRequested);
   }
 
@@ -36,7 +41,6 @@ class CreateDetailItemShoppinglistBloc
   ) async {
     emit(DetailItemShoppingListItemLoading());
     try {
-
       final createDetailItem = await _createDetailItemShoppingListUsecase
           .createDetailItemShoppingList(
             detailItem: CreateDetailItemShoppingListEntity(
@@ -54,14 +58,39 @@ class CreateDetailItemShoppinglistBloc
               itemDueDate: event.detailItem.itemDueDate,
               itemNotes: event.detailItem.itemNotes,
               itemPriceTotal: event.detailItem.itemPriceTotal,
+              itemFractionalPrice: event.detailItem.itemFractionalPrice,
             ),
           );
-      emit(DetailItemShoppingListItemFetchSuccess(createDetailItem));
+      emit(DetailItemShoppingListAddSuccess(createDetailItem));
     } catch (e) {
       print('aa $e');
       emit(
         DetailItemShoppingListError(
           'Erro ao carregar itens1. Tente novamente.',
+        ),
+      );
+    }
+  }
+
+  Future<void>
+  _onFetchDetailItemShoppingListRequested(
+    FetchDetailItemShoppingListRequested event,
+    Emitter<CreateDetailItemShoppinglistState> emit,
+  ) async {
+    emit(DetailItemShoppingListItemLoading());
+    try {
+      final detailItem = await _detailItemShoppingListRepository.fetchDetailitemShoppingList(
+        event.shoppingListId,
+        event.productId,
+        event.listItemId
+      );
+      print('Fetched detail item: $detailItem');
+      emit(DetailItemShoppingListItemFetchSuccess(detailItem));
+    } catch (e) {
+      print('Erro list: $e');
+      emit(
+        DetailItemShoppingListError(
+          'Error ao carregar os dados do item, tente novamente',
         ),
       );
     }

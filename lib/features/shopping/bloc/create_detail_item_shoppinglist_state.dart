@@ -14,7 +14,13 @@ class DetailItemShoppingListItemFetchSuccess extends CreateDetailItemShoppinglis
   );
 }
 
-class DetailItemShoppingListAddSuccess extends CreateDetailItemShoppinglistState {}
+class DetailItemShoppingListAddSuccess extends CreateDetailItemShoppinglistState {
+    final CreateDetailItemShoppingListEntity item;
+
+  DetailItemShoppingListAddSuccess(
+    this.item,
+  );
+}
 
 class DetailItemShoppingListUpdateSuccess extends CreateDetailItemShoppinglistState {}
 

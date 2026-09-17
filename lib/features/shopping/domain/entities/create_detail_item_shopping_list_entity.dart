@@ -5,7 +5,7 @@ class CreateDetailItemShoppingListEntity {
   final String listId;
   final String userId;
   final String itemName;
-  final String itemBrand;
+  final String? itemBrand;
   final double itemPrice;
   final double itemPricePromotional;
   final bool isPromotional;
@@ -15,6 +15,7 @@ class CreateDetailItemShoppingListEntity {
   final String? itemDueDate;
   final String? itemNotes;
   final String? listItemId;
+  final double? itemFractionalPrice;
 
   const CreateDetailItemShoppingListEntity({
     this.id,
@@ -23,7 +24,7 @@ class CreateDetailItemShoppingListEntity {
     required this.listId,
     required this.userId,
     required this.itemName,
-    required this.itemBrand,
+    this.itemBrand,
     required this.itemPrice,
     required this.itemPricePromotional,
     required this.isPromotional,
@@ -33,6 +34,7 @@ class CreateDetailItemShoppingListEntity {
     this.itemDueDate,
     this.itemNotes,
     this.listItemId,
+    this.itemFractionalPrice,
   });
 }
 

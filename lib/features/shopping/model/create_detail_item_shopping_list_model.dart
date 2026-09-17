@@ -8,7 +8,7 @@ class CreateDetailItemShoppingListModel {
   final String userId;
   final String listItemId;
   final String itemName;
-  final String itemBrand;
+  final String? itemBrand;
   final double itemQuantity;
   final String itemType;
   final double itemPrice;
@@ -17,6 +17,7 @@ class CreateDetailItemShoppingListModel {
   final String? itemDueDate;
   final String? itemNotes;
   final double itemPriceTotal;
+  final double? itemFractionalPrice;
 
   CreateDetailItemShoppingListModel({
     required this.id,
@@ -35,6 +36,7 @@ class CreateDetailItemShoppingListModel {
     this.itemDueDate,
     this.itemNotes,
     required this.itemPriceTotal,
+    this.itemFractionalPrice,
   });
 
   factory CreateDetailItemShoppingListModel.fromMap(Map<String, dynamic> map) {
@@ -46,15 +48,18 @@ class CreateDetailItemShoppingListModel {
       userId: map['user_id'] as String,
       listItemId: map['list_item_id'] as String,
       itemName: map['item_name'] as String,
-      itemBrand: map['item_brand'] as String,
+      itemBrand: map['item_brand'] as String?,
       itemQuantity: (map['item_quantity'] as num).toDouble(),
       itemType: map['item_type'] as String,
       itemPrice: (map['item_price'] as num).toDouble(),
       isPromotional: map['is_promotional'] as bool,
       itemPricePromotional: (map['item_price_promotional'] as num).toDouble(),
-      itemDueDate: map['item_due_date'] as String?,
+      itemDueDate: map['item_due_date'],
       itemNotes: map['item_notes'] as String?,
       itemPriceTotal: (map['item_price_total'] as num).toDouble(),
+      itemFractionalPrice: map['item_fractional_price'] != null
+          ? (map['item_fractional_price'] as num).toDouble()
+          : null
     );
   }
 
@@ -66,7 +71,7 @@ class CreateDetailItemShoppingListModel {
     required String userId,
     required String listItemId,
     required String itemName,
-    required String itemBrand,
+    required String? itemBrand,
     required double itemQuantity,
     required String itemType,
     required double itemPrice,
@@ -75,6 +80,7 @@ class CreateDetailItemShoppingListModel {
     required double itemPriceTotal,
     String? itemNotes,
     String? itemDueDate,
+    double? itemFractionalPrice,
   }) {
     return CreateDetailItemShoppingListModel(
       id: id,
@@ -93,6 +99,7 @@ class CreateDetailItemShoppingListModel {
       itemDueDate: itemDueDate,
       itemNotes: itemNotes,
       itemPriceTotal: itemPriceTotal,
+      itemFractionalPrice: itemFractionalPrice,
     );
   }
 
@@ -114,6 +121,7 @@ class CreateDetailItemShoppingListModel {
       itemDueDate: itemDueDate,
       itemNotes: itemNotes,
       itemPriceTotal: itemPriceTotal,
+      itemFractionalPrice: itemFractionalPrice,
     );
   }
 }

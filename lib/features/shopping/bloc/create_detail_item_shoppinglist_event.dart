@@ -12,8 +12,9 @@ class CreateDetailItemRequest extends CreateDetailItemShoppinglistEvent {
 class FetchDetailItemShoppingListRequested extends CreateDetailItemShoppinglistEvent {
   final String shoppingListId;
   final String productId;
+  final String listItemId;
 
-   FetchDetailItemShoppingListRequested(this.shoppingListId, this.productId);
+   FetchDetailItemShoppingListRequested(this.shoppingListId, this.productId, this.listItemId);
 }
 
 class DetailItemUpdateShoppingListRequested extends CreateDetailItemShoppinglistEvent {

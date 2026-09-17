@@ -54,7 +54,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         event.startDate,
         event.endDate
       );
-      print('ahhhhhhhh $shoppingList');
       emit(HomeShoppingListFetchSuccess(shoppingList));
     } catch (e) {
       emit(
