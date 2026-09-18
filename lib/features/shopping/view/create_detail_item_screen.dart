@@ -73,7 +73,7 @@ class _CreateDetailItemShoppingListScreenState
   void initState() {
     super.initState();
     if (isEditing) {
-      _createBloc.add(
+     final result =_createBloc.add(
         FetchDetailItemShoppingListRequested(
           widget.listId,
           widget.productId,
@@ -263,17 +263,24 @@ class _CreateDetailItemShoppingListScreenState
                 if (state is DetailItemShoppingListItemFetchSuccess) {
                   _selectedType = state.item.itemType;
                   _itemBrandController.text = state.item.itemBrand ?? '';
-                  _itemPriceController.text = _formatter.format(state.item.itemPrice);
-                  _isPromotional = state.item.isPromotional; 
-                  _itemPriceController.text = _formatter.format(state.item.itemPrice);
-                  _itemPricePromotionalController.text = _formatter.format(state.item.itemPricePromotional);
-                  _itemQuantityController.text = state.item.itemQuantity.toString();
+                  _itemPriceController.text = _formatter.format(
+                    state.item.itemPrice,
+                  );
+                  _isPromotional = state.item.isPromotional;
+                  _itemPriceController.text = _formatter.format(
+                    state.item.itemPrice,
+                  );
+                  _itemPricePromotionalController.text = _formatter.format(
+                    state.item.itemPricePromotional,
+                  );
+                  _itemQuantityController.text = state.item.itemQuantity
+                      .toString();
                   _itemNotesController.text = state.item.itemNotes ?? '';
-                  _itemPriceTypeController.text = state.item.itemFractionalPrice != null
+                  _itemPriceTypeController.text =
+                      state.item.itemFractionalPrice != null
                       ? _formatter.format(state.item.itemFractionalPrice)
                       : '';
                 }
-
 
                 if (state is DetailItemShoppingListError) {
                   ToastAlert.show(context, state.message);
@@ -297,33 +304,69 @@ class _CreateDetailItemShoppingListScreenState
 
                 final shoppingListLocate = currentShoppingList?.local ?? '';
 
+                if (isLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  );
+                }
+
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(24),
-                  child: isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator.adaptive(),
-                        )
-                      : Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              isEditing
-                                  ? Text(
-                                      'Atualize os dados do item selecionado.',
-                                      style: theme.textTheme.bodyMedium,
-                                    )
-                                  : Text(
-                                      'Preencha os dados do item que você quer adicionar à lista.',
-                                      style: theme.textTheme.bodyMedium,
-                                    ),
-                              const SizedBox(height: 24),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        isEditing
+                            ? Text(
+                                'Atualize os dados do item selecionado.',
+                                style: theme.textTheme.bodyMedium,
+                              )
+                            : Text(
+                                'Preencha os dados do item que você quer adicionar à lista.',
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                        const SizedBox(height: 24),
 
-                              TextFormField(
-                                readOnly: true,
-                                controller: _itemNameController,
+                        TextFormField(
+                          readOnly: true,
+                          controller: _itemNameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Nome do item',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                          ),
+                          validator: Validators.required,
+                        ),
+                        const SizedBox(height: 16),
+
+                        TextFormField(
+                          controller: _itemBrandController,
+                          decoration: const InputDecoration(
+                            labelText: 'Marca',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: _itemQuantityController,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
                                 decoration: const InputDecoration(
-                                  labelText: 'Nome do item',
+                                  labelText: 'Quantidade',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(8),
@@ -331,129 +374,32 @@ class _CreateDetailItemShoppingListScreenState
                                   ),
                                 ),
                                 validator: Validators.required,
-                              ),
-                              const SizedBox(height: 16),
-
-                              TextFormField(
-                                controller: _itemBrandController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Marca',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _itemQuantityController,
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                            decimal: true,
-                                          ),
-                                      decoration: const InputDecoration(
-                                        labelText: 'Quantidade',
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(8),
-                                          ),
-                                        ),
-                                      ),
-                                      validator: Validators.required,
-                                      onChanged: (_) => setState(() {
-                                        if (_selectedType != 'Unidade' &&
-                                            _selectedType != 'Kg' &&
-                                            _selectedType != null) {
-                                          _itemPriceController =
-                                              TextEditingController(
-                                                text: _formatter.format(
-                                                  _totalPriceFractional,
-                                                ),
-                                              );
-                                        }
-                                      }),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: DropdownButtonFormField<String>(
-                                      initialValue: _selectedType,
-                                      items: _typeItems,
-                                      onChanged: (value) => setState(() {
-                                        _selectedType = value;
-                                        _itemPriceTypeController.clear();
-                                        _itemPriceController.clear();
-                                      }),
-                                      decoration: const InputDecoration(
-                                        labelText: 'Tipo',
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(8),
-                                          ),
-                                        ),
-                                      ),
-                                      validator: Validators.required,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-
-                              if (_selectedType != 'Unidade' &&
-                                  _selectedType != 'Kg' &&
-                                  _selectedType != null) ...[
-                                TextFormField(
-                                  controller: _itemPriceTypeController,
-                                  inputFormatters: [CurrencyInputFormatter()],
-                                  autofocus: true,
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
-                                  decoration: InputDecoration(
-                                    labelText: 'Preço da $_selectedType',
-                                    prefixText: 'R\$ ',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(8),
-                                      ),
-                                    ),
-                                  ),
-                                  validator: Validators.required,
-                                  onChanged: (_) => setState(() {
+                                onChanged: (_) => setState(() {
+                                  if (_selectedType != 'Unidade' &&
+                                      _selectedType != 'Kg' &&
+                                      _selectedType != null) {
                                     _itemPriceController =
                                         TextEditingController(
                                           text: _formatter.format(
                                             _totalPriceFractional,
                                           ),
                                         );
-                                  }),
-                                ),
-                                const SizedBox(height: 16),
-                              ],
-
-                              TextFormField(
-                                controller: _itemPriceController,
-
-                                inputFormatters: [CurrencyInputFormatter()],
-                                keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                      decimal: true,
-                                    ),
-                                decoration: InputDecoration(
-                                  enabled:
-                                      (_selectedType != 'Unidade' &&
-                                          _selectedType != 'Kg' &&
-                                          _selectedType != null)
-                                      ? false
-                                      : true,
-                                  labelText: 'Preço do item',
-                                  prefixText: 'R\$ ',
+                                  }
+                                }),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                initialValue: _selectedType,
+                                items: _typeItems,
+                                onChanged: (value) => setState(() {
+                                  _selectedType = value;
+                                  _itemPriceTypeController.clear();
+                                  _itemPriceController.clear();
+                                }),
+                                decoration: const InputDecoration(
+                                  labelText: 'Tipo',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(8),
@@ -461,133 +407,183 @@ class _CreateDetailItemShoppingListScreenState
                                   ),
                                 ),
                                 validator: Validators.required,
-                                onChanged: (_) => setState(() {}),
                               ),
-                              const SizedBox(height: 12),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
 
-                              SwitchListTile.adaptive(
-                                contentPadding: EdgeInsets.zero,
-                                title: const Text('Item em promoção'),
-                                value: _isPromotional,
-                                activeThumbColor: theme.colorScheme.primary,
-                                onChanged: (value) {
-                                  _itemPricePromotionalController.clear();
-                                  setState(() => _isPromotional = value);
-                                },
-                              ),
-
-                              if (_isPromotional) ...[
-                                TextFormField(
-                                  controller: _itemPricePromotionalController,
-                                  inputFormatters: [CurrencyInputFormatter()],
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
-                                  decoration: const InputDecoration(
-                                    labelText: 'Preço promocional',
-                                    prefixText: 'R\$ ',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(8),
-                                      ),
-                                    ),
-                                  ),
-                                  validator: Validators.required,
-                                  onChanged: (_) => setState(() {}),
-                                ),
-                                const SizedBox(height: 16),
-                              ],
-
-                              InkWell(
-                                onTap: _pickDueDate,
-                                borderRadius: BorderRadius.circular(8),
-                                child: InputDecorator(
-                                  decoration: const InputDecoration(
-                                    labelText: 'Validade (opcional)',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(8),
-                                      ),
-                                    ),
-                                    suffixIcon: Icon(
-                                      Icons.calendar_today,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    _itemDueDate == null
-                                        ? 'Selecionar data'
-                                        : '${_itemDueDate!.day.toString().padLeft(2, '0')}/'
-                                              '${_itemDueDate!.month.toString().padLeft(2, '0')}/'
-                                              '${_itemDueDate!.year}',
-                                  ),
+                        if (_selectedType != 'Unidade' &&
+                            _selectedType != 'Kg' &&
+                            _selectedType != null) ...[
+                          TextFormField(
+                            controller: _itemPriceTypeController,
+                            inputFormatters: [CurrencyInputFormatter()],
+                            autofocus: true,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            decoration: InputDecoration(
+                              labelText: 'Preço da $_selectedType',
+                              prefixText: 'R\$ ',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                            ),
+                            validator: Validators.required,
+                            onChanged: (_) => setState(() {
+                              _itemPriceController = TextEditingController(
+                                text: _formatter.format(_totalPriceFractional),
+                              );
+                            }),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
 
-                              TextFormField(
-                                controller: _itemNotesController,
-                                maxLines: 3,
-                                decoration: const InputDecoration(
-                                  labelText: 'Observações (opcional)',
-                                  alignLabelWithHint: true,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(8),
-                                    ),
-                                  ),
+                        TextFormField(
+                          controller: _itemPriceController,
+
+                          inputFormatters: [CurrencyInputFormatter()],
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          decoration: InputDecoration(
+                            enabled:
+                                (_selectedType != 'Unidade' &&
+                                    _selectedType != 'Kg' &&
+                                    _selectedType != null)
+                                ? false
+                                : true,
+                            labelText: 'Preço do item',
+                            prefixText: 'R\$ ',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                          ),
+                          validator: Validators.required,
+                          onChanged: (_) => setState(() {}),
+                        ),
+                        const SizedBox(height: 12),
+
+                        SwitchListTile.adaptive(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Item em promoção'),
+                          value: _isPromotional,
+                          activeThumbColor: theme.colorScheme.primary,
+                          onChanged: (value) {
+                            _itemPricePromotionalController.clear();
+                            setState(() => _isPromotional = value);
+                          },
+                        ),
+
+                        if (_isPromotional) ...[
+                          TextFormField(
+                            controller: _itemPricePromotionalController,
+                            inputFormatters: [CurrencyInputFormatter()],
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            decoration: const InputDecoration(
+                              labelText: 'Preço promocional',
+                              prefixText: 'R\$ ',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
                                 ),
                               ),
-                              const SizedBox(height: 24),
+                            ),
+                            validator: Validators.required,
+                            onChanged: (_) => setState(() {}),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
 
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.primary.withValues(
-                                    alpha: 0.08,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Total',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Text(
-                                      'R\$ ${_formatter.format(_totalPrice)}',
-                                      style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            color: theme.colorScheme.primary,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                  ],
+                        InkWell(
+                          onTap: _pickDueDate,
+                          borderRadius: BorderRadius.circular(8),
+                          child: InputDecorator(
+                            decoration: const InputDecoration(
+                              labelText: 'Validade (opcional)',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
                                 ),
                               ),
-                              const SizedBox(height: 32),
+                              suffixIcon: Icon(Icons.calendar_today, size: 20),
+                            ),
+                            child: Text(
+                              _itemDueDate == null
+                                  ? 'Selecionar data'
+                                  : '${_itemDueDate!.day.toString().padLeft(2, '0')}/'
+                                        '${_itemDueDate!.month.toString().padLeft(2, '0')}/'
+                                        '${_itemDueDate!.year}',
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
 
-                              SizedBox(
-                                width: double.infinity,
-                                child: SMButton(
-                                  text: isEditing ? 'Atualizar' : 'Salvar',
-                                  onPressed: () =>
-                                      _onSaveItemPressed(shoppingListLocate),
-                                  isLoading: isLoading,
+                        TextFormField(
+                          controller: _itemNotesController,
+                          maxLines: 3,
+                          decoration: const InputDecoration(
+                            labelText: 'Observações (opcional)',
+                            alignLabelWithHint: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.08,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Total',
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                'R\$ ${_formatter.format(_totalPrice)}',
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
                           ),
                         ),
+                        const SizedBox(height: 32),
+
+                        SizedBox(
+                          width: double.infinity,
+                          child: SMButton(
+                            text: isEditing ? 'Atualizar' : 'Salvar',
+                            onPressed: () =>
+                                _onSaveItemPressed(shoppingListLocate),
+                            isLoading: isLoading,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               },
             ),

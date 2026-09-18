@@ -84,10 +84,14 @@ class CreateDetailItemShoppinglistBloc
         event.productId,
         event.listItemId
       );
-      print('Fetched detail item: $detailItem');
+
+      if (detailItem == null) {
+        emit(DetailItemShoppingListItemNotFound());
+        return;
+      }
+
       emit(DetailItemShoppingListItemFetchSuccess(detailItem));
     } catch (e) {
-      print('Erro list: $e');
       emit(
         DetailItemShoppingListError(
           'Error ao carregar os dados do item, tente novamente',

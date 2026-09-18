@@ -7,7 +7,7 @@ class CreateDetailItemShoppingListRepository {
 
   CreateDetailItemShoppingListRepository(this.client);
 
-  Future<CreateDetailItemShoppingListEntity> fetchDetailitemShoppingList(
+  Future<CreateDetailItemShoppingListEntity?> fetchDetailitemShoppingList(
     String shoppingListId,
     String productId,
     String listItemId,
@@ -18,7 +18,6 @@ class CreateDetailItemShoppingListRepository {
       throw Exception('Usuário não autenticado.');
     }
 
-print('Fetching detail item for list: $shoppingListId, product: $productId, list item: $listItemId, userId: $userId');
     final response = await client
         .from('shopping_list_item_detail')
         .select(
@@ -30,7 +29,11 @@ print('Fetching detail item for list: $shoppingListId, product: $productId, list
         .eq('product_id', productId)
         .eq('list_item_id', listItemId)
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
+
+    if (response == null) {
+      return null;
+    }
 
     return CreateDetailItemShoppingListModel.fromMap(response).toEntity();
   }

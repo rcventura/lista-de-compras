@@ -24,6 +24,8 @@ class DetailItemShoppingListAddSuccess extends CreateDetailItemShoppinglistState
 
 class DetailItemShoppingListUpdateSuccess extends CreateDetailItemShoppinglistState {}
 
+class DetailItemShoppingListItemNotFound extends CreateDetailItemShoppinglistState {}
+
 class DetailItemShoppingListError extends CreateDetailItemShoppinglistState {
   final String message;
 
