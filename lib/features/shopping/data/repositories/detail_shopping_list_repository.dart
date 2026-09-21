@@ -7,7 +7,9 @@ class DetailShoppingListRepository {
 
   DetailShoppingListRepository(this.client);
 
-  Future<List<FetchDetailShoppingListEntity>> fetchShoppingListDetail(String shoppingListId) async {
+  Future<List<FetchDetailShoppingListEntity>> fetchShoppingListDetail(
+    String shoppingListId,
+  ) async {
     final userId = client.auth.currentUser?.id;
 
     if (userId == null) {
@@ -18,7 +20,7 @@ class DetailShoppingListRepository {
         .from('shopping_list_items')
         .select(
           'id, list_id, product_id, name, '
-          'checked, created_at'
+          'checked, created_at',
         )
         .eq('list_id', shoppingListId)
         .order('created_at', ascending: true)
@@ -27,5 +29,28 @@ class DetailShoppingListRepository {
     return (response as List)
         .map((item) => FetchDetailShoppingListModel.fromMap(item).toEntity())
         .toList();
+  }
+
+  Future<double> fetchTotalShoppingList(String shoppingListId) async {
+    final userId = client.auth.currentUser?.id;
+
+    if (userId == null) {
+      throw Exception('Usuário não autenticado.');
+    }
+
+    final response = await client
+        .from('shopping_list_item_detail')
+        .select('item_price_total')
+        .eq('list_id', shoppingListId)
+        .eq('user_id', userId);
+
+    final total = (response as List).fold<double>(
+      0.0,
+      (acc, row) =>
+          acc + ((row['item_price_total'] as num?)?.toDouble() ?? 0.0),
+    );
+
+ // Adicione esta linha para depuração
+    return total;
   }
 }

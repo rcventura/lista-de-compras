@@ -8,17 +8,26 @@ import 'detail_shoppinglist_state.dart';
 
 class DetailShoppinglistBloc
     extends Bloc<DetailShoppinglistEvent, DetailShoppinglistState> {
-      late final DetailShoppingListRepository _detailShoppingListRepository;
-      late final FetchDetailShoppingListUsecase _fetchDetailShoppingListUsecase;
-      
+  late final DetailShoppingListRepository _detailShoppingListRepository;
+  late final FetchDetailShoppingListUsecase _fetchDetailShoppingListUsecase;
 
   DetailShoppinglistBloc() : super(DetailSShoppingListItemInitial()) {
-    _detailShoppingListRepository = DetailShoppingListRepository(Supabase.instance.client);
-    _fetchDetailShoppingListUsecase = FetchDetailShoppingListUsecase(_detailShoppingListRepository);
+    _detailShoppingListRepository = DetailShoppingListRepository(
+      Supabase.instance.client,
+    );
+    _fetchDetailShoppingListUsecase = FetchDetailShoppingListUsecase(
+      _detailShoppingListRepository,
+    );
 
-    on<DetailFetchShoppingListItemsRequested>(_onFetchShoppingListItemsRequested);
-    on<DetailUpdateShoppingListItemRequested>(_onUpdateShoppingListItemRequested);
-    on<DetailDeleteShoppingListItemRequested>(_onDeleteShoppingListItemRequested);
+    on<DetailFetchShoppingListItemsRequested>(
+      _onFetchShoppingListItemsRequested,
+    );
+    on<DetailUpdateShoppingListItemRequested>(
+      _onUpdateShoppingListItemRequested,
+    );
+    on<DetailDeleteShoppingListItemRequested>(
+      _onDeleteShoppingListItemRequested,
+    );
   }
 
   Future<void> _onFetchShoppingListItemsRequested(
@@ -27,12 +36,21 @@ class DetailShoppinglistBloc
   ) async {
     emit(DetailSShoppingListItemLoading());
     try {
-      final List<FetchDetailShoppingListEntity> items = await _fetchDetailShoppingListUsecase.fetchShoppingListDetail(event.shoppingListId);
+      final results = await Future.wait([
+      _fetchDetailShoppingListUsecase.fetchShoppingListDetail(event.shoppingListId),
+      _fetchDetailShoppingListUsecase.fetchTotalShoppingList(event.shoppingListId),
+    ]);
+   
       emit(DetailSShoppingListItemFetchSuccess(
-        items,
-      ));
+        results[0] as List<FetchDetailShoppingListEntity>, 
+        results[1] as double,
+        ));
     } catch (e) {
-      emit(DetailSShoppingListItemError('Erro ao carregar itens. Tente novamente.'));
+      emit(
+        DetailSShoppingListItemError(
+          'Erro ao carregar itens. Tente novamente.',
+        ),
+      );
     }
   }
 
@@ -57,7 +75,11 @@ class DetailShoppinglistBloc
 
       emit(DetailSShoppingListItemUpdateSuccess());
     } catch (e) {
-      emit(DetailSShoppingListItemError('Erro ao atualizar item. Tente novamente.'));
+      emit(
+        DetailSShoppingListItemError(
+          'Erro ao atualizar item. Tente novamente.',
+        ),
+      );
     }
   }
 
@@ -75,7 +97,9 @@ class DetailShoppinglistBloc
 
       emit(DetailSShoppingListItemDeleteSuccess());
     } catch (e) {
-      emit(DetailSShoppingListItemError('Erro ao deletar item. Tente novamente.'));
+      emit(
+        DetailSShoppingListItemError('Erro ao deletar item. Tente novamente.'),
+      );
     }
   }
 }

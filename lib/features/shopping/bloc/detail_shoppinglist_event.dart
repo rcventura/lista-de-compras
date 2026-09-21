@@ -22,6 +22,12 @@ class DetailUpdateShoppingListItemRequested extends DetailShoppinglistEvent {
   });
 }
 
+class DetailFetchTotalShoppingListRequested extends DetailShoppinglistEvent {
+  final String shoppingListId;
+
+  DetailFetchTotalShoppingListRequested(this.shoppingListId);
+}
+
 class DetailDeleteShoppingListItemRequested extends DetailShoppinglistEvent {
   final String itemId;
 

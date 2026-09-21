@@ -8,9 +8,11 @@ class DetailSShoppingListItemLoading extends DetailShoppinglistState {}
 
 class DetailSShoppingListItemFetchSuccess extends DetailShoppinglistState {
   final List<FetchDetailShoppingListEntity> items;
+  final double? totalPrice;
 
   DetailSShoppingListItemFetchSuccess(
     this.items,
+    this.totalPrice,
   );
 }
 

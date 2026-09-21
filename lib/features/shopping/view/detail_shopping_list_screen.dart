@@ -21,9 +21,17 @@ class DetailShoppingListScreen extends StatefulWidget {
 }
 
 class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
+  final DetailShoppinglistBloc _detailShoppinglistBloc =
+      DetailShoppinglistBloc();
+
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant DetailShoppingListScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
   }
 
   Future<void> _navigateToCategories() async {
@@ -85,7 +93,10 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
               currentShoppingList?.createdAt ??
               DateTime.now().toIso8601String();
           final shoppingListItems = shoppingList?.items ?? [];
+          final totalPrice = shoppingList?.totalPrice ?? 0.0;
           final shoppingListLocate = currentShoppingList?.local ?? '';
+
+          print(shoppingListItems.length);
 
           // Lógica para construir a UI com base no estado atual
           return Scaffold(
@@ -123,112 +134,124 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                       child: Column(
                         children: [
                           Expanded(
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  height: 100,
-                                  padding: EdgeInsets.all(16.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withValues(
-                                          alpha: 0.5,
-                                        ),
-                                        spreadRadius: 2,
-                                        blurRadius: 5,
-                                        offset: Offset(0, 1),
-                                        // changes position of shadow
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            shoppingListName,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                            child: RefreshIndicator.adaptive(
+                              onRefresh: () async {
+                                _detailShoppinglistBloc.add(
+                                  DetailFetchShoppingListItemsRequested(widget.shoppingListId),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    height: 100,
+                                    padding: EdgeInsets.all(16.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withValues(
+                                            alpha: 0.5,
                                           ),
-
-                                          Text(
-                                            DateFormat('dd/MM/yyyy').format(
-                                              DateTime.parse(
-                                                shoppingListCreatedAt,
+                                          spreadRadius: 2,
+                                          blurRadius: 5,
+                                          offset: Offset(0, 1),
+                                          // changes position of shadow
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              shoppingListName,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 4),
-                                      shoppingListLocate.isNotEmpty
-                                          ? Text(
-                                              shoppingListLocate,
+
+                                            Text(
+                                              DateFormat('dd/MM/yyyy').format(
+                                                DateTime.parse(
+                                                  shoppingListCreatedAt,
+                                                ),
+                                              ),
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 color: Colors.grey,
                                               ),
-                                            )
-                                          : SizedBox.shrink(),
-                                    ],
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        shoppingListLocate.isNotEmpty
+                                            ? Text(
+                                                shoppingListLocate,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey,
+                                                ),
+                                              )
+                                            : SizedBox.shrink(),
+                                      ],
+                                    ),
                                   ),
-                                ),
 
-                                Expanded(
-                                  child: shoppingListItems.isEmpty
-                                      ? Center(
-                                          child: Text(
-                                            'Nenhum item adicionado à lista.',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.grey,
+                                  Expanded(
+                                    child: shoppingListItems.isEmpty
+                                        ? Center(
+                                            child: Text(
+                                              'Nenhum item adicionado à lista.',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          )
+                                        : SizedBox(
+                                            width: double.infinity,
+                                            height: 10,
+                                            child: ListView.builder(
+                                              scrollDirection: Axis.vertical,
+                                              itemCount:
+                                                  shoppingListItems.length,
+                                              shrinkWrap: true,
+                                              itemBuilder: (context, index) {
+                                                return ListTile(
+                                                  title: Text(
+                                                    shoppingListItems[index]
+                                                        .name,
+                                                  ),
+                                                  //   subtitle: Text(
+                                                  //     'Descrição do item ${index + 1}',
+                                                  //   ),
+                                                  trailing: Icon(
+                                                    Icons
+                                                        .keyboard_arrow_right_outlined,
+                                                  ),
+                                                  onTap: () => _navigateToDetailItem(
+                                                    shoppingListItems[index]
+                                                        .name, // detailItemId
+                                                    widget
+                                                        .shoppingListId, // listId
+                                                    shoppingListItems[index]
+                                                        .productId,
+                                                    shoppingListItems[index].id,
+                                                  ),
+                                                );
+                                              },
                                             ),
                                           ),
-                                        )
-                                      : SizedBox(
-                                          width: double.infinity,
-                                          height: 10,
-                                          child: ListView.builder(
-                                            scrollDirection: Axis.vertical,
-                                            itemCount: shoppingListItems.length,
-                                            shrinkWrap: true,
-                                            itemBuilder: (context, index) {
-                                              return ListTile(
-                                                title: Text(
-                                                  shoppingListItems[index].name,
-                                                ),
-                                                //   subtitle: Text(
-                                                //     'Descrição do item ${index + 1}',
-                                                //   ),
-                                                trailing: Icon(
-                                                  Icons
-                                                      .keyboard_arrow_right_outlined,
-                                                ),
-                                                onTap: () => _navigateToDetailItem(
-                                                  shoppingListItems[index].name, // detailItemId
-                                                  widget.shoppingListId, // listId
-                                                  shoppingListItems[index].productId,
-                                                  shoppingListItems[index].id,
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                ),
-                              ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
 
@@ -259,8 +282,11 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                       ),
                                       Text(
                                         shoppingListItems.isNotEmpty
-                                            ? 'R\$ ${shoppingListItems.fold(0.0, (sum, item) => sum).toStringAsFixed(2)}'
-                                            : 'R\$ 0.00',
+                                            ? NumberFormat.currency(
+                                                locale: 'pt_BR',
+                                                symbol: 'R\$',
+                                              ).format(totalPrice)
+                                            : 'R\$ 0.07',
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.normal,
