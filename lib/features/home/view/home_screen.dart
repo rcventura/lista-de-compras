@@ -317,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     borderSide: BorderSide.none,
                                   ),
                                   filled: true,
-                                  fillColor: Colors.grey[200],
+                                  fillColor: Colors.grey[50],
                                   suffixIcon: showClearButtom(),
                                 ),
                               ),

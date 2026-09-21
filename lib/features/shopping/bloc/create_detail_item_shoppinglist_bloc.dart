@@ -92,6 +92,7 @@ class CreateDetailItemShoppinglistBloc
 
       emit(DetailItemShoppingListItemFetchSuccess(detailItem));
     } catch (e) {
+      print('Error fetching detail item: $e');
       emit(
         DetailItemShoppingListError(
           'Error ao carregar os dados do item, tente novamente',

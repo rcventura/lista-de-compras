@@ -227,12 +227,12 @@ class _CategoriesItemsScreenState extends State<CategoriesItemsScreen> {
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.zero,
                             hintText: 'Pesquisar item',
+                            filled: true,
+                            fillColor: Colors.grey[50],
                             prefixIcon: const Icon(Icons.search),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            filled: true,
-                            fillColor: Colors.grey[200],
                             suffixIcon: showClearButtom(),
                           ),
                         ),

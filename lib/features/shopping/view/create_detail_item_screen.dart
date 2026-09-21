@@ -39,9 +39,7 @@ class CreateDetailItemShoppingListScreen extends StatefulWidget {
 class _CreateDetailItemShoppingListScreenState
     extends State<CreateDetailItemShoppingListScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final _createBloc = CreateDetailItemShoppinglistBloc();
-
   TextEditingController get _itemNameController =>
       TextEditingController(text: widget.itemName);
   final _itemBrandController = TextEditingController();
@@ -73,7 +71,7 @@ class _CreateDetailItemShoppingListScreenState
   void initState() {
     super.initState();
     if (isEditing) {
-     final result =_createBloc.add(
+      _createBloc.add(
         FetchDetailItemShoppingListRequested(
           widget.listId,
           widget.productId,
@@ -242,7 +240,6 @@ class _CreateDetailItemShoppingListScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Editar Item' : 'Adicionar Item'),
@@ -260,6 +257,10 @@ class _CreateDetailItemShoppingListScreenState
             >(
               bloc: _createBloc,
               listener: (context, state) {
+                if (state is DetailItemShoppingListAddSuccess) {
+                  ToastAlert.show(context, 'Item adicionado com sucesso!');
+                  Navigator.pop(context, true);
+                }
                 if (state is DetailItemShoppingListItemFetchSuccess) {
                   _selectedType = state.item.itemType;
                   _itemBrandController.text = state.item.itemBrand ?? '';
@@ -285,15 +286,9 @@ class _CreateDetailItemShoppingListScreenState
                 if (state is DetailItemShoppingListError) {
                   ToastAlert.show(context, state.message);
                 }
-
-                if (state is DetailItemShoppingListAddSuccess) {
-                  ToastAlert.show(context, 'Item adicionado com sucesso!');
-                  Navigator.pop(context, true);
-                }
               },
               builder: (context, state) {
                 final isLoading = state is DetailItemShoppingListItemLoading;
-
                 final currentShoppingListState = context
                     .watch<CurrentShoppingListCubit>()
                     .state;
@@ -301,7 +296,6 @@ class _CreateDetailItemShoppingListScreenState
                     currentShoppingListState is CurrentShoppingListLoaded
                     ? currentShoppingListState.currentShoppingList
                     : null;
-
                 final shoppingListLocate = currentShoppingList?.local ?? '';
 
                 if (isLoading) {
@@ -331,7 +325,9 @@ class _CreateDetailItemShoppingListScreenState
                         TextFormField(
                           readOnly: true,
                           controller: _itemNameController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[300],
                             labelText: 'Nome do item',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
@@ -345,8 +341,10 @@ class _CreateDetailItemShoppingListScreenState
 
                         TextFormField(
                           controller: _itemBrandController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Marca',
+                            filled: true,
+                            fillColor: Colors.grey[50],
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(8),
@@ -365,8 +363,10 @@ class _CreateDetailItemShoppingListScreenState
                                     const TextInputType.numberWithOptions(
                                       decimal: true,
                                     ),
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   labelText: 'Quantidade',
+                                  filled: true,
+                                  fillColor: Colors.grey[50],
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(8),
@@ -398,8 +398,10 @@ class _CreateDetailItemShoppingListScreenState
                                   _itemPriceTypeController.clear();
                                   _itemPriceController.clear();
                                 }),
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   labelText: 'Tipo',
+                                  filled: true,
+                                  fillColor: Colors.grey[50],
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(8),
@@ -426,6 +428,8 @@ class _CreateDetailItemShoppingListScreenState
                             decoration: InputDecoration(
                               labelText: 'Preço da $_selectedType',
                               prefixText: 'R\$ ',
+                              filled: true,
+                              fillColor: Colors.grey[50],
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(8),
@@ -444,7 +448,6 @@ class _CreateDetailItemShoppingListScreenState
 
                         TextFormField(
                           controller: _itemPriceController,
-
                           inputFormatters: [CurrencyInputFormatter()],
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
@@ -457,6 +460,8 @@ class _CreateDetailItemShoppingListScreenState
                                 ? false
                                 : true,
                             labelText: 'Preço do item',
+                            filled: true,
+                            fillColor: Colors.grey[50],
                             prefixText: 'R\$ ',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
@@ -471,6 +476,7 @@ class _CreateDetailItemShoppingListScreenState
 
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
+                          activeColor: theme.colorScheme.primary,
                           title: const Text('Item em promoção'),
                           value: _isPromotional,
                           activeThumbColor: theme.colorScheme.primary,
@@ -487,9 +493,11 @@ class _CreateDetailItemShoppingListScreenState
                             keyboardType: const TextInputType.numberWithOptions(
                               decimal: true,
                             ),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Preço promocional',
                               prefixText: 'R\$ ',
+                              filled: true,
+                              fillColor: Colors.grey[50],
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(8),
@@ -506,8 +514,10 @@ class _CreateDetailItemShoppingListScreenState
                           onTap: _pickDueDate,
                           borderRadius: BorderRadius.circular(8),
                           child: InputDecorator(
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Validade (opcional)',
+                              filled: true,
+                              fillColor: Colors.grey[50],
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(8),
@@ -529,8 +539,10 @@ class _CreateDetailItemShoppingListScreenState
                         TextFormField(
                           controller: _itemNotesController,
                           maxLines: 3,
-                          decoration: const InputDecoration(
+                          decoration:  InputDecoration(
                             labelText: 'Observações (opcional)',
+                            filled: true,
+                            fillColor: Colors.grey[50],
                             alignLabelWithHint: true,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
