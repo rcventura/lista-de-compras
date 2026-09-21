@@ -21,8 +21,7 @@ class DetailShoppingListScreen extends StatefulWidget {
 }
 
 class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
-  final DetailShoppinglistBloc _detailShoppinglistBloc =
-      DetailShoppinglistBloc();
+  var totalPrice = 0.0;
 
   @override
   void initState() {
@@ -32,6 +31,8 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
   @override
   void didUpdateWidget(covariant DetailShoppingListScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+  
   }
 
   Future<void> _navigateToCategories() async {
@@ -93,7 +94,7 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
               currentShoppingList?.createdAt ??
               DateTime.now().toIso8601String();
           final shoppingListItems = shoppingList?.items ?? [];
-          final totalPrice = shoppingList?.totalPrice ?? 0.0;
+          totalPrice = shoppingList?.totalPrice ?? 0.0;
           final shoppingListLocate = currentShoppingList?.local ?? '';
 
           print(shoppingListItems.length);
@@ -136,8 +137,17 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                           Expanded(
                             child: RefreshIndicator.adaptive(
                               onRefresh: () async {
-                                _detailShoppinglistBloc.add(
-                                  DetailFetchShoppingListItemsRequested(widget.shoppingListId),
+                                final bloc = context
+                                    .read<DetailShoppinglistBloc>();
+                                bloc.add(
+                                  DetailFetchShoppingListItemsRequested(
+                                    widget.shoppingListId,
+                                  ),
+                                );
+                                await bloc.stream.firstWhere(
+                                  (s) =>
+                                      s is DetailSShoppingListItemFetchSuccess ||
+                                      s is DetailSShoppingListItemError,
                                 );
                               },
                               child: Column(

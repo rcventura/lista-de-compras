@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:lista_compras/features/shopping/domain/entities/fetch_detail_shopping_list_entity.dart';
 import 'package:lista_compras/features/shopping/model/fetch_detail_shopping_list_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -50,7 +51,10 @@ class DetailShoppingListRepository {
           acc + ((row['item_price_total'] as num?)?.toDouble() ?? 0.0),
     );
 
- // Adicione esta linha para depuração
+    debugPrint(
+      '[total] list=$shoppingListId user=$userId '
+      'rows=${response.length} total=$total data=$response',
+    );
     return total;
   }
 }
