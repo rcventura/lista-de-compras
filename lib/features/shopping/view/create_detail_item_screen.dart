@@ -6,6 +6,7 @@ import 'package:lista_compras/components/SMButtom/SMButtom.dart';
 import 'package:lista_compras/core/helpers/currency_input_formatter.dart';
 import 'package:lista_compras/core/helpers/enum.dart';
 import 'package:lista_compras/core/helpers/validators.dart';
+import 'package:lista_compras/core/routes/routes.dart';
 import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_bloc.dart';
 import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_event.dart';
 import 'package:lista_compras/features/categories_items/bloc/add_items_in_list_state.dart';
@@ -235,6 +236,11 @@ class _CreateDetailItemShoppingListScreenState
         ),
       ),
     );
+
+    ToastAlert.show(context, 'Item adicionado com sucesso!');
+    Navigator.of(
+      context,
+    ).popUntil(ModalRoute.withName(Routes.shoppingListDetail));
   }
 
   @override
@@ -257,10 +263,8 @@ class _CreateDetailItemShoppingListScreenState
             >(
               bloc: _createBloc,
               listener: (context, state) {
-                if (state is DetailItemShoppingListAddSuccess) {
-                  ToastAlert.show(context, 'Item adicionado com sucesso!');
-                  Navigator.pop(context, true);
-                }
+                if (!mounted) return;
+
                 if (state is DetailItemShoppingListItemFetchSuccess) {
                   _selectedType = state.item.itemType;
                   _itemBrandController.text = state.item.itemBrand ?? '';
@@ -539,7 +543,7 @@ class _CreateDetailItemShoppingListScreenState
                         TextFormField(
                           controller: _itemNotesController,
                           maxLines: 3,
-                          decoration:  InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Observações (opcional)',
                             filled: true,
                             fillColor: Colors.grey[50],

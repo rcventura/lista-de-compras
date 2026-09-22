@@ -31,8 +31,6 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
   @override
   void didUpdateWidget(covariant DetailShoppingListScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-
-  
   }
 
   Future<void> _navigateToCategories() async {
@@ -144,11 +142,16 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                     widget.shoppingListId,
                                   ),
                                 );
-                                await bloc.stream.firstWhere(
-                                  (s) =>
-                                      s is DetailSShoppingListItemFetchSuccess ||
-                                      s is DetailSShoppingListItemError,
-                                );
+                                await bloc.stream
+                                    .firstWhere(
+                                      (s) =>
+                                          s is DetailSShoppingListItemFetchSuccess ||
+                                          s is DetailSShoppingListItemError,
+                                    )
+                                    .timeout(
+                                      const Duration(seconds: 10),
+                                      onTimeout: () => bloc.state,
+                                    );
                               },
                               child: Column(
                                 children: [
