@@ -17,7 +17,7 @@ class DetailShoppingListRepository {
       throw Exception('Usuário não autenticado.');
     }
 
-    final response = await client
+    final itemsResponse = await client
         .from('shopping_list_items')
         .select(
           'id, list_id, product_id, name, '
@@ -27,9 +27,23 @@ class DetailShoppingListRepository {
         .order('created_at', ascending: true)
         .range(0, 100);
 
-    return (response as List)
-        .map((item) => FetchDetailShoppingListModel.fromMap(item).toEntity())
-        .toList();
+    final detailResponse = await client
+        .from('shopping_list_item_detail')
+        .select('list_item_id, item_price_total')
+        .eq('list_id', shoppingListId)
+        .eq('user_id', userId);
+
+    final priceByListItemId = <String, num>{
+      for (final row in detailResponse as List)
+        if (row['list_item_id'] != null)
+          row['list_item_id'] as String: row['item_price_total'] as num? ?? 0,
+    };
+
+    return (itemsResponse as List).map((item) {
+      final map = Map<String, dynamic>.from(item as Map);
+      map['item_price_total'] = priceByListItemId[map['id']];
+      return FetchDetailShoppingListModel.fromMap(map).toEntity();
+    }).toList();
   }
 
   Future<double> fetchTotalShoppingList(String shoppingListId) async {

@@ -63,7 +63,6 @@ class CreateDetailItemShoppinglistBloc
           );
       emit(DetailItemShoppingListAddSuccess(createDetailItem));
     } catch (e) {
-      print('aa $e');
       emit(
         DetailItemShoppingListError(
           'Erro ao carregar itens1. Tente novamente.',
@@ -92,7 +91,6 @@ class CreateDetailItemShoppinglistBloc
 
       emit(DetailItemShoppingListItemFetchSuccess(detailItem));
     } catch (e) {
-      print('Error fetching detail item: $e');
       emit(
         DetailItemShoppingListError(
           'Error ao carregar os dados do item, tente novamente',

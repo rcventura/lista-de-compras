@@ -21,7 +21,6 @@ class DetailShoppingListScreen extends StatefulWidget {
 }
 
 class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
-  var totalPrice = 0.0;
 
   @override
   void initState() {
@@ -59,6 +58,12 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
         listItemId: listItemId,
       ),
     );
+
+    if (mounted) {
+      context.read<DetailShoppinglistBloc>().add(
+        DetailFetchShoppingListItemsRequested(widget.shoppingListId),
+      );
+    }
   }
 
   @override
@@ -92,10 +97,8 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
               currentShoppingList?.createdAt ??
               DateTime.now().toIso8601String();
           final shoppingListItems = shoppingList?.items ?? [];
-          totalPrice = shoppingList?.totalPrice ?? 0.0;
+          final totalPrice = shoppingList?.totalPrice ?? 0.0;
           final shoppingListLocate = currentShoppingList?.local ?? '';
-
-          print(shoppingListItems.length);
 
           // Lógica para construir a UI com base no estado atual
           return Scaffold(
@@ -237,14 +240,24 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                                   shoppingListItems.length,
                                               shrinkWrap: true,
                                               itemBuilder: (context, index) {
+                                                final itemPriceTotal =
+                                                    shoppingListItems[index]
+                                                        .priceTotal;
                                                 return ListTile(
                                                   title: Text(
                                                     shoppingListItems[index]
                                                         .name,
                                                   ),
-                                                  //   subtitle: Text(
-                                                  //     'Descrição do item ${index + 1}',
-                                                  //   ),
+                                                  subtitle: Text(
+                                                    itemPriceTotal != null
+                                                        ? NumberFormat.currency(
+                                                            locale: 'pt_BR',
+                                                            symbol: 'R\$',
+                                                          ).format(
+                                                            itemPriceTotal,
+                                                          )
+                                                        : 'Preço não informado',
+                                                  ),
                                                   trailing: Icon(
                                                     Icons
                                                         .keyboard_arrow_right_outlined,
@@ -299,7 +312,7 @@ class _DetailShoppingListScreenState extends State<DetailShoppingListScreen> {
                                                 locale: 'pt_BR',
                                                 symbol: 'R\$',
                                               ).format(totalPrice)
-                                            : 'R\$ 0.07',
+                                            : 'R\$ 0.00',
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.normal,

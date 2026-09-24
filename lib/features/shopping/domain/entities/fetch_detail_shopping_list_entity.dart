@@ -6,6 +6,7 @@ class FetchDetailShoppingListEntity {
   final String name;
   final bool checked;
   final DateTime? createdAt;
+  final double? priceTotal;
 
   FetchDetailShoppingListEntity({
     required this.id,
@@ -14,5 +15,6 @@ class FetchDetailShoppingListEntity {
     required this.name,
     required this.checked,
     this.createdAt,
+    this.priceTotal,
   });
 }

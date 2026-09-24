@@ -25,7 +25,6 @@ class HomeRespository {
         .lt('created_at', startOfNextMonth.toIso8601String())
         .order('created_at', ascending: false);
 
-print('Response from Supabase: $response');
     return _mapShoppingListsWithItemsCount(response as List);
   }
 

@@ -192,7 +192,7 @@ class _CreateDetailItemShoppingListScreenState
 
   Future<void> _onSaveItemPressed(String shoppingListLocate) async {
     if (shoppingListLocate == ShoppingListLocateEnum.casa.value) {
-      _saveItem(widget.listItemId ?? '');
+      await _saveItem(widget.listItemId ?? '');
       return;
     }
 
@@ -205,15 +205,16 @@ class _CreateDetailItemShoppingListScreenState
 
     if (listItemId == null) return;
 
-    _saveItem(listItemId);
+    await _saveItem(listItemId);
   }
 
-  void _saveItem(String listItemId) {
+  Future<void> _saveItem(String listItemId) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    context.read<CreateDetailItemShoppinglistBloc>().add(
+    final bloc = context.read<CreateDetailItemShoppinglistBloc>();
+    bloc.add(
       CreateDetailItemRequest(
         CreateDetailItemShoppingListEntity(
           productId: widget.productId,
@@ -236,6 +237,19 @@ class _CreateDetailItemShoppingListScreenState
         ),
       ),
     );
+
+    final state = await bloc.stream.firstWhere(
+      (s) =>
+          s is DetailItemShoppingListAddSuccess ||
+          s is DetailItemShoppingListError,
+    );
+
+    if (!mounted) return;
+
+    if (state is DetailItemShoppingListError) {
+      ToastAlert.show(context, state.message);
+      return;
+    }
 
     ToastAlert.show(context, 'Item adicionado com sucesso!');
     Navigator.of(
@@ -480,7 +494,6 @@ class _CreateDetailItemShoppingListScreenState
 
                         SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
-                          activeColor: theme.colorScheme.primary,
                           title: const Text('Item em promoção'),
                           value: _isPromotional,
                           activeThumbColor: theme.colorScheme.primary,
